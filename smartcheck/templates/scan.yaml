@@ -1,0 +1,122 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: scan
+  labels:
+    name: scan
+    chart: {{ template "smartcheck.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      name: external
+  selector:
+    service: scan
+    release: {{ .Release.Name }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scan-internal
+  labels:
+    name: scan-internal
+    chart: {{ template "smartcheck.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  ports:
+    - port: 8081
+      protocol: TCP
+      name: internal
+  selector:
+    service: scan
+    release: {{ .Release.Name }}
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: scan
+  labels:
+    service: scan
+    chart: {{ template "smartcheck.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ default 1 .Values.replicas.scan }}
+  template:
+    metadata:
+      labels:
+        service: scan
+        chart: {{ template "smartcheck.chart" . }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+    spec:
+      containers:
+        - name: scan
+          {{- $imageDefaults := .Values.images.defaults }}
+          {{- with .Values.images.scan }}
+          {{- if eq (default "" .registry) "-" }}
+          image: {{ printf "%s:%s" (required ".repository is required!" .repository) (default $imageDefaults.tag .tag) | quote }}
+          {{- else }}
+          image: {{ printf "%s/%s:%s" (default $imageDefaults.registry .registry) .repository (default $imageDefaults.tag .tag) | quote }}
+          {{- end }}
+          imagePullPolicy: {{ default $imageDefaults.pullPolicy .pullPolicy }}
+          {{- end }}
+          ports:
+            - containerPort: 8080
+              name: external
+            - containerPort: 8081
+              name: internal
+            - containerPort: 8082
+              name: metrics
+            - containerPort: 8083
+              name: health
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8083
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8083
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          args:
+            - --internal-base=http://scan-internal:8081
+            - --authorization-url=http://auth-internal:8081
+            - --malware-scan-url=http://malware-scan-internal:8081
+            - --vulnerability-scan-url=http://vulnerability-scan-internal:8081
+            - --content-source-scanner-webhook-url=http://registryviews-internal:8081/api/results
+            - --database-connection-string=postgres:host=db user=$(DB_USER) password=$(DB_PASSWORD) dbname=scandb sslmode=disable connect_timeout=5 # seconds
+            - --database-secret=$(DB_SECRET)
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  name: {{ template "smartcheck.fullname" . }}-db
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: {{ template "smartcheck.fullname" . }}-db
+            - name: DB_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: database-secret
+                  name: {{ template "smartcheck.fullname" . }}-db
+          resources:
+{{ toYaml (default .Values.resources.defaults .Values.resources.scan) | indent 12 }}
+      nodeSelector:
+{{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.scan) | indent 8 }}
+      tolerations:
+{{ toYaml (default .Values.tolerations.defaults .Values.tolerations.scan) | indent 8 }}
+      restartPolicy: Always

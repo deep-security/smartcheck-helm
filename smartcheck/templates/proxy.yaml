@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: proxy
+  labels:
+    name: proxy
+    chart: {{ template "smartcheck.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ default "LoadBalancer" .Values.service.type }}
+  ports:
+    - port: {{ default 443 .Values.service.httpsPort }}
+      targetPort: 443
+      protocol: TCP
+      name: https
+    - port: {{ default 80 .Values.service.httpPort }}
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    service: proxy
+    release: {{ .Release.Name }}
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: proxy
+  labels:
+    service: proxy
+    chart: {{ template "smartcheck.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ default 1 .Values.replicas.proxy }}
+  template:
+    metadata:
+      labels:
+        service: proxy
+        chart: {{ template "smartcheck.chart" . }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+    spec:
+      containers:
+        - name: proxy
+          {{- $imageDefaults := .Values.images.defaults }}
+          {{- with .Values.images.proxy }}
+          {{- if eq (default "" .registry) "-" }}
+          image: {{ printf "%s:%s" (required ".repository is required!" .repository) (default $imageDefaults.tag .tag) | quote }}
+          {{- else }}
+          image: {{ printf "%s/%s:%s" (default $imageDefaults.registry .registry) .repository (default $imageDefaults.tag .tag) | quote }}
+          {{- end }}
+          imagePullPolicy: {{ default $imageDefaults.pullPolicy .pullPolicy }}
+          {{- end }}
+          ports:
+            - containerPort: 8080
+              name: external
+          volumeMounts:
+            - mountPath: /secrets/
+              name: tls-secret
+          # TODO probes
+          # livenessProbe:
+          # readinessProbe:
+          args: []
+          env: []
+          resources:
+{{ toYaml (default .Values.resources.defaults .Values.resources.proxy) | indent 12 }}
+      volumes:
+        - name: tls-secret
+          secret:
+            secretName: {{ template "smartcheck.fullname" . }}-tls-certificate
+      nodeSelector:
+{{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.proxy) | indent 8 }}
+      tolerations:
+{{ toYaml (default .Values.tolerations.defaults .Values.tolerations.proxy) | indent 8 }}
+      restartPolicy: Always

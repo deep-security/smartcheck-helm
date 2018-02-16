@@ -1,0 +1,132 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth
+  labels:
+    name: auth
+    chart: {{ template "smartcheck.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      name: external
+  selector:
+    service: auth
+    release: {{ .Release.Name }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-internal
+  labels:
+    name: auth-internal
+    chart: {{ template "smartcheck.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  ports:
+    - port: 8081
+      protocol: TCP
+      name: internal
+  selector:
+    service: auth
+    release: {{ .Release.Name }}
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: auth
+  labels:
+    service: auth
+    chart: {{ template "smartcheck.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ default 1 .Values.replicas.auth }}
+  template:
+    metadata:
+      labels:
+        service: auth
+        chart: {{ template "smartcheck.chart" . }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+    spec:
+      containers:
+        - name: auth
+          {{- $imageDefaults := .Values.images.defaults }}
+          {{- with .Values.images.auth }}
+          {{- if eq (default "" .registry) "-" }}
+          image: {{ printf "%s:%s" (required ".repository is required!" .repository) (default $imageDefaults.tag .tag) | quote }}
+          {{- else }}
+          image: {{ printf "%s/%s:%s" (default $imageDefaults.registry .registry) .repository (default $imageDefaults.tag .tag) | quote }}
+          {{- end }}
+          imagePullPolicy: {{ default $imageDefaults.pullPolicy .pullPolicy }}
+          {{- end }}
+          ports:
+            - containerPort: 8080
+              name: external
+            - containerPort: 8081
+              name: internal
+            - containerPort: 8082
+              name: metrics
+            - containerPort: 8083
+              name: health
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8083
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8083
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          args:
+            - --internal-base=http://auth-internal:8081
+            - --authorization-url=http://auth-internal:8081
+            - --database-connection-string=postgres:host=db user=$(DB_USER) password=$(DB_PASSWORD) dbname=authdb sslmode=disable connect_timeout=5 # seconds
+            - --database-secret=$(DB_SECRET)
+            - --initial-role={{ default "admin" .Values.auth.roleName }}
+            - --initial-user=$(INITIAL_USER)
+            - --initial-password=$(INITIAL_PASSWORD)
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  name: {{ template "smartcheck.fullname" . }}-db
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: {{ template "smartcheck.fullname" . }}-db
+            - name: DB_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: database-secret
+                  name: {{ template "smartcheck.fullname" . }}-db
+            - name: INITIAL_USER
+              valueFrom:
+                secretKeyRef:
+                  key: userName
+                  name: {{ template "smartcheck.fullname" . }}-auth
+            - name: INITIAL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: {{ template "smartcheck.fullname" . }}-auth
+          resources:
+{{ toYaml (default .Values.resources.defaults .Values.resources.auth) | indent 12 }}
+      nodeSelector:
+{{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.auth) | indent 8 }}
+      tolerations:
+{{ toYaml (default .Values.tolerations.defaults .Values.tolerations.auth) | indent 8 }}
+      restartPolicy: Always
