@@ -8,6 +8,20 @@ You will need `[helm](https://helm.sh)` installed and running. There's a handy [
 
 The Helm team have some helpful [guidelines for securing your Helm installation](https://docs.helm.sh/using_helm/#securing-your-helm-installation) as well as [an abbreviated list of best practices](https://docs.helm.sh/using_helm/#best-practices-for-securing-helm-and-tiller) for reference.
 
+```sh
+helm init --service-account tiller
+```
+
+Storing helm release information in secrets (beta as of 2018-02-21):
+
+```sh
+helm init --override 'spec.template.spec.containers[0].command'='{/tiller,--storage=secret}'
+```
+
+helm init with cert options
+
+See also: [github.com/michelleN/helm-secure-tiller](https://github.com/michelleN/helm-secure-tiller).
+
 ### Installing Deep Security Smart Check
 
 The Helm chart for Deep Security Smart Check is hosted on Github; the latest version is `v0.0.2`.
