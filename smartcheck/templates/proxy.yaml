@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: proxy
   labels:
-    name: proxy
+    service: proxy
     chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -75,3 +75,74 @@ spec:
       tolerations:
 {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.proxy) | indent 8 }}
       restartPolicy: Always
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: proxy
+  labels:
+    service: proxy
+    chart: {{ template "smartcheck.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  podSelector:
+    matchLabels:
+      service: proxy
+      chart: {{ template "smartcheck.chart" . }}
+      release: {{ .Release.Name }}
+      heritage: {{ .Release.Service }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from: # any
+      ports:
+        - protocol: TCP
+          port: 80
+    - from: # any
+      ports:
+        - protocol: TCP
+          port: 443
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              service: frontend
+              chart: {{ template "smartcheck.chart" . }}
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+        - podSelector:
+            matchLabels:
+              service: scan
+              chart: {{ template "smartcheck.chart" . }}
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+        - podSelector:
+            matchLabels:
+              service: registryviews
+              chart: {{ template "smartcheck.chart" . }}
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+        - podSelector:
+            matchLabels:
+              service: auth
+              chart: {{ template "smartcheck.chart" . }}
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+        - podSelector:
+            matchLabels:
+              service: docs
+              chart: {{ template "smartcheck.chart" . }}
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+      ports:
+        - protocol: TCP
+          port: 8080
+    - to: # any
+      ports:
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53
