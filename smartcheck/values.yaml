@@ -181,3 +181,6 @@ affinity:
   defaults: {}
 
 ingress: {}
+
+networkPolicy:
+  enabled: false

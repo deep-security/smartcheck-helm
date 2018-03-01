@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: auth
   labels:
-    name: auth
+    service: auth
     chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -22,7 +22,7 @@ kind: Service
 metadata:
   name: auth-internal
   labels:
-    name: auth-internal
+    service: auth-internal
     chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
@@ -131,6 +131,7 @@ spec:
 {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.auth) | indent 8 }}
       restartPolicy: Always
 
+{{ if .Values.networkPolicy.enabled }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -219,3 +220,4 @@ spec:
           port: 53
         - protocol: UDP
           port: 53
+{{- end }}

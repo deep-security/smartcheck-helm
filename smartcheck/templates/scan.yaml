@@ -121,7 +121,9 @@ spec:
 {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.scan) | indent 8 }}
       restartPolicy: Always
 
+{{ if .Values.networkPolicy.enabled }}
 ---
+apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: scan
@@ -232,3 +234,4 @@ spec:
       ports:
       - protocol: TCP
         port: 443
+{{- end }}

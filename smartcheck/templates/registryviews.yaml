@@ -119,6 +119,7 @@ spec:
 {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.registryviews) | indent 8 }}
       restartPolicy: Always
 
+{{ if .Values.networkPolicy.enabled }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -153,7 +154,10 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              name: scan
+              service: scan
+              chart: {{ template "smartcheck.chart" . }}
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
       ports:
         - protocol: TCP
           port: 8081
@@ -206,3 +210,4 @@ spec:
       ports:
         - protocol: TCP
           port: 443
+{{- end }}
