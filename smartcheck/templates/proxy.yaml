@@ -11,11 +11,11 @@ spec:
   type: {{ default "LoadBalancer" .Values.service.type }}
   ports:
     - port: {{ default 443 .Values.service.httpsPort }}
-      targetPort: 443
+      targetPort: 8443
       protocol: TCP
       name: https
     - port: {{ default 80 .Values.service.httpPort }}
-      targetPort: 80
+      targetPort: 8080
       protocol: TCP
       name: http
   selector:
@@ -55,9 +55,11 @@ spec:
           {{- end }}
           ports:
             - containerPort: 8080
-              name: external
+              name: http
+            - containerPort: 8443
+              name: https
           volumeMounts:
-            - mountPath: /secrets/
+            - mountPath: /etc/nginx/
               name: tls-secret
           # TODO probes
           # livenessProbe:
@@ -101,11 +103,11 @@ spec:
     - from: # any
       ports:
         - protocol: TCP
-          port: 80
+          port: 8080
     - from: # any
       ports:
         - protocol: TCP
-          port: 443
+          port: 8443
   egress:
     - to:
         - podSelector:
