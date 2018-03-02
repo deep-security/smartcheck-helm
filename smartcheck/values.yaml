@@ -106,24 +106,26 @@ images:
     tag: 0.0.2
     pullPolicy: Always
   db:
-    repository: deepsecurity/db
+    repository: db
   auth:
-    repository: deepsecurity/auth
+    repository: auth
   malwareScan:
-    repository: deepsecurity/vscan
+    repository: vscan
   scan:
-    repository: deepsecurity/scan
+    repository: scan
   registryviews:
-    repository: deepsecurity/contentsourcescan
+    repository: contentsourcescan
   docs:
-    repository: deepsecurity/api-docs
+    repository: api-docs
   frontend:
-    repository: deepsecurity/frontend
+    repository: frontend
   proxy:
-    repository: deepsecurity/proxy
+    repository: proxy
   vulnerabilityScan:
-    repository: deepsecurity/clair
+    repository: clair
   vulnerabilityDB:
+    registry: "-"
+    project: library
     repository: postgres
     tag: "9.6.2"
 

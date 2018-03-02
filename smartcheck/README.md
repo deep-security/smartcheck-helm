@@ -19,8 +19,8 @@ The Helm chart for Deep Security Smart Check is hosted on Github; the latest ver
 To install Deep Security Smart Check into the default Kubernetes namespace:
 
 ```sh
-helm upgrade --install \
-  deepsecurity-smartcheck \
+helm install \
+  --name deepsecurity-smartcheck \
   https://github.com/deepsecurity/smartcheck/archive/v0.0.2.tgz
 ```
 
@@ -30,6 +30,18 @@ _Experienced `helm` users will note that we are using `deepsecurity-smartcheck` 
 
 The install process will display instructions for obtaining the initial username and password and for connecting to Deep Security Smart Check.
 
+### Uninstalling Deep Security Smart Check
+
+You can delete all of the resources created for Deep Security Smart Check by running `helm delete`:
+
+```sh
+helm delete deepsecurity-smartcheck
+```
+
+Use the `helm list` command to list installed releases.
+
+**This is a destructive command and will delete all of the Deep Security Smart Check resources, including database contents, without further confirmation.**
+
 ## Advanced topics
 
 ### Using an alternate Kubernetes namespace
@@ -37,9 +49,9 @@ The install process will display instructions for obtaining the initial username
 To install Deep Security Smart Check into an existing Kubernetes namespace that's different from the current kube config namespace, use the `--namespace` parameter in the `helm upgrade` command:
 
 ```sh
-helm upgrade --install \
+helm install \
   --namespace {namespace} \
-  deepsecurity-smartcheck \
+  --name deepsecurity-smartcheck \
   https://github.com/deepsecurity/smartcheck/archive/v0.0.2.tgz
 ```
 
@@ -50,18 +62,18 @@ Helm uses a file called `values.yaml` to set configuration defaults.
 You can override the defaults in this file by specifying a comma-separated list of key-value pairs on the command line:
 
 ```sh
-helm upgrade --install \
+helm install \
   --set key1=value1,key2=value2,... \
-  deepsecurity-smartcheck \
+  --name deepsecurity-smartcheck \
   https://github.com/deepsecurity/smartcheck/archive/v0.0.2.tgz
 ```
 
 or by creating a <abbr title="YAML Ain't Markup Language">YAML</abbr> file with the specific values you want to override and providing the location of this file on the command line:
 
 ```sh
-helm upgrade --install \
+helm install \
   --values overrides.yaml \
-  deepsecurity-smartcheck \
+  --name deepsecurity-smartcheck \
   https://github.com/deepsecurity/smartcheck/archive/v0.0.2.tgz
 ```
 
@@ -79,8 +91,89 @@ Refer to the `values.yaml` file for a full list of available values to override;
 <tr><td><code>auth.userName</code></td><td><code>administrator</code></td><td>The name of the default administrator user that the system will create on startup.</td></tr>
 <tr><td><code>auth.password</code></td><td><code>{a random 16-character alphanumeric string}</code></td><td>The default password assigned to the default administrator. <code>helm</code> will provide instructions for retrieving the initial password as part of the installation process.</td></tr>
 <tr><td><code>certificate.commonName</code></td><td><code>example.com</code></td><td>The server name to use in the default self-signed certificate created for the service.</td></tr>
-<tr><td><code>service.type</code></td><td><code>LoadBalancer</code></td><td>The Kubernetes service type to create. This must be one of <code>LoadBalancer</code>, <code>ClusterIP</code>, <code>NodePort</code>, or <code>ExternalName</code>.</td></tr>
+<tr><td><code>service.type</code></td><td><code>LoadBalancer</code></td><td>The Kubernetes service type to create. This must be one of <code>LoadBalancer</code>, <code>ClusterIP</code>, or <code>NodePort</code>.</td></tr>
 <tr><td><code>persistence.enabled</code></td><td><code>true</code></td><td>Whether a persistent volume should be created for the Deep Security Smart Check databases. <strong>If no persistent volume claim is created, all database content will be lost when the database container restarts.</strong></td></tr>
 <tr><td><code>networkPolicy.enabled</code></td><td><code>false</code></td><td><strong>EXPERIMENTAL:</strong> Whether Kubernetes <code>NetworkPolicy</code> resources should be created for the deployed pods.</td></tr>
 </tbody>
 </table>
+
+### Replacing the service certificate
+
+Follow the instructions below to replace the certificate that the service is
+using.
+
+1. Create a new self-signed certificate (or bring your own):
+
+    ```sh
+    openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
+      -keyout default_ssl.key \
+      -out default_ssl.crt
+    ```
+
+   **IMPORTANT**: you MUST name the certificate file `default_ssl.crt` and
+   the key file `default_ssl.key`, or else the service will not find the
+   data properly.
+
+2. Delete and re-add the Kubernetes secret that stores the certificate:
+
+    ```sh
+    kubectl delete secret \
+      --namespace default \
+      deepsecurity-smartcheck-tls-certificate
+
+    kubectl create secret generic \
+      --namespace default \
+      deepsecurity-smartcheck-tls-certificate \
+      --from-file=./default_ssl.key \
+      --from-file=./default_ssl.crt
+    ```
+
+3. Delete the pods. They will be restarted by the Kubernetes deployment:
+
+    ```sh
+    kubectl delete pods \
+      --namespace default \
+      -l "service=proxy,release=deepsecurity-smartcheck"
+    ```
+
+## Troubleshooting
+
+### Failed to pull image ... certificate signed by unknown authority
+
+If you are using `minikube` and an insecure registry, you will need to tell `minikube` that the registry is insecure. To do this, you will need to first delete and then restart your `minikube` VM:
+
+```sh
+minikube delete
+minikube start --insecure-registry {registry address}
+```
+
+### Failed to pull image ... Please enable or contact project owners to enable the Google Container Registry API
+
+#### Step 1: Check that you have the right repository names in your `overrides.yaml`
+
+If you have copied the Deep Security Smart Check images from their default location to the Google Container Registry and pods are failing to start with an error message that looks like the following:
+
+```text
+Failed to pull image "us.gcr.io/deepsecurity/auth:latest": rpc error: code = 2 desc = Error response from daemon: {"message":"Get https://gcr.io/v2/deepsecurity/auth/manifests/latest: denied: Please enable or contact project owners to enable the Google Container Registry API in Cloud Console at https://console.cloud.google.com/apis/api/containerregistry.googleapis.com/overview?project=deepsecurity before performing this operation."}
+```
+
+with the `deepsecurity` project name, then check to make sure that you have the right project name override in your `overrides.yaml` file. For example, if your project is `amazing-minbari` and your registry endpoint is `gcr.io`, you should have the following in your `overrides.yaml`:
+
+```yaml
+images:
+  defaults:
+    registry: gcr.io
+    project: amazing-minbari
+```
+
+#### Step 2: Ensure that the Google Container Registry API is enabled
+
+If you have confirmed that the project name is set correctly and you are seeing it in the error message, follow the instructions and the link in the error to enable the Google Container Registry API, then delete and re-install the release:
+
+```sh
+helm delete deepsecurity-smartcheck
+helm install \
+  --values overrides.yaml \
+  --name deepsecurity-smartcheck \
+  https://github.com/deepsecurity/smartcheck/archive/v0.0.2.tgz
+```
