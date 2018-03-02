@@ -69,12 +69,7 @@ _If you create a file to override the values, make sure to copy the structure fr
 
 #### Common configuration overrides
 
-Refer to the `values.yaml` file in the chart for a full list of available values to override; some common keys are listed here:
-
-<style type="text/css">
-th { vertical-align: bottom; }
-td { vertical-align: top; }
-</style>
+Refer to the `values.yaml` file for a full list of available values to override; some common keys are listed here:
 
 <table>
 <thead>
