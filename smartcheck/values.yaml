@@ -103,29 +103,27 @@ vulnerabilityDB:
 
 images:
   defaults:
-    registry: 10.203.201.62
-    tag: latest
+    tag: 0.0.2
     pullPolicy: Always
   db:
-    repository: argus/db
+    repository: deepsecurity/db
   auth:
-    repository: argus/auth
+    repository: deepsecurity/auth
   malwareScan:
-    repository: argus/vscan
+    repository: deepsecurity/vscan
   scan:
-    repository: argus/scan
+    repository: deepsecurity/scan
   registryviews:
-    repository: argus/contentsourcescan
+    repository: deepsecurity/contentsourcescan
   docs:
-    repository: argus/api-docs
+    repository: deepsecurity/api-docs
   frontend:
-    repository: argus/frontend
+    repository: deepsecurity/frontend
   proxy:
-    repository: argus/proxy
+    repository: deepsecurity/proxy
   vulnerabilityScan:
-    repository: argus/clair
+    repository: deepsecurity/clair
   vulnerabilityDB:
-    registry: "-"
     repository: postgres
     tag: "9.6.2"
 

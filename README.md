@@ -54,11 +54,11 @@ helm upgrade --install \
   https://github.com/deepsecurity/smartcheck/archive/v0.0.2.tgz
 ```
 
-For example, to install using the defaults but expose the service as a `ClusterIP` instead of using a `LoadBalancer` and to disable persistent volumes, use:
+For example, to install using the defaults but override the default registry and image tag, use the default registry for the vulnerability database image, expose the service as a `ClusterIP` instead of using a `LoadBalancer`, and disable persistent volumes, use:
 
 ```sh
 helm upgrade --install \
-  --set persistence.enabled=false,service.type=ClusterIP \
+  --set images.defaults.registry=registry,images.defaults.tag=latest,images.vulnerabilityDB.registry=-,persistence.enabled=false,service.type=ClusterIP \
   {release name}
   https://github.com/deepsecurity/smartcheck/archive/v0.0.2.tgz
 ```
