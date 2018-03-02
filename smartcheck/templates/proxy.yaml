@@ -59,7 +59,7 @@ spec:
             - containerPort: 8443
               name: https
           volumeMounts:
-            - mountPath: /etc/nginx/
+            - mountPath: /secrets/
               name: tls-secret
           # TODO probes
           # livenessProbe:
