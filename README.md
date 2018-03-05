@@ -8,10 +8,6 @@ Deep Security Smart Check uses the `helm` package manager for Kubernetes.
 
 You will need `helm` installed and running. There's a handy [quickstart](https://docs.helm.sh/using_helm/#quickstart) that will help you get started.
 
-#### Securing Helm
-
-The Helm team have some helpful [guidelines for securing your Helm installation](https://docs.helm.sh/using_helm/#securing-your-helm-installation) as well as [an abbreviated list of best practices](https://docs.helm.sh/using_helm/#best-practices-for-securing-helm-and-tiller) for reference.
-
 ### Installing git
 
 You will need a `git` client installed. You can download a client at the `git` [downloads page](https://git-scm.com/downloads).
@@ -114,13 +110,9 @@ using.
 
     ```sh
     openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
-      -keyout default_ssl.key \
-      -out default_ssl.crt
+      -keyout mycert.key \
+      -out mycert.crt
     ```
-
-   **IMPORTANT**: you MUST name the certificate file `default_ssl.crt` and
-   the key file `default_ssl.key`, or else the service will not find the
-   data properly.
 
 2. Delete and re-add the Kubernetes secret that stores the certificate:
 
@@ -132,9 +124,14 @@ using.
     kubectl create secret generic \
       --namespace default \
       deepsecurity-smartcheck-tls-certificate \
-      --from-file=./default_ssl.key \
-      --from-file=./default_ssl.crt
+      --from-file=default_ssl.key=mycert.key \
+      --from-file=default_ssl.crt=mycert.crt
     ```
+
+    **IMPORTANT:** Make sure that `mycert.key` and `mycert.crt` in this
+    command match the file names for the key and certificate created in
+    step 1. Do not change the `default_ssl.key` or `default_ssl.crt` parts
+    of the command, or the service will fail to read the secret.
 
 3. Delete the pods. They will be restarted by the Kubernetes deployment:
 
@@ -143,6 +140,10 @@ using.
       --namespace default \
       -l "service=proxy,release=deepsecurity-smartcheck"
     ```
+
+### Securing Helm
+
+The Helm team have some helpful [guidelines for securing your Helm installation](https://docs.helm.sh/using_helm/#securing-your-helm-installation) as well as [an abbreviated list of best practices](https://docs.helm.sh/using_helm/#best-practices-for-securing-helm-and-tiller) for reference.
 
 ## Troubleshooting
 
