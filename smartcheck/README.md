@@ -35,7 +35,7 @@ The install process will display instructions for obtaining the initial username
 You can delete all of the resources created for Deep Security Smart Check by running `helm delete`:
 
 ```sh
-helm delete deepsecurity-smartcheck
+helm delete --purge deepsecurity-smartcheck
 ```
 
 Use the `helm list` command to list installed releases.
@@ -171,9 +171,42 @@ images:
 If you have confirmed that the project name is set correctly and you are seeing it in the error message, follow the instructions and the link in the error to enable the Google Container Registry API, then delete and re-install the release:
 
 ```sh
-helm delete deepsecurity-smartcheck
+helm delete --purge deepsecurity-smartcheck
 helm install \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
   https://github.com/deepsecurity/smartcheck/archive/v0.0.2.tgz
 ```
+
+### Failed to pull image ... pull access denied ... repository does not exist or may require 'docker login'
+
+If the images are stored in a private registry, you will need to use `ImagePullSecrets` to allow your Kubernetes cluster to pull the images from the registry.
+
+#### Creating a Secret with a Docker Config
+
+Run the following command to create a Docker secret, replacing the upper-case values with your values:
+
+```sh
+kubectl create secret docker-registry myregistrykey --docker-server=DOCKER_REGISTRY_SERVER --docker-username=DOCKER_USER --docker-password=DOCKER_PASSWORD --docker-email=DOCKER_EMAIL
+```
+
+Then, provide the secret key (`myregistrykey` in the example) to the install process, either on the command line:
+
+```sh
+helm delete --purge deepsecurity-smartcheck
+helm install \
+  --set images.defaults.imagePullSecret=myregistrykey \
+  --values overrides.yaml \
+  --name deepsecurity-smartcheck \
+  https://github.com/deepsecurity/smartcheck/archive/v0.0.2.tgz
+```
+
+or by editing your `overrides.yaml` file to set the `images.defaults.imagePullSecret` attribute and re-installing:
+
+```sh
+helm delete --purge deepsecurity-smartcheck
+helm install \
+  --values overrides.yaml \
+  --name deepsecurity-smartcheck \
+  https://github.com/deepsecurity/smartcheck/archive/v0.0.2.tgz
+  ```

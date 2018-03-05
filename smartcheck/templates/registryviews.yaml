@@ -55,10 +55,15 @@ spec:
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
     spec:
+      {{- $imageDefaults := .Values.images.defaults }}
+      {{- with .Values.images.registryviews }}
+      {{- $secret := (default $imageDefaults.imagePullSecret .imagePullSecret) | quote }}
+      {{- if not (eq "" $secret) }}
+      imagePullSecrets:
+        - name: {{ $secret }}
+      {{- end }}
       containers:
         - name: registryviews
-          {{- $imageDefaults := .Values.images.defaults }}
-          {{- with .Values.images.registryviews }}
           {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
           {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
           {{- $tag := (default $imageDefaults.tag .tag) }}
@@ -70,7 +75,7 @@ spec:
           {{- else }}
           image: {{ printf "%s/%s:%s" (default $imageDefaults.registry .registry) $repository $tag | quote }}
           {{- end }}
-          imagePullPolicy: {{ default $imageDefaults.pullPolicy .pullPolicy }}
+          imagePullPolicy: {{ default (default "Always" $imageDefaults.pullPolicy) .pullPolicy }}
           {{- end }}
           ports:
             - containerPort: 8080

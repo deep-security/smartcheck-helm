@@ -103,8 +103,36 @@ vulnerabilityDB:
 
 images:
   defaults:
+    ## Default registry to pull images from. This can be overridden for
+    ## each image by specifying the registry attribute at the image level.
+    ## If no registry is provided, images will be pulled from your default
+    ## registry (which may be Docker Hub).
+    ##
+    ## Default value: blank
+    # registry:
+
+    ## Default project / organization to pull images from. This can be
+    ## overridden for each image by specifying the project attribute at the
+    ## image level.
+    ##
+    ## Default value: deepsecurity
+    # project: deepsecurity
+
+    ## Default tag for images to pull. This can be overridden for each image
+    ## by specifying the tag attribute at the image level.
     tag: 0.0.2
-    pullPolicy: Always
+
+    ## Default pull policy for images. This can be overridden for each image
+    ## by specifying the pullPolicy attribute at the image level.
+    ##
+    ## Default value: Always
+    # pullPolicy: Always
+
+    ## Default secret for pulling images. This can be overridden for each
+    ## image by specifying the secretKey attribute at the image level.
+    ##
+    ## Default value: none
+    # secretKey:
   db:
     repository: db
   auth:
