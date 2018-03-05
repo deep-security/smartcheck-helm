@@ -12,16 +12,24 @@ You will need `helm` installed and running. There's a handy [quickstart](https:/
 
 The Helm team have some helpful [guidelines for securing your Helm installation](https://docs.helm.sh/using_helm/#securing-your-helm-installation) as well as [an abbreviated list of best practices](https://docs.helm.sh/using_helm/#best-practices-for-securing-helm-and-tiller) for reference.
 
+### Installing git
+
+You will need a `git` client installed. You can download a client at the `git` [downloads page](https://git-scm.com/downloads).
+
 ### Installing Deep Security Smart Check
 
-The Helm chart for Deep Security Smart Check is hosted on Github; the latest version is `v0.0.2`.
+The Helm chart for Deep Security Smart Check is hosted in a private repository on Github. You will need a Github account that has access to the repository (this should have been arranged during the trial setup process). You can then clone the repository using:
+
+```sh
+git clone git@github.com:deep-security/smartcheck
+```
 
 To install Deep Security Smart Check into the default Kubernetes namespace:
 
 ```sh
 helm install \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck/archive/v0.0.2.tgz
+  smartcheck
 ```
 
 _Experienced `helm` users will note that we are using `deepsecurity-smartcheck` as the `helm` release name in these examples. There is no requirement to use this release name._
@@ -52,7 +60,7 @@ To install Deep Security Smart Check into an existing Kubernetes namespace that'
 helm install \
   --namespace {namespace} \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck/archive/v0.0.2.tgz
+  smartcheck
 ```
 
 ### Overriding configuration defaults
@@ -65,7 +73,7 @@ You can override the defaults in this file by specifying a comma-separated list 
 helm install \
   --set key1=value1,key2=value2,... \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck/archive/v0.0.2.tgz
+  smartcheck
 ```
 
 or by creating a <abbr title="YAML Ain't Markup Language">YAML</abbr> file with the specific values you want to override and providing the location of this file on the command line:
@@ -74,7 +82,7 @@ or by creating a <abbr title="YAML Ain't Markup Language">YAML</abbr> file with 
 helm install \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck/archive/v0.0.2.tgz
+  smartcheck
 ```
 
 _If you create a file to override the values, make sure to copy the structure from the chart's `values.yaml` file. You only need to provide the values that you are overriding._
@@ -138,6 +146,12 @@ using.
 
 ## Troubleshooting
 
+### Error: failed to download "smartcheck"
+
+If you are trying to run `helm install ... smartcheck` and get this error message, you need to be in the folder where you ran the `git clone` command.
+
+Go to the parent folder of the `smartcheck` folder and try again.
+
 ### Failed to pull image ... certificate signed by unknown authority
 
 If you are using `minikube` and an insecure registry, you will need to tell `minikube` that the registry is insecure. To do this, you will need to first delete and then restart your `minikube` VM:
@@ -175,7 +189,7 @@ helm delete --purge deepsecurity-smartcheck
 helm install \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck/archive/v0.0.2.tgz
+  smartcheck
 ```
 
 ### Failed to pull image ... pull access denied ... repository does not exist or may require 'docker login'
@@ -198,7 +212,7 @@ helm install \
   --set images.defaults.imagePullSecret=myregistrykey \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck/archive/v0.0.2.tgz
+  smartcheck
 ```
 
 or by editing your `overrides.yaml` file to set the `images.defaults.imagePullSecret` attribute and re-installing:
@@ -208,5 +222,20 @@ helm delete --purge deepsecurity-smartcheck
 helm install \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck/archive/v0.0.2.tgz
-  ```
+  smartcheck
+```
+
+### Internal network failures with minikube
+
+If you are using `minikube` and seeing errors like:
+
+```text
+request canceled while waiting for connection
+```
+
+There is an [open issue](https://github.com/kubernetes/minikube/issues/1568) that may be causing the issue. The workaround suggested by the `minikube` team is to try:
+
+```sh
+minikube ssh
+sudo ip link set docker0 promisc on
+```
