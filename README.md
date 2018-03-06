@@ -6,7 +6,65 @@ Deep Security Smart Check uses the `helm` package manager for Kubernetes.
 
 ### Installing Helm
 
-You will need `helm` installed and running. There's a handy [quickstart](https://docs.helm.sh/using_helm/#quickstart) that will help you get started.
+You will need `helm` version `v2.8.0` or later. There's a handy [quickstart](https://docs.helm.sh/using_helm/#quickstart) that will help you get started, or if you like living dangerously:
+
+```sh
+curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash
+```
+
+Helm has a cluster-side component called `tiller` that needs to be installed as well.
+
+Make sure that your `kubectl` context is set correctly to point to your cluster:
+
+```sh
+kubectl config current-context
+```
+
+_If your `kubectl` context is not pointing to your cluster, use `kubectl config get-contexts` and `kubectl config set-context` to set it, or if you are using Google Cloud Platform follow the instructions in the **Connect to the cluster** dialog available by clicking the **Connect** button beside your cluster information in the console._
+
+Install the `tiller` cluster-side component:
+
+```sh
+helm init
+```
+
+You will also need to configure a service account for `tiller`:
+
+```sh
+kubectl create serviceaccount \
+  --namespace kube-system \
+  tiller
+
+kubectl create clusterrolebinding tiller-cluster-role \
+  --clusterrole=cluster-admin \
+  --serviceaccount=kube-system:tiller
+
+kubectl patch deploy \
+  --namespace kube-system \
+  tiller-deploy \
+  --patch '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+```
+
+Use `helm version` to confirm that you have at least version `v2.8.0` of the client and server installed.
+
+_Note: the commands above will give `tiller` full cluster administrator privileges. Review [Securing your Helm Installation](https://docs.helm.sh/using_helm/#securing-your-helm-installation) for help on what to consider when setting up Helm in your cluster._
+
+### Creating a Secret with a Docker Config
+
+The Deep Security Smart Check images are stored in a private registry. You should have been asked for your Docker Hub account name as part of the trial setup process, and you should have received an email saying that your Docker Hub account has been added the `deepsecurity` organization.
+
+You will need to set up Docker credentials to allow your Kubernetes cluster to pull the images from the registry.
+
+Run the following command to create a Docker secret, replacing the upper-case values with your values:
+
+```sh
+kubectl create secret docker-registry myregistrykey \
+  --docker-username=DOCKER_USER \
+  --docker-password=DOCKER_PASSWORD \
+  --docker-email=DOCKER_EMAIL
+```
+
+**IMPORTANT:** Make sure you enter your credentials correctly! If you get the values wrong, Docker Hub will lock out your account when it sees repeated failed attempts to download the images.
 
 ### Installing git
 
@@ -18,14 +76,16 @@ The Helm chart for Deep Security Smart Check is hosted in a private repository o
 
 ```sh
 git clone git@github.com:deep-security/smartcheck
+cd smartcheck
 ```
 
 To install Deep Security Smart Check into the default Kubernetes namespace:
 
 ```sh
 helm install \
+  --set images.defaults.imagePullSecret=myregistrykey
   --name deepsecurity-smartcheck \
-  smartcheck
+  .
 ```
 
 _Experienced `helm` users will note that we are using `deepsecurity-smartcheck` as the `helm` release name in these examples. There is no requirement to use this release name._
@@ -56,7 +116,7 @@ To install Deep Security Smart Check into an existing Kubernetes namespace that'
 helm install \
   --namespace {namespace} \
   --name deepsecurity-smartcheck \
-  smartcheck
+  .
 ```
 
 ### Overriding configuration defaults
@@ -69,7 +129,7 @@ You can override the defaults in this file by specifying a comma-separated list 
 helm install \
   --set key1=value1,key2=value2,... \
   --name deepsecurity-smartcheck \
-  smartcheck
+  .
 ```
 
 or by creating a <abbr title="YAML Ain't Markup Language">YAML</abbr> file with the specific values you want to override and providing the location of this file on the command line:
@@ -78,7 +138,7 @@ or by creating a <abbr title="YAML Ain't Markup Language">YAML</abbr> file with 
 helm install \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  smartcheck
+  .
 ```
 
 _If you create a file to override the values, make sure to copy the structure from the chart's `values.yaml` file. You only need to provide the values that you are overriding._
@@ -190,7 +250,7 @@ helm delete --purge deepsecurity-smartcheck
 helm install \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  smartcheck
+  .
 ```
 
 ### Failed to pull image ... pull access denied ... repository does not exist or may require 'docker login'
@@ -202,8 +262,14 @@ If the images are stored in a private registry, you will need to use `ImagePullS
 Run the following command to create a Docker secret, replacing the upper-case values with your values:
 
 ```sh
-kubectl create secret docker-registry myregistrykey --docker-server=DOCKER_REGISTRY_SERVER --docker-username=DOCKER_USER --docker-password=DOCKER_PASSWORD --docker-email=DOCKER_EMAIL
+kubectl create secret docker-registry myregistrykey \
+  --docker-server=DOCKER_REGISTRY_SERVER \
+  --docker-username=DOCKER_USER \
+  --docker-password=DOCKER_PASSWORD \
+  --docker-email=DOCKER_EMAIL
 ```
+
+**IMPORTANT:** Make sure you enter your credentials correctly! If you get the values wrong, Docker Hub will lock out your account when it sees repeated failed attempts to download the images.
 
 Then, provide the secret key (`myregistrykey` in the example) to the install process, either on the command line:
 
@@ -213,7 +279,7 @@ helm install \
   --set images.defaults.imagePullSecret=myregistrykey \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  smartcheck
+  .
 ```
 
 or by editing your `overrides.yaml` file to set the `images.defaults.imagePullSecret` attribute and re-installing:
@@ -223,7 +289,7 @@ helm delete --purge deepsecurity-smartcheck
 helm install \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  smartcheck
+  .
 ```
 
 ### Internal network failures with minikube
