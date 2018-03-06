@@ -20,7 +20,7 @@ Make sure that your `kubectl` context is set correctly to point to your cluster:
 kubectl config current-context
 ```
 
-_If your `kubectl` context is not pointing to your cluster, use `kubectl config get-contexts` and `kubectl config set-context` to set it, or if you are using Google Cloud Platform follow the instructions in the **Connect to the cluster** dialog available by clicking the **Connect** button beside your cluster information in the console._
+_If your `kubectl` context is not pointing to your cluster, use `kubectl config get-contexts` and `kubectl config use-context` to set it, or if you are using Google Cloud Platform follow the instructions in the **Connect to the cluster** dialog available by clicking the **Connect** button beside your cluster information in the console._
 
 Install the `tiller` cluster-side component:
 
