@@ -75,8 +75,8 @@ You will need a `git` client installed. You can download a client at the `git` [
 The Helm chart for Deep Security Smart Check is hosted in a private repository on Github. You will need a Github account that has access to the repository (this should have been arranged during the trial setup process). You can then clone the repository using:
 
 ```sh
-git clone git@github.com:deep-security/smartcheck
-cd smartcheck
+git clone git@github.com:deep-security/smartcheck-helm
+cd smartcheck-helm
 ```
 
 To install Deep Security Smart Check into the default Kubernetes namespace:
@@ -206,12 +206,6 @@ using.
 The Helm team have some helpful [guidelines for securing your Helm installation](https://docs.helm.sh/using_helm/#securing-your-helm-installation) as well as [an abbreviated list of best practices](https://docs.helm.sh/using_helm/#best-practices-for-securing-helm-and-tiller) for reference.
 
 ## Troubleshooting
-
-### Error: failed to download "smartcheck"
-
-If you are trying to run `helm install ... smartcheck` and get this error message, you need to be in the folder where you ran the `git clone` command.
-
-Go to the parent folder of the `smartcheck` folder and try again.
 
 ### Failed to pull image ... certificate signed by unknown authority
 
