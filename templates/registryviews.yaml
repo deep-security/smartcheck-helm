@@ -104,7 +104,7 @@ spec:
             - --internal-base=http://registryviews:8081
             - --authorization-url=http://auth-internal:8081
             - --scan-url=http://scan-internal:8081
-            - --database-connection-string=postgres:host=db user=$(DB_USER) password=$(DB_PASSWORD) dbname=contentsourcesdb sslmode=disable connect_timeout=5 # seconds
+            - --database-connection-string=postgres:postgres://$(DB_USER):$(DB_PASSWORD)@db/contentsourcesdb?sslmode=disable&connect_timeout=5 # seconds
             - --database-secret=$(DB_SECRET)
           env:
             - name: DB_USER

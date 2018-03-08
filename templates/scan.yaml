@@ -106,7 +106,7 @@ spec:
             - --malware-scan-url=http://malware-scan-internal:8081
             - --vulnerability-scan-url=http://vulnerability-scan-internal:8081
             - --content-source-scanner-webhook-url=http://registryviews-internal:8081/api/results
-            - --database-connection-string=postgres:host=db user=$(DB_USER) password=$(DB_PASSWORD) dbname=scandb sslmode=disable connect_timeout=5 # seconds
+            - --database-connection-string=postgres:postgres://$(DB_USER):$(DB_PASSWORD)@db/scandb?sslmode=disable&connect_timeout=5 # seconds
             - --database-secret=$(DB_SECRET)
           env:
             - name: DB_USER
