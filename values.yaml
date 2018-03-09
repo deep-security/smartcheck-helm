@@ -211,4 +211,4 @@ affinity:
 ingress: {}
 
 networkPolicy:
-  enabled: false
+  enabled: true
