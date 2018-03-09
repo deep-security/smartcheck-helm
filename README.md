@@ -288,7 +288,7 @@ helm install \
 
 ### Internal network failures with minikube
 
-If you are using `minikube` and seeing errors like:
+If you are using `minikube` and see errors like:
 
 ```text
 request canceled while waiting for connection
