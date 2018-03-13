@@ -106,15 +106,15 @@ spec:
             - --malware-scan-url=http://malware-scan-internal:8081
             - --vulnerability-scan-url=http://vulnerability-scan-internal:8081
             - --content-source-scanner-webhook-url=http://registryviews-internal:8081/api/results
-            - --database-connection-string=postgres:postgres://$(DB_USER):$(DB_PASSWORD)@db/scandb?sslmode=disable&connect_timeout=5 # seconds
+            - --database-connection-string=postgres:postgres://db/scandb?sslmode=disable&connect_timeout=5 # seconds
             - --database-secret=$(DB_SECRET)
           env:
-            - name: DB_USER
+            - name: PGUSER
               valueFrom:
                 secretKeyRef:
                   key: database-user
                   name: {{ template "smartcheck.fullname" . }}-db
-            - name: DB_PASSWORD
+            - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
                   key: database-password

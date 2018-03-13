@@ -104,15 +104,15 @@ spec:
             - --internal-base=http://registryviews:8081
             - --authorization-url=http://auth-internal:8081
             - --scan-url=http://scan-internal:8081
-            - --database-connection-string=postgres:postgres://$(DB_USER):$(DB_PASSWORD)@db/contentsourcesdb?sslmode=disable&connect_timeout=5 # seconds
+            - --database-connection-string=postgres:postgres://db/contentsourcesdb?sslmode=disable&connect_timeout=5 # seconds
             - --database-secret=$(DB_SECRET)
           env:
-            - name: DB_USER
+            - name: PGUSER
               valueFrom:
                 secretKeyRef:
                   key: database-user
                   name: {{ template "smartcheck.fullname" . }}-db
-            - name: DB_PASSWORD
+            - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
                   key: database-password
