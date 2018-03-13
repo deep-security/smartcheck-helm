@@ -84,6 +84,7 @@ To install Deep Security Smart Check into the default Kubernetes namespace:
 ```sh
 helm install \
   --set images.defaults.imagePullSecret=myregistrykey
+  --set auth.masterPassword={password}
   --name deepsecurity-smartcheck \
   .
 ```
@@ -115,6 +116,7 @@ To install Deep Security Smart Check into an existing Kubernetes namespace that'
 ```sh
 helm install \
   --namespace {namespace} \
+  --set auth.masterPassword={password}
   --name deepsecurity-smartcheck \
   .
 ```
@@ -152,6 +154,7 @@ Refer to the `values.yaml` file for a full list of available values to override;
 <tr><th>Key</th><th>Default value</th><th>Description</th></tr>
 </thead>
 <tbody>
+<tr><td><code>auth.masterPassword</code></td><td>None</td><td>The master password to use when generating passwords within the system, ensuring that each installation of Deep Security Smart Check has different passwords.</td></tr>
 <tr><td><code>auth.userName</code></td><td><code>administrator</code></td><td>The name of the default administrator user that the system will create on startup.</td></tr>
 <tr><td><code>auth.password</code></td><td><code>{a random 16-character alphanumeric string}</code></td><td>The default password assigned to the default administrator. <code>helm</code> will provide instructions for retrieving the initial password as part of the installation process.</td></tr>
 <tr><td><code>certificate.commonName</code></td><td><code>example.com</code></td><td>The server name to use in the default self-signed certificate created for the service.</td></tr>
