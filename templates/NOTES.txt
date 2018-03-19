@@ -19,7 +19,7 @@ You can watch the status of the proxy pod by running:
 {{- else if contains "NodePort" .Values.service.type }}
     export NODE_PORT=$(kubectl get {{ if not (eq "default" .Release.Namespace) }}--namespace {{ .Release.Namespace }} {{ end }}-o jsonpath="{.spec.ports[0].nodePort}" services proxy)
     export NODE_IP=$(kubectl get nodes {{ if not (eq "default" .Release.Namespace) }}--namespace {{ .Release.Namespace }} {{ end }}-o jsonpath="{.items[0].status.addresses[0].address}")
-    echo Application URL: http://$NODE_IP:$NODE_PORT
+    echo Application URL: https://$NODE_IP:$NODE_PORT
 {{- else if contains "LoadBalancer" .Values.service.type }}
     export SERVICE_IP=$(kubectl get svc {{ if not (eq "default" .Release.Namespace) }}--namespace {{ .Release.Namespace }} {{ end }}proxy -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
     echo https://$SERVICE_IP:{{ default 443 .Values.service.httpsPort }}
