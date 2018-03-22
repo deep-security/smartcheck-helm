@@ -169,9 +169,16 @@ spec:
               chart: {{ template "smartcheck.chart" . }}
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
+        - podSelector:
+            matchLabels:
+              task: scan
+              chart: {{ template "smartcheck.chart" . }}
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
       ports:
         - protocol: TCP
           port: 8081
+
     - from: # any -- this is for metrics
       ports:
         - protocol: TCP

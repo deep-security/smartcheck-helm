@@ -166,6 +166,8 @@ images:
     project: library
     repository: postgres
     tag: "9.6.2"
+  tasks:
+    repository: tasks
 
 replicas: {}
 
@@ -222,3 +224,20 @@ ingress: {}
 
 networkPolicy:
   enabled: true
+
+# Scheduled system tasks
+tasks:
+  # The scan task will periodically trigger scans on views that have the `schedule`
+  # flag set to `true`.
+  scan:
+    ## enabled controls whether or not to create the Kubernetes CronJob task that
+    ## will trigger the scheduled scan.
+    ##
+    ## Default value: true
+    enabled: true
+
+    ## schedule controls the schedule for the scheduled scan. It is a string in
+    ## [cron](https://en.wikipedia.org/wiki/Cron) format.
+    ##
+    ## Default value: @daily (once a day, at midnight UTC)
+    schedule: "@daily"
