@@ -3,6 +3,11 @@ apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: scan
+  labels:
+    task: scan
+    chart: {{ template "smartcheck.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
   schedule: {{ quote .Values.tasks.scan.schedule }}
   jobTemplate:
