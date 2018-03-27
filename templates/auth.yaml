@@ -106,6 +106,8 @@ spec:
             - --database-connection-string=postgres:postgres://db/authdb?sslmode=disable&connect_timeout=5 # seconds
             - --database-secret=$(DB_SECRET)
             - --initial-role={{ default "admin" .Values.auth.roleName }}
+            - --auditor-role={{ default "auditor" .Values.auth.auditorRoleName }}
+            - --user-role={{ default "user" .Values.auth.userRoleName }}
             - --initial-user=$(INITIAL_USER)
             - --initial-password=$(INITIAL_PASSWORD)
           env:

@@ -15,6 +15,18 @@ auth:
   ## Default value: administrator
   roleName: administrator
 
+  ## auditorRoleName is the name of the default auditor role that the system creates on startup.
+  ## If a role with this name already exists, no action will be taken.
+  ##
+  ## Default value: auditor
+  auditorRoleName: auditor
+
+  ## userRoleName is the name of the default user role that the system creates on startup.
+  ## If a role with this name already exists, no action will be taken.
+  ##
+  ## Default value: user
+  userRoleName: user
+
   ## userName is the name of the default administrator user that the system creates on startup.
   ## If a user with this name already exists, no action will be taken.
   ##
