@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
+  labels:
+    service: {{ template "smartcheck.fullname" . }}-outbound-proxy
+    chart: {{ template "smartcheck.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  httpProxy: {{ quote .Values.proxy.httpProxy }}
+  httpsProxy: {{ quote .Values.proxy.httpsProxy }}
+  noProxy: {{ .Values.proxy.noProxy | join "," | quote }}

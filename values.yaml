@@ -1,6 +1,11 @@
 # Default values for smartcheck.
 # This is a YAML-formatted file.
 
+## activationCode is the product activation code.
+##
+## Default value: (none)
+activationCode:
+
 proxy:
   ## httpProxy, if set, will be used as the proxy for HTTP traffic from
   ## Deep Security Smart Check.

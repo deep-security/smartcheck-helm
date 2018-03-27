@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template "smartcheck.fullname" . }}-activation-code
+  labels:
+    app: {{ template "smartcheck.name" . }}
+    chart: {{ template "smartcheck.chart" . }}
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+type: Opaque
+data:
+  code: {{ default "" .Values.activationCode | b64enc | quote }}

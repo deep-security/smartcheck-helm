@@ -125,11 +125,20 @@ spec:
                   key: database-secret
                   name: {{ template "smartcheck.fullname" . }}-db
             - name: HTTP_PROXY
-              value: {{ .Values.proxy.httpProxy }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
+                  key: httpProxy
             - name: HTTPS_PROXY
-              value: {{ .Values.proxy.httpsProxy }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
+                  key: httpsProxy
             - name: NO_PROXY
-              value: {{ .Values.proxy.noProxy | join "," }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
+                  key: noProxy
           resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.scan) | indent 12 }}
       nodeSelector:
