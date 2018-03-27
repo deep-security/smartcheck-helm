@@ -161,6 +161,9 @@ Refer to the `values.yaml` file for a full list of available values to override;
 <tr><td><code>service.type</code></td><td><code>LoadBalancer</code></td><td>The Kubernetes service type to create. This must be one of <code>LoadBalancer</code>, <code>ClusterIP</code>, or <code>NodePort</code>.</td></tr>
 <tr><td><code>persistence.enabled</code></td><td><code>true</code></td><td>Whether a persistent volume should be created for the Deep Security Smart Check databases. <strong>If no persistent volume claim is created, all database content will be lost when the database container restarts.</strong></td></tr>
 <tr><td><code>networkPolicy.enabled</code></td><td><code>false</code></td><td><strong>EXPERIMENTAL:</strong> Whether Kubernetes <code>NetworkPolicy</code> resources should be created for the deployed pods.</td></tr>
+<tr><td><code>proxy.httpProxy</code></td><td></td><td>If set, will be used as the proxy for HTTP traffic from Deep Security Smart Check. The value may be either a complete URL or a <code>host[:port]</code>, in which case the <code>http</code> scheme is assumed.</td></tr>
+<tr><td><code>proxy.httpsProxy</code></td><td></td><td>If set, will be used as the proxy for HTTPS traffic from Deep Security Smart Check. If <code>httpsProxy</code> is not set, <code>httpProxy</code> is also checked and will be used if set. The value may be either a complete URL or a <code>host[:port]</code>, in which case the <code>http</code> scheme is assumed.</td></tr>
+<tr><td><code>proxy.noProxy</code></td><td></td><td>If set, is a list of hosts or <code>host:port</code> combinations which should not be accessed through the proxy.</td></tr>
 </tbody>
 </table>
 

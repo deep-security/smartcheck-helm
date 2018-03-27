@@ -1,6 +1,32 @@
 # Default values for smartcheck.
 # This is a YAML-formatted file.
 
+proxy:
+  ## httpProxy, if set, will be used as the proxy for HTTP traffic from
+  ## Deep Security Smart Check.
+  ##
+  ## The value may be either a complete URL or a `host[:port]`, in which
+  ## case the `http` scheme is assumed.
+  ##
+  ## Default value: (none)
+  httpProxy:
+
+  ## httpsProxy, if set, will be used as the proxy for HTTPS traffic from
+  ## Deep Security Smart Check. If `httpsProxy` is not set, `httpProxy`
+  ## is also checked and will be used if set.
+  ##
+  ## The value may be either a complete URL or a `host[:port]`, in which
+  ## case the `http` scheme is assumed.
+  ##
+  ## Default value: (none)
+  httpsProxy:
+
+  ## noProxy, if set, is a list of hosts or `host:port` combinations which
+  ## should not be accessed through the proxy.
+  ##
+  ## Default value: (none)
+  noProxy: []
+
 auth:
   ## masterPassword is used as part of the password generation process for
   ## all auto-generated internal passwords, ensuring that each installation of

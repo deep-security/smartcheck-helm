@@ -122,6 +122,12 @@ spec:
                 secretKeyRef:
                   key: database-secret
                   name: {{ template "smartcheck.fullname" . }}-db
+            - name: HTTP_PROXY
+              value: {{ .Values.proxy.httpProxy }}
+            - name: HTTPS_PROXY
+              value: {{ .Values.proxy.httpsProxy }}
+            - name: NO_PROXY
+              value: {{ .Values.proxy.noProxy | join "," }}
           resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.registryviews) | indent 12 }}
       nodeSelector:
