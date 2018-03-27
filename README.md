@@ -83,8 +83,8 @@ To install Deep Security Smart Check into the default Kubernetes namespace:
 
 ```sh
 helm install \
-  --set images.defaults.imagePullSecret=myregistrykey
-  --set auth.masterPassword={password}
+  --set images.defaults.imagePullSecret=myregistrykey \
+  --set auth.masterPassword={password} \
   --name deepsecurity-smartcheck \
   .
 ```
@@ -116,7 +116,7 @@ To install Deep Security Smart Check into an existing Kubernetes namespace that'
 ```sh
 helm install \
   --namespace {namespace} \
-  --set auth.masterPassword={password}
+  --set auth.masterPassword={password} \
   --name deepsecurity-smartcheck \
   .
 ```
