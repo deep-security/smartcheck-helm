@@ -111,7 +111,7 @@ Use the `helm list` command to list installed releases.
 
 ### Using an alternate Kubernetes namespace
 
-To install Deep Security Smart Check into an existing Kubernetes namespace that's different from the current kube config namespace, use the `--namespace` parameter in the `helm upgrade` command:
+To install Deep Security Smart Check into an existing Kubernetes namespace that's different from the current kube config namespace, use the `--namespace` parameter in the `helm install` command:
 
 ```sh
 helm install \
