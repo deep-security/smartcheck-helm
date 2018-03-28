@@ -8,6 +8,6 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
-  httpProxy: {{ quote .Values.proxy.httpProxy }}
-  httpsProxy: {{ quote .Values.proxy.httpsProxy }}
-  noProxy: {{ .Values.proxy.noProxy | join "," | quote }}
+  httpProxy: {{ quote (default "" .Values.proxy.httpProxy) }}
+  httpsProxy: {{ quote (default "" .Values.proxy.httpsProxy) }}
+  noProxy: {{ default "" .Values.proxy.noProxy | join "," | quote }}
