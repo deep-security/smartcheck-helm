@@ -82,7 +82,21 @@ spec:
       volumes:
         - name: tls-secret
           secret:
+{{- if not .Values.certificate.secret.name }}
             secretName: {{ template "smartcheck.fullname" . }}-tls-certificate
+            items:
+              - key: certificate
+                path: default_ssl.crt
+              - key: privateKey
+                path: default_ssl.key
+{{- else }}
+            secretName: {{ .Values.certificate.secret.name }}
+            items:
+              - key: {{ required "certificate.secret.certificate is required when certificate.secret.name is set" .Values.certificate.secret.certificate }}
+                path: default_ssl.crt
+              - key: {{ required "certificate.secret.privateKey is required when certificate.secret.name is set" .Values.certificate.secret.privateKey }}
+                path: default_ssl.key
+{{- end }}
       nodeSelector:
 {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.proxy) | indent 8 }}
       tolerations:

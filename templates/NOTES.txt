@@ -39,7 +39,11 @@ You can watch the status of the proxy pod by running:
    service certificate" Use the following values in the kubectl commands:
 
     Release:   {{ .Release.Name }}
+{{- if not .Values.certificate.secret.name }}
     Secret:    {{ template "smartcheck.fullname" . }}-tls-certificate
-    {{- if not (eq "default" .Release.Namespace) }}
+{{- else }}
+    Secret:    {{ .Values.certificate.secret.name }}
+{{- end }}
+{{- if not (eq "default" .Release.Namespace) }}
     Namespace: {{ .Release.Namespace -}}
-    {{ end }}
+{{- end }}
