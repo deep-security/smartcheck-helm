@@ -31,6 +31,10 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+{{- $storageClassName := default (default "" .Values.persistence.storageClassName) .Values.persistence.db.storageClassName }}
+{{- if $storageClassName }}
+  storageClassName: {{ $storageClassName }}
+{{- end }}
   resources:
     requests:
       storage: {{ default "8Gi" .Values.persistence.db.size }}
