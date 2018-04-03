@@ -32,6 +32,16 @@ proxy:
   ## Default value: (none)
   noProxy: []
 
+  ## username, if set, is the user name to provide to the outbound proxy when making requests.
+  ##
+  ## Default value: (none)
+  username:
+
+  ## password, if set, is the password to provide to the outbound proxy when making requests.
+  ##
+  ## Default value: (none)
+  password:
+
 auth:
   ## masterPassword is used as part of the password generation process for
   ## all auto-generated internal passwords, ensuring that each installation of

@@ -139,6 +139,16 @@ spec:
                 configMapKeyRef:
                   name: {{ template "smartcheck.fullname" . }}-outbound-proxy
                   key: noProxy
+            - name: PROXY_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
+                  key: username
+            - name: PROXY_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
+                  key: password
           resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.scan) | indent 12 }}
       nodeSelector:
