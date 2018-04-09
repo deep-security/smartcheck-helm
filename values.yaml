@@ -347,3 +347,59 @@ tasks:
     ##
     ## Default value: @daily (once a day, at midnight UTC)
     schedule: "@daily"
+
+# securityContext specifies the security contexts that we'll apply to the pods.
+securityContext:
+  ## enabled is a global flag controlling whether security contexts are included at all in the manifest
+  ## Default value: false
+  enabled: false
+
+  ## default is the default security context that we'll apply at the pod and container level.
+  ## if `securityCOntext.enabled` is true, the `pod` value will be inserted into the `Deployment` manifest
+  ## as part of the pod template and the `container` value will be inserted at the container level.
+  default:
+    pod:
+      runAsNonRoot: true
+    container:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": perfect.
+  db: &databaseSecurityContext
+    pod:
+      runAsNonRoot: false
+    container:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: []
+      privileged: false
+      readOnlyRootFilesystem: false
+      runAsNonRoot: false
+  vulnerabilityDB: *databaseSecurityContext
+  vulnerabilityScan: &scanSecurityContext
+    pod:
+      runAsNonRoot: false
+    container:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: []
+      privileged: false
+      readOnlyRootFilesystem: false
+      runAsNonRoot: false
+  malwareScan: *scanSecurityContext
+  proxy: &staticAssetSecurityContext
+    pod:
+      runAsNonRoot: false
+    container:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: []
+      privileged: false
+      readOnlyRootFilesystem: false
+      runAsNonRoot: false
+  frontend: *staticAssetSecurityContext
+  docs: *staticAssetSecurityContext
