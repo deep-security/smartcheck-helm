@@ -118,6 +118,7 @@ spec:
             - --scan-url=http://scan-internal:8081
             - --database-connection-string=postgres:postgres://db/contentsourcesdb?sslmode=disable&connect_timeout=5 # seconds
             - --database-secret=$(DB_SECRET)
+            - --cursor-encryption-secret=$(CURSOR_ENCRYPTION_SECRET)
           env:
             - name: PGUSER
               valueFrom:
@@ -159,6 +160,11 @@ spec:
                 secretKeyRef:
                   name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
                   key: password
+            - name: CURSOR_ENCRYPTION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: secret
+                  name: {{ template "smartcheck.fullname" . }}-cursor
           resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.registryviews) | indent 12 }}
       nodeSelector:

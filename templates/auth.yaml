@@ -122,6 +122,7 @@ spec:
             - --user-role={{ default "user" .Values.auth.userRoleName }}
             - --initial-user=$(INITIAL_USER)
             - --initial-password=$(INITIAL_PASSWORD)
+            - --cursor-encryption-secret=$(CURSOR_ENCRYPTION_SECRET)
           env:
             - name: PGUSER
               valueFrom:
@@ -148,6 +149,11 @@ spec:
                 secretKeyRef:
                   key: password
                   name: {{ template "smartcheck.fullname" . }}-auth
+            - name: CURSOR_ENCRYPTION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: secret
+                  name: {{ template "smartcheck.fullname" . }}-cursor
           resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.auth) | indent 12 }}
       nodeSelector:

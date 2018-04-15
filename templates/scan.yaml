@@ -120,6 +120,7 @@ spec:
             - --content-source-scanner-webhook-url=http://registryviews-internal:8081/api/results
             - --database-connection-string=postgres:postgres://db/scandb?sslmode=disable&connect_timeout=5 # seconds
             - --database-secret=$(DB_SECRET)
+            - --cursor-encryption-secret=$(CURSOR_ENCRYPTION_SECRET)
           env:
             - name: PGUSER
               valueFrom:
@@ -161,6 +162,11 @@ spec:
                 secretKeyRef:
                   name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
                   key: password
+            - name: CURSOR_ENCRYPTION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: secret
+                  name: {{ template "smartcheck.fullname" . }}-cursor
           resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.scan) | indent 12 }}
       nodeSelector:
