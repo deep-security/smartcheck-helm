@@ -6,6 +6,35 @@
 ## Default value: (none)
 activationCode:
 
+rateLimiting:
+  api:
+    ## The maximum API request rate (per source IP address) in requests per second.
+    ##
+    ## Default value: 10
+    rate: 10
+
+    ## The allowable burst rate. If this is greater than 0, then requests that exceed
+    ## the maximum API request rate will be queued.
+    ##
+    ## This does not change the rate of requests that are sent to the backend services.
+    ## Queued requests will be sent to the backend services at the rate defined in
+    ## `rateLimiting.api.rate`.
+    ##
+    ## Default value: 10
+    burst: 10
+
+    ## The HTTP response status code to send when a request is rejected due to the rate
+    ## limit being exceeded.
+    ##
+    ## Default value: 429 (Too many requests)
+    status: 429
+
+    ## The size, in megabytes, of the rate limiting memory zone. State monitoring for
+    ## about 16,000 IP addresses takes 1 megabyte.
+    ##
+    ## Default value: 10
+    size: 10
+
 proxy:
   ## httpProxy, if set, will be used as the proxy for HTTP traffic from
   ## Deep Security Smart Check.
