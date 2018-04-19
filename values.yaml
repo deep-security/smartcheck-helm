@@ -272,7 +272,7 @@ images:
   proxy:
     repository: proxy
   vulnerabilityScan:
-    repository: clair
+    repository: vulnerability-scan
   vulnerabilityDB:
     registry: "-"
     project: library
