@@ -123,6 +123,7 @@ spec:
             - --initial-user=$(INITIAL_USER)
             - --initial-password=$(INITIAL_PASSWORD)
             - --cursor-encryption-secret=$(CURSOR_ENCRYPTION_SECRET)
+            - --token-audience={{ default "deepsecurity-smartcheck" .Values.auth.tokenAudience }}
           env:
             - name: PGUSER
               valueFrom:
