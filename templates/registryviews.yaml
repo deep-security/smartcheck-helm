@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: contentsources # TODO rename after updating the proxy/nginx/argus-proxies.conf
+  name: registryviews
   labels:
     service: registryviews
     chart: {{ template "smartcheck.chart" . }}
@@ -116,7 +116,7 @@ spec:
             - --internal-base=http://registryviews:8081
             - --authorization-url=http://auth-internal:8081
             - --scan-url=http://scan-internal:8081
-            - --database-connection-string=postgres:postgres://db/contentsourcesdb?sslmode=disable&connect_timeout=5 # seconds
+            - --database-connection-string=postgres:postgres://db/registryviewsdb?sslmode=disable&connect_timeout=5 # seconds
             - --database-secret=$(DB_SECRET)
             - --cursor-encryption-secret=$(CURSOR_ENCRYPTION_SECRET)
           env:

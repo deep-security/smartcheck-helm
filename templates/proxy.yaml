@@ -153,8 +153,8 @@ data:
     upstream docs_server {
       server docs:8080;
     }
-    upstream contentsources_server {
-      server contentsources:8080;
+    upstream registryviews_server {
+      server registryviews:8080;
     }
 
     # Configuration for the server
@@ -213,11 +213,11 @@ data:
         proxy_set_header   X-Forwarded-Host $server_name;
       }
 
-      location ~ /api/(registries|contentsources|views) {
+      location ~ /api/(registries|views) {
         limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
         limit_req_status {{ default 429 $apiRateLimiting.status }};
 
-        proxy_pass         http://contentsources_server;
+        proxy_pass         http://registryviews_server;
         proxy_redirect     off;
         proxy_set_header   Host $host;
         proxy_set_header   X-Real-IP $remote_addr;

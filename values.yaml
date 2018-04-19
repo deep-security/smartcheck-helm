@@ -264,7 +264,7 @@ images:
   scan:
     repository: scan
   registryviews:
-    repository: contentsourcescan
+    repository: registryviews
   docs:
     repository: api-docs
   frontend:
