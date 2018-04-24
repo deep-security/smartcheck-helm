@@ -213,6 +213,37 @@ using.
 
 The Helm team have some helpful [guidelines for securing your Helm installation](https://docs.helm.sh/using_helm/#securing-your-helm-installation) as well as [an abbreviated list of best practices](https://docs.helm.sh/using_helm/#best-practices-for-securing-helm-and-tiller) for reference.
 
+## Database backup and restore
+
+Deep Security Smart Check stores its data in a `postgres` database.
+
+### Backing up the application database
+
+The following example command will perform a full database dump, compressing the output and writing it to the file `db.gz` in the current directory. You can then archive the `db.gz` file according to your needs.
+
+```sh
+kubectl exec $(kubectl get pods -l service=db -o jsonpath='{.items[0].metadata.name}') -- \
+  sh -c 'pg_dumpall -U $POSTGRES_USER | gzip -' \
+  > db.gz
+```
+
+_Note: If you are running Deep Security Smart Check in a namespace other than the `default` namespace and your `kubectl` context is not set to use that namespace, you will need to add the `--namespace NAMESPACE` parameter to both `kubectl` commands in this example._
+
+_Important: While Deep Security Smart Check encrypts credentials stored in the database, the database backup file contains other information that you may consider sensitive, such as registry locations, names, and scan results. Ensure that you store your backups safely with appropriate access controls to prevent misuse or accidental disclosure._
+
+### Restoring the application database from a backup
+
+The following example command will perform a database restore from the compressed database dump created in the previous procedure.
+
+```sh
+kubectl exec -i \
+  $(kubectl get pods -l service=db -o jsonpath='{.items[0].metadata.name}') -- \
+  sh -c 'gunzip -f -c - | psql -U $POSTGRES_USER' \
+  < db.gz
+```
+
+_Note: If you are running Deep Security Smart Check in a namespace other than the `default` namespace and your `kubectl` context is not set to use that namespace, you will need to add the `--namespace NAMESPACE` parameter to both `kubectl` commands in this example._
+
 ## Troubleshooting
 
 ### Failed to pull image ... certificate signed by unknown authority
