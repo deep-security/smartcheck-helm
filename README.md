@@ -174,7 +174,7 @@ Refer to the `values.yaml` file for a full list of available values to override;
 Follow the instructions below to replace the certificate that the service is
 using.
 
-1. Create a new self-signed certificate (or bring your own):
+1.  Create a new self-signed certificate (or bring your own):
 
     ```sh
     openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
@@ -182,7 +182,7 @@ using.
       -out mycert.crt
     ```
 
-2. Delete and re-add the Kubernetes secret that stores the certificate:
+2.  Delete and re-add the Kubernetes secret that stores the certificate:
 
     ```sh
     kubectl delete secret \
@@ -201,7 +201,7 @@ using.
     step 1. Do not change the `default_ssl.key` or `default_ssl.crt` parts
     of the command, or the service will fail to read the secret.
 
-3. Delete the pods. They will be restarted by the Kubernetes deployment:
+3.  Delete the pods. They will be restarted by the Kubernetes deployment:
 
     ```sh
     kubectl delete pods \
@@ -293,6 +293,10 @@ helm install \
   --name deepsecurity-smartcheck \
   .
 ```
+
+### What role does my Google Cloud Platform service account need in order for Deep Security Smart Check to work with Google Container Registry?
+
+The service account must have at least the `StorageObjectViewer` role.
 
 ### Internal network failures with minikube
 
