@@ -385,8 +385,8 @@ tasks:
 # securityContext specifies the security contexts that we'll apply to the pods.
 securityContext:
   ## enabled is a global flag controlling whether security contexts are included at all in the manifest
-  ## Default value: false
-  enabled: false
+  ## Default value: true
+  enabled: true
 
   ## default is the default security context that we'll apply at the pod and container level.
   ## if `securityCOntext.enabled` is true, the `pod` value will be inserted into the `Deployment` manifest
