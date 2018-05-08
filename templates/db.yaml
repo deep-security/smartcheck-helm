@@ -184,7 +184,7 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-          claimName: {{ template "smartcheck.fullname" . }}-app-db
+            claimName: {{ template "smartcheck.fullname" . }}-app-db
 {{ end }}
       nodeSelector:
 {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.db) | indent 8 }}
