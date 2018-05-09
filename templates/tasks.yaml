@@ -10,6 +10,7 @@ metadata:
     heritage: {{ .Release.Service }}
 spec:
   schedule: {{ quote .Values.tasks.scan.schedule }}
+  successfulJobsHistoryLimit: 0
   jobTemplate:
     spec:
       template:
