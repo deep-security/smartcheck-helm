@@ -274,10 +274,7 @@ images:
   vulnerabilityScan:
     repository: vulnerability-scan
   vulnerabilityDB:
-    registry: "-"
-    project: library
-    repository: postgres
-    tag: "9.6.2"
+    repository: vulnerability-db
   tasks:
     repository: tasks
 
