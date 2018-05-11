@@ -493,6 +493,22 @@ securityContext:
   frontend: *staticAssetSecurityContext
   docs: *staticAssetSecurityContext
 
+  ## GKE mounts persistent volumes as root with mode 0755,
+  ## so these pods need to run as root.
+  metricsCollector: &metrics
+    pod:
+      runAsNonRoot: false
+    container:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: false
+      runAsUser: 0
+  metricsReporter: *metrics
+
 cursor:
   ## secret is an application cursor secret used to encrypt data within the
   ## cursor. The value is put through PBKDF2 key expansion before being used
