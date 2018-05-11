@@ -115,6 +115,7 @@ spec:
                   mountPath: /data
               resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.metricsCollector) | indent 16 }}
+          restartPolicy: Never
           volumes:
             - name: data
 {{- if .Values.persistence.enabled }}
@@ -280,6 +281,7 @@ spec:
                   mountPath: /data
               resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.metricsReporter) | indent 16 }}
+          restartPolicy: Never
           volumes:
             - name: data
 {{- if .Values.persistence.enabled }}
