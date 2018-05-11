@@ -277,6 +277,14 @@ images:
     repository: vulnerability-db
   tasks:
     repository: tasks
+  metricsCollector:
+    # Using IfNotPresent instead of the default of Always because this runs every minute out of the box
+    imagePullPolicy: IfNotPresent
+    repository: k8s-metrics-reporter
+  metricsReporter:
+    # Using IfNotPresent instead of the default of Always because this runs every minute out of the box
+    imagePullPolicy: IfNotPresent
+    repository: k8s-metrics-reporter
 
 replicas: {}
 
@@ -321,6 +329,22 @@ persistence:
     ##
     ## Default: blank
     storageClassName:
+
+  metrics:
+    ## size is the amount of persistent volume storage to request for the metrics collector and reporter.
+    ##
+    ## Default value: 1Mi
+    size: 1Mi #?
+
+    ## storageClassName is the name of the storage class that should be used for persistent volume
+    ## used by the metrics collector and reporter. If no value is specified, then the value of
+    ## `persistence.storageClassName` is used.
+    ##
+    ## Reference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class
+    ##
+    ## Default: blank
+    storageClassName:
+
 
 resources:
   defaults: {}
@@ -378,6 +402,40 @@ tasks:
     ##
     ## Default value: @daily (once a day, at midnight UTC)
     schedule: "@daily"
+
+  # The metrics collector will periodically retrieve metrics from pods that have the
+  # `metrics: include` label.
+  metricsCollector:
+    ## enabled controls whether or not to create the Kubernetes Cronjob task that will
+    ## trigger metrics collection.
+    ##
+    ## Default value: true
+    enabled: true
+
+    ## schedule controls the schedule for metrics collection. It is a string in
+    ## [cron](https://en.wikipedia.org/wiki/Cron) format.
+    ##
+    ## Default value: */1 * * * * (every minute)
+    schedule: "*/1 * * * *"
+
+  metricsReporter:
+    ## enabled controls whether or not to create the Kubernetes Cronjob task that will
+    ## trigger metrics collection.
+    ##
+    ## Default value: true
+    enabled: true
+
+    ## schedule controls the schedule for metrics collection. It is a string in
+    ## [cron](https://en.wikipedia.org/wiki/Cron) format.
+    ##
+    ## Default value: @weekly (once a week, at midnight UTC on Sunday)
+    schedule: "@weekly"
+
+    ## url is the target URL for reporting metrics. If no URL is provided, then metrics
+    ## will not be reported.
+    ##
+    ## Default value: blank
+    url:
 
 # securityContext specifies the security contexts that we'll apply to the pods.
 securityContext:

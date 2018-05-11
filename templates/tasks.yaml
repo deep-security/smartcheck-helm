@@ -59,10 +59,53 @@ spec:
               args:
                 - scan
               resources:
-{{ toYaml (default .Values.resources.defaults .Values.resources.auth) | indent 16 }}
+{{ toYaml (default .Values.resources.defaults .Values.resources.tasks) | indent 16 }}
           restartPolicy: OnFailure
           nodeSelector:
-{{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.auth) | indent 12 }}
+{{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.tasks) | indent 12 }}
           tolerations:
-{{ toYaml (default .Values.tolerations.defaults .Values.tolerations.auth) | indent 12 }}
+{{ toYaml (default .Values.tolerations.defaults .Values.tolerations.tasks) | indent 12 }}
 {{ end }}
+
+{{ if .Values.networkPolicy.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: tasks
+  labels:
+    task: scan
+    chart: {{ template "smartcheck.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  podSelector:
+    matchLabels:
+      task: scan
+      chart: {{ template "smartcheck.chart" . }}
+      release: {{ .Release.Name }}
+      heritage: {{ .Release.Service }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+      ports:
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              service: registryviews
+              chart: {{ template "smartcheck.chart" . }}
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+      ports:
+        - protocol: TCP
+          port: 8081
+    - to: # any
+      ports:
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53
+{{- end }}

@@ -45,6 +45,7 @@ metadata:
     chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    metrics: include
 spec:
   replicas: {{ default 1 .Values.replicas.scan }}
   template:
@@ -54,6 +55,7 @@ spec:
         chart: {{ template "smartcheck.chart" . }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
+        metrics: include
     spec:
       automountServiceAccountToken: false
 {{- $securityContextEnabled := .Values.securityContext.enabled }}
