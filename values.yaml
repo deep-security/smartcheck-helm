@@ -409,8 +409,8 @@ tasks:
     ## enabled controls whether or not to create the Kubernetes Cronjob task that will
     ## trigger metrics collection.
     ##
-    ## Default value: true
-    enabled: true
+    ## Default value: false
+    enabled: false
 
     ## schedule controls the schedule for metrics collection. It is a string in
     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
@@ -422,8 +422,8 @@ tasks:
     ## enabled controls whether or not to create the Kubernetes Cronjob task that will
     ## trigger metrics collection.
     ##
-    ## Default value: true
-    enabled: true
+    ## Default value: false
+    enabled: false
 
     ## schedule controls the schedule for metrics collection. It is a string in
     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
