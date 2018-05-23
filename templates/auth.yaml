@@ -7,6 +7,9 @@ metadata:
     chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{ $k }}: {{ quote $v }}
+{{- end }}
 spec:
   ports:
     - port: 8080
@@ -26,6 +29,9 @@ metadata:
     chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{ $k }}: {{ quote $v }}
+{{- end }}
 spec:
   ports:
     - port: 8081
@@ -46,6 +52,9 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
     metrics: include
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{ $k }}: {{ quote $v }}
+{{- end }}
 spec:
   replicas: {{ default 1 .Values.replicas.auth }}
   template:
@@ -56,6 +65,9 @@ spec:
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
         metrics: include
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+        {{ $k }}: {{ quote $v }}
+{{- end }}
     spec:
       automountServiceAccountToken: false
 {{- $securityContextEnabled := .Values.securityContext.enabled }}
@@ -177,6 +189,9 @@ metadata:
     chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{ $k }}: {{ quote $v }}
+{{- end }}
 spec:
   podSelector:
     matchLabels:
@@ -184,6 +199,9 @@ spec:
       chart: {{ template "smartcheck.chart" . }}
       release: {{ .Release.Name }}
       heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+      {{ $k }}: {{ quote $v }}
+{{- end }}
   policyTypes:
     - Ingress
     - Egress
@@ -195,6 +213,9 @@ spec:
               chart: {{ template "smartcheck.chart" . }}
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+{{- end }}
       ports:
         - protocol: TCP
           port: 8080
@@ -205,18 +226,27 @@ spec:
               chart: {{ template "smartcheck.chart" . }}
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+{{- end }}
         - podSelector:
             matchLabels:
               service: scan
               chart: {{ template "smartcheck.chart" . }}
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+{{- end }}
         - podSelector:
             matchLabels:
               service: auth
               chart: {{ template "smartcheck.chart" . }}
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+{{- end }}
       ports:
         - protocol: TCP
           port: 8081
@@ -236,6 +266,9 @@ spec:
               chart: {{ template "smartcheck.chart" . }}
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+{{- end }}
       ports:
         - protocol: TCP
           port: 5432
@@ -246,6 +279,9 @@ spec:
               chart: {{ template "smartcheck.chart" . }}
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+{{- end }}
       ports:
         - protocol: TCP
           port: 8081

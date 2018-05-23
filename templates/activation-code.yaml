@@ -7,6 +7,9 @@ metadata:
     chart: {{ template "smartcheck.chart" . }}
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{ $k }}: {{ quote $v }}
+{{- end }}
 type: Opaque
 data:
   code: {{ default "" .Values.activationCode | b64enc | quote }}

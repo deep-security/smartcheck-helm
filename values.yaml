@@ -6,6 +6,10 @@
 ## Default value: (none)
 activationCode:
 
+## extraLabels is a dictionary of additional labels that will be added to all resources
+## created by this chart.
+extraLabels: {}
+
 rateLimiting:
   api:
     ## The maximum API request rate (per source IP address) in requests per second.
