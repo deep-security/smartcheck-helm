@@ -4,7 +4,6 @@ metadata:
   name: metrics
   labels:
     service: metrics
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -18,7 +17,6 @@ spec:
       targetPort: 8082
   selector:
     metrics: include
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -36,7 +34,6 @@ metadata:
   name: {{ template "smartcheck.fullname" . }}-metrics
   labels:
     task: metrics
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -62,7 +59,6 @@ metadata:
   name: metrics-collector
   labels:
     task: metrics-collector
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -77,7 +73,6 @@ spec:
         metadata:
           labels:
             task: metrics-collector
-            chart: {{ template "smartcheck.chart" . }}
             release: {{ .Release.Name }}
             heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -154,7 +149,6 @@ metadata:
   name: metrics-collector
   labels:
     task: metrics-collector
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -164,7 +158,6 @@ spec:
   podSelector:
     matchLabels:
       task: metrics-collector
-      chart: {{ template "smartcheck.chart" . }}
       release: {{ .Release.Name }}
       heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -181,7 +174,6 @@ spec:
         - podSelector:
             matchLabels:
               metrics: include
-              chart: {{ template "smartcheck.chart" . }}
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -205,7 +197,6 @@ metadata:
   name: metrics-reporter
   labels:
     task: metrics-reporter
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -220,7 +211,6 @@ spec:
         metadata:
           labels:
             task: metrics-reporter
-            chart: {{ template "smartcheck.chart" . }}
             release: {{ .Release.Name }}
             heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -335,7 +325,6 @@ metadata:
   name: metrics-reporter
   labels:
     task: metrics-reporter
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -345,7 +334,6 @@ spec:
   podSelector:
     matchLabels:
       task: metrics-reporter
-      chart: {{ template "smartcheck.chart" . }}
       release: {{ .Release.Name }}
       heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -379,7 +367,6 @@ metadata:
   name: {{ template "smartcheck.fullname" . }}-metrics-collector
   labels:
     task: metrics-collector
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -392,7 +379,6 @@ metadata:
   name: {{ template "smartcheck.fullname" . }}-metrics-collector-role
   labels:
     task: metrics-collector
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -409,7 +395,6 @@ metadata:
   name: {{ template "smartcheck.fullname" . }}-metrics-collector-role-binding
   labels:
     task: metrics-collector
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}

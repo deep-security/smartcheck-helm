@@ -4,7 +4,6 @@ metadata:
   name: {{ template "smartcheck.fullname" . }}-activation-code
   labels:
     app: {{ template "smartcheck.name" . }}
-    chart: {{ template "smartcheck.chart" . }}
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}

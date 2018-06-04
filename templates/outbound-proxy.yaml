@@ -4,7 +4,6 @@ metadata:
   name: {{ template "smartcheck.fullname" . }}-outbound-proxy
   labels:
     service: {{ template "smartcheck.fullname" . }}-outbound-proxy
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}

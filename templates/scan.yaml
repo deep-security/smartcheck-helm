@@ -4,7 +4,6 @@ metadata:
   name: scan
   labels:
     service: scan
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -26,7 +25,6 @@ metadata:
   name: scan-internal
   labels:
     service: scan-internal
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -48,7 +46,6 @@ metadata:
   name: scan
   labels:
     service: scan
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
     metrics: include
@@ -61,7 +58,6 @@ spec:
     metadata:
       labels:
         service: scan
-        chart: {{ template "smartcheck.chart" . }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
         metrics: include
@@ -198,7 +194,6 @@ metadata:
   name: scan
   labels:
     service: scan
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -208,7 +203,6 @@ spec:
   podSelector:
     matchLabels:
       service: scan
-      chart: {{ template "smartcheck.chart" . }}
       release: {{ .Release.Name }}
       heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -222,7 +216,6 @@ spec:
       - podSelector:
           matchLabels:
             service: proxy
-            chart: {{ template "smartcheck.chart" . }}
             release: {{ .Release.Name }}
             heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -235,7 +228,6 @@ spec:
       - podSelector:
           matchLabels:
             service: registryviews
-            chart: {{ template "smartcheck.chart" . }}
             release: {{ .Release.Name }}
             heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -244,7 +236,6 @@ spec:
       - podSelector:
           matchLabels:
             service: vulnerability-scan
-            chart: {{ template "smartcheck.chart" . }}
             release: {{ .Release.Name }}
             heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -266,7 +257,6 @@ spec:
         - podSelector:
             matchLabels:
               service: malware-scan
-              chart: {{ template "smartcheck.chart" . }}
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -275,7 +265,6 @@ spec:
         - podSelector:
             matchLabels:
               service: auth
-              chart: {{ template "smartcheck.chart" . }}
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -284,7 +273,6 @@ spec:
         - podSelector:
             matchLabels:
               service: registryviews
-              chart: {{ template "smartcheck.chart" . }}
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -297,7 +285,6 @@ spec:
         - podSelector:
             matchLabels:
               service: db
-              chart: {{ template "smartcheck.chart" . }}
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -310,7 +297,6 @@ spec:
         - podSelector:
             matchLabels:
               service: vulnerability-scan
-              chart: {{ template "smartcheck.chart" . }}
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}

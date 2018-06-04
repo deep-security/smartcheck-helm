@@ -4,7 +4,6 @@ metadata:
   name: docs
   labels:
     service: docs
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -26,7 +25,6 @@ metadata:
   name: docs
   labels:
     service: docs
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -38,7 +36,6 @@ spec:
     metadata:
       labels:
         service: docs
-        chart: {{ template "smartcheck.chart" . }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -104,7 +101,6 @@ metadata:
   name: docs
   labels:
     service: docs
-    chart: {{ template "smartcheck.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -114,7 +110,6 @@ spec:
   podSelector:
     matchLabels:
       service: docs
-      chart: {{ template "smartcheck.chart" . }}
       release: {{ .Release.Name }}
       heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -128,7 +123,6 @@ spec:
         - podSelector:
             matchLabels:
               service: proxy
-              chart: {{ template "smartcheck.chart" . }}
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
