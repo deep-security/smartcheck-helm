@@ -98,7 +98,7 @@ Use the `helm list` command to list installed releases.
 
 ## Documentation
 
-Our [docs page](https://deep-security.github.io/smartcheck-docs/) provides links to the Deep Security Smart Check Administration Guide and full API documentation.
+Our [docs page](https://deep-security.github.io/smartcheck-docs/) provides links to the Deep Security Smart Check Deployment Guide and full API documentation.
 
 ## Advanced topics
 
