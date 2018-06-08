@@ -51,7 +51,7 @@ _Note: the commands above will give `tiller` full cluster administrator privileg
 
 ### Getting an activation code
 
-We recommend that you register for a 30-day trial license [code](http://go2.trendmicro.com/geoip/trial-168). Deep Security Smart Check will operate without an activation code; however, malware pattern updates will not be available and you will see a warning message in the administration console.
+We recommend that you register for a 30-day trial license [code](https://go2.trendmicro.com/geoip/trial-168). Deep Security Smart Check will operate without an activation code; however, malware pattern updates will not be available and you will see a warning message in the administration console.
 
 ### Installing git
 
