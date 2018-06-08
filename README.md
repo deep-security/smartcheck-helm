@@ -96,6 +96,10 @@ Use the `helm list` command to list installed releases.
 
 **This is a destructive command and will delete all of the Deep Security Smart Check resources, including database contents, without further confirmation.**
 
+## Documentation
+
+Our [docs page](https://deep-security.github.io/smartcheck-docs/) provides links to the Deep Security Smart Check Administration Guide and full API documentation.
+
 ## Advanced topics
 
 ### Using an alternate Kubernetes namespace
