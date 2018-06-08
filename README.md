@@ -49,22 +49,9 @@ Use `helm version` to confirm that you have at least version `v2.8.0` of the cli
 
 _Note: the commands above will give `tiller` full cluster administrator privileges. Review [Securing your Helm Installation](https://docs.helm.sh/using_helm/#securing-your-helm-installation) for help on what to consider when setting up Helm in your cluster._
 
-### Creating a Secret with a Docker Config
+### Getting an activation code
 
-The Deep Security Smart Check images are stored in a private registry. You should have been asked for your Docker Hub account name as part of the trial setup process, and you should have received an email saying that your Docker Hub account has been added the `deepsecurity` organization.
-
-You will need to set up Docker credentials to allow your Kubernetes cluster to pull the images from the registry.
-
-Run the following command to create a Docker secret, replacing the upper-case values with your values:
-
-```sh
-kubectl create secret docker-registry myregistrykey \
-  --docker-username=DOCKER_USER \
-  --docker-password=DOCKER_PASSWORD \
-  --docker-email=DOCKER_EMAIL
-```
-
-**IMPORTANT:** Make sure you enter your credentials correctly! If you get the values wrong, Docker Hub will lock out your account when it sees repeated failed attempts to download the images.
+We recommend that you register for a 30-day trial license code here: http://go2.trendmicro.com/geoip/trial-168. Deep Security Smart Check will operate without an activation code; however, malware pattern updates will not be available and you will see a warning message in the administration console.
 
 ### Installing git
 
@@ -72,7 +59,7 @@ You will need a `git` client installed. You can download a client at the `git` [
 
 ### Installing Deep Security Smart Check
 
-The Helm chart for Deep Security Smart Check is hosted in a private repository on Github. You will need a Github account that has access to the repository (this should have been arranged during the trial setup process). You can then clone the repository using:
+The Helm chart for Deep Security Smart Check is hosted in a public repository on Github. You can clone the repository using:
 
 ```sh
 git clone git@github.com:deep-security/smartcheck-helm
@@ -83,13 +70,15 @@ To install Deep Security Smart Check into the default Kubernetes namespace:
 
 ```sh
 helm install \
-  --set images.defaults.imagePullSecret=myregistrykey \
   --set auth.masterPassword={password} \
+  --set activationCode={activation code} \
   --name deepsecurity-smartcheck \
   .
 ```
 
 _Experienced `helm` users will note that we are using `deepsecurity-smartcheck` as the `helm` release name in these examples. There is no requirement to use this release name._
+
+**Note:** If you do not have an activation code then omit the `--set activationCode={activation code}` line.
 
 ### Connecting to Deep Security Smart Check
 
@@ -156,6 +145,8 @@ Refer to the `values.yaml` file for a full list of available values to override;
 <tbody>
 <tr><td><code>auth.masterPassword</code></td><td>None</td><td>The master password to use when generating passwords within the system, ensuring that each installation of Deep Security Smart Check has different passwords.</td></tr>
 <tr><td><code>auth.userName</code></td><td><code>administrator</code></td><td>The name of the default administrator user that the system will create on startup.</td></tr>
+<tr><td><code>activationCode</code></td><td>None</td><td>The activation code to use. The activation code is required if you wish to receive updated malware patterns.</td></tr>
+<tr><td><code>auth.userName</code></td><td><code>administrator</code></td><td>The name of the default administrator user that the system will create on startup.</td></tr>  
 <tr><td><code>auth.password</code></td><td><code>{a random 16-character alphanumeric string}</code></td><td>The default password assigned to the default administrator. <code>helm</code> will provide instructions for retrieving the initial password as part of the installation process.</td></tr>
 <tr><td><code>certificate.commonName</code></td><td><code>example.com</code></td><td>The server name to use in the default self-signed certificate created for the service.</td></tr>
 <tr><td><code>service.type</code></td><td><code>LoadBalancer</code></td><td>The Kubernetes service type to create. This must be one of <code>LoadBalancer</code>, <code>ClusterIP</code>, or <code>NodePort</code>.</td></tr>
