@@ -187,14 +187,14 @@ using.
     kubectl create secret generic \
       --namespace default \
       deepsecurity-smartcheck-tls-certificate \
-      --from-file=default_ssl.key=mycert.key \
-      --from-file=default_ssl.crt=mycert.crt
+      --from-file=privateKey=mycert.key \
+      --from-file=certificate=mycert.crt
     ```
 
     **IMPORTANT:** Make sure that `mycert.key` and `mycert.crt` in this
     command match the file names for the key and certificate created in
-    step 1. Do not change the `default_ssl.key` or `default_ssl.crt` parts
-    of the command, or the service will fail to read the secret.
+    step 1. Do not change the `privateKey=` or `certificate=` parts of
+    the command, or the service will fail to read the secret.
 
 3.  Delete the pods. They will be restarted by the Kubernetes deployment:
 
