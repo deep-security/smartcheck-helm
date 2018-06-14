@@ -17,6 +17,11 @@ spec:
     spec:
       template:
         metadata:
+{{ $seccomp := default .Values.seccomp.default .Values.seccomp.tasks }}
+{{- if $seccomp.profile }}
+          annotations:
+            seccomp.security.alpha.kubernetes.io/pod: {{ quote $seccomp.profile }}
+{{- end }}
           labels:
             task: scan
             release: {{ .Release.Name }}

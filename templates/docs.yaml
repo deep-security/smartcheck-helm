@@ -34,6 +34,11 @@ spec:
   replicas: {{ default 1 .Values.replicas.docs }}
   template:
     metadata:
+{{ $seccomp := default .Values.seccomp.default .Values.seccomp.docs }}
+{{- if $seccomp.profile }}
+      annotations:
+        seccomp.security.alpha.kubernetes.io/pod: {{ quote $seccomp.profile }}
+{{- end }}
       labels:
         service: docs
         release: {{ .Release.Name }}

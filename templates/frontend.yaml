@@ -34,6 +34,11 @@ spec:
   replicas: {{ default 1 .Values.replicas.frontend }}
   template:
     metadata:
+{{ $seccomp := default .Values.seccomp.default .Values.seccomp.frontend }}
+{{- if $seccomp.profile }}
+      annotations:
+        seccomp.security.alpha.kubernetes.io/pod: {{ quote $seccomp.profile }}
+{{- end }}
       labels:
         service: frontend
         release: {{ .Release.Name }}

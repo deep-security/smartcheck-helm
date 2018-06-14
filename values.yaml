@@ -523,3 +523,12 @@ cursor:
   ##
   ## Default value: a generated password derived from the masterPassword and system details
   secret:
+
+seccomp:
+  ## You can override the seccomp profile for individual pods using the same identifiers as in `images`.
+  default:
+    ## The default seccomp profile to apply to pods.
+    ## See https://github.com/jpeeler/community/blob/master/contributors/design-proposals/seccomp.md
+    ##
+    ## Default value: (none)
+    profile:

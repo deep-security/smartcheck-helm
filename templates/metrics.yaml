@@ -71,6 +71,11 @@ spec:
     spec:
       template:
         metadata:
+{{ $seccomp := default .Values.seccomp.default .Values.seccomp.metricsCollector }}
+{{- if $seccomp.profile }}
+          annotations:
+            seccomp.security.alpha.kubernetes.io/pod: {{ quote $seccomp.profile }}
+{{- end }}
           labels:
             task: metrics-collector
             release: {{ .Release.Name }}
@@ -209,6 +214,11 @@ spec:
     spec:
       template:
         metadata:
+{{ $seccomp := default .Values.seccomp.default .Values.seccomp.metricsReporter }}
+{{- if $seccomp.profile }}
+          annotations:
+            seccomp.security.alpha.kubernetes.io/pod: {{ quote $seccomp.profile }}
+{{- end }}
           labels:
             task: metrics-reporter
             release: {{ .Release.Name }}

@@ -56,6 +56,11 @@ spec:
   replicas: {{ default 1 .Values.replicas.scan }}
   template:
     metadata:
+{{ $seccomp := default .Values.seccomp.default .Values.seccomp.scan }}
+{{- if $seccomp.profile }}
+      annotations:
+        seccomp.security.alpha.kubernetes.io/pod: {{ quote $seccomp.profile }}
+{{- end }}
       labels:
         service: scan
         release: {{ .Release.Name }}

@@ -150,7 +150,7 @@ Refer to the `values.yaml` file for a full list of available values to override;
 <tr><td><code>auth.masterPassword</code></td><td>None</td><td>The master password to use when generating passwords within the system, ensuring that each installation of Deep Security Smart Check has different passwords.</td></tr>
 <tr><td><code>auth.userName</code></td><td><code>administrator</code></td><td>The name of the default administrator user that the system will create on startup.</td></tr>
 <tr><td><code>activationCode</code></td><td>None</td><td>The activation code to use. The activation code is required if you wish to receive updated malware patterns.</td></tr>
-<tr><td><code>auth.userName</code></td><td><code>administrator</code></td><td>The name of the default administrator user that the system will create on startup.</td></tr>  
+<tr><td><code>auth.userName</code></td><td><code>administrator</code></td><td>The name of the default administrator user that the system will create on startup.</td></tr>
 <tr><td><code>auth.password</code></td><td><code>{a random 16-character alphanumeric string}</code></td><td>The default password assigned to the default administrator. <code>helm</code> will provide instructions for retrieving the initial password as part of the installation process.</td></tr>
 <tr><td><code>certificate.commonName</code></td><td><code>example.com</code></td><td>The server name to use in the default self-signed certificate created for the service.</td></tr>
 <tr><td><code>service.type</code></td><td><code>LoadBalancer</code></td><td>The Kubernetes service type to create. This must be one of <code>LoadBalancer</code>, <code>ClusterIP</code>, or <code>NodePort</code>.</td></tr>
@@ -323,6 +323,24 @@ helm install \
 ### What role does my Google Cloud Platform service account need in order for Deep Security Smart Check to work with Google Container Registry?
 
 The service account must have at least the `StorageObjectViewer` role.
+
+### My cluster security policy requires seccomp on all containers. How do I enable seccomp for Deep Security Smart Check?
+
+Deep Security Smart Check allows you to set the `seccomp` policy at a pod level.
+
+Set `seccomp.default.profile` when you install. If you have already installed Deep Security Smart Check, you can set the value with:
+
+```sh
+helm upgrade \
+  --set seccomp.default.profile=PROFILE \
+  deepsecurity-smartcheck \
+  .
+```
+
+See [the seccomp design proposal](https://github.com/jpeeler/community/blob/master/contributors/design-proposals/seccomp.md) for more details.
+
+**Caution:** We have tested with `docker/default`. If you use a custom `seccomp` profile that prevents operations required for Deep Security Smart Check,
+your experience may vary.
 
 ### Internal network failures with minikube
 
