@@ -53,27 +53,18 @@ _Note: the commands above will give `tiller` full cluster administrator privileg
 
 We recommend that you register for a 30-day trial license [code](https://go2.trendmicro.com/geoip/trial-168). Deep Security Smart Check will operate without an activation code; however, malware pattern updates will not be available and you will see a warning message in the administration console.
 
-### Installing git
-
-You will need a `git` client installed. You can download a client at the `git` [downloads page](https://git-scm.com/downloads).
-
 ### Installing Deep Security Smart Check
 
-The Helm chart for Deep Security Smart Check is hosted in a public repository on Github. You can clone the repository using:
+The Helm chart for Deep Security Smart Check is hosted in a public repository on Github.
 
-```sh
-git clone git@github.com:deep-security/smartcheck-helm
-cd smartcheck-helm
-```
-
-To install Deep Security Smart Check into the default Kubernetes namespace:
+To install the latest version of Deep Security Smart Check into the default Kubernetes namespace:
 
 ```sh
 helm install \
   --set auth.masterPassword={password} \
   --set activationCode={activation code} \
   --name deepsecurity-smartcheck \
-  .
+  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
 ```
 
 _Experienced `helm` users will note that we are using `deepsecurity-smartcheck` as the `helm` release name in these examples. There is no requirement to use this release name._
@@ -102,6 +93,18 @@ Our [docs page](https://deep-security.github.io/smartcheck-docs/) provides links
 
 ## Advanced topics
 
+### Installing a specific version of Deep Security Smart Check
+
+If you want to install a specific version of Deep Security Smart Check, you can use the archive link for the tagged release rather than for `master`. For example, to install Deep Security Smart Check 1.0.1, you can run:
+
+```sh
+helm install \
+  --set auth.masterPassword={password} \
+  --set activationCode={activation code} \
+  --name deepsecurity-smartcheck \
+  https://github.com/deep-security/smartcheck-helm/archive/1.0.1.tar.gz
+```
+
 ### Using an alternate Kubernetes namespace
 
 To install Deep Security Smart Check into an existing Kubernetes namespace that's different from the current kube config namespace, use the `--namespace` parameter in the `helm install` command:
@@ -111,7 +114,7 @@ helm install \
   --namespace {namespace} \
   --set auth.masterPassword={password} \
   --name deepsecurity-smartcheck \
-  .
+  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
 ```
 
 ### Overriding configuration defaults
@@ -124,7 +127,7 @@ You can override the defaults in this file by specifying a comma-separated list 
 helm install \
   --set key1=value1,key2=value2,... \
   --name deepsecurity-smartcheck \
-  .
+  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
 ```
 
 or by creating a <abbr title="YAML Ain't Markup Language">YAML</abbr> file with the specific values you want to override and providing the location of this file on the command line:
@@ -133,7 +136,7 @@ or by creating a <abbr title="YAML Ain't Markup Language">YAML</abbr> file with 
 helm install \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  .
+  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
 ```
 
 _If you create a file to override the values, make sure to copy the structure from the chart's `values.yaml` file. You only need to provide the values that you are overriding._
@@ -150,7 +153,7 @@ Refer to the `values.yaml` file for a full list of available values to override;
 <tr><td><code>auth.masterPassword</code></td><td>None</td><td>The master password to use when generating passwords within the system, ensuring that each installation of Deep Security Smart Check has different passwords.</td></tr>
 <tr><td><code>auth.userName</code></td><td><code>administrator</code></td><td>The name of the default administrator user that the system will create on startup.</td></tr>
 <tr><td><code>activationCode</code></td><td>None</td><td>The activation code to use. The activation code is required if you wish to receive updated malware patterns.</td></tr>
-<tr><td><code>auth.userName</code></td><td><code>administrator</code></td><td>The name of the default administrator user that the system will create on startup.</td></tr>  
+<tr><td><code>auth.userName</code></td><td><code>administrator</code></td><td>The name of the default administrator user that the system will create on startup.</td></tr>
 <tr><td><code>auth.password</code></td><td><code>{a random 16-character alphanumeric string}</code></td><td>The default password assigned to the default administrator. <code>helm</code> will provide instructions for retrieving the initial password as part of the installation process.</td></tr>
 <tr><td><code>certificate.commonName</code></td><td><code>example.com</code></td><td>The server name to use in the default self-signed certificate created for the service.</td></tr>
 <tr><td><code>service.type</code></td><td><code>LoadBalancer</code></td><td>The Kubernetes service type to create. This must be one of <code>LoadBalancer</code>, <code>ClusterIP</code>, or <code>NodePort</code>.</td></tr>
@@ -278,7 +281,7 @@ helm delete --purge deepsecurity-smartcheck
 helm install \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  .
+  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
 ```
 
 ### Failed to pull image ... pull access denied ... repository does not exist or may require 'docker login'
@@ -307,7 +310,7 @@ helm install \
   --set images.defaults.imagePullSecret=myregistrykey \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  .
+  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
 ```
 
 or by editing your `overrides.yaml` file to set the `images.defaults.imagePullSecret` attribute and re-installing:
@@ -317,7 +320,7 @@ helm delete --purge deepsecurity-smartcheck
 helm install \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  .
+  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
 ```
 
 ### What role does my Google Cloud Platform service account need in order for Deep Security Smart Check to work with Google Container Registry?
