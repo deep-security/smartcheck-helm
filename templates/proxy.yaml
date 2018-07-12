@@ -93,9 +93,6 @@ spec:
               name: tls-secret
             - mountPath: /etc/nginx/argus
               name: config
-              items:
-                - key: proxy.conf
-                  path: proxy.conf
           # TODO probes
           # livenessProbe:
           # readinessProbe:
@@ -124,6 +121,9 @@ spec:
         - name: config
           configMap:
             name: {{ template "smartcheck.fullname" . }}-proxy
+            items:
+              - key: proxy.conf
+                path: proxy.conf
       nodeSelector:
 {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.proxy) | indent 8 }}
       tolerations:
