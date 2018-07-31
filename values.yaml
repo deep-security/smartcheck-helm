@@ -192,6 +192,12 @@ service:
   ## Default value: 80
   httpPort: 80
 
+  ## annotations is the arbitrary non-identifying metadata to `proxy` service.
+  ## Some cloud providers support different setting to load balancer via annotations.
+  ##
+  ## Default value: {}
+  annotations: {}
+
 db:
   ## Application database user
   ##
