@@ -162,6 +162,7 @@ Refer to the `values.yaml` file for a full list of available values to override;
 | `proxy.noProxy`                |                                               | If set, is a list of hosts or `host:port` combinations which should not be accessed through the proxy.                                                                                                                                                                      |
 | `proxy.username`               |                                               | If set, is the user name to use to authenticate requests sent through the proxy.                                                                                                                                                                                            |
 | `proxy.password`               |                                               | If set, is the password to use to authenticate requests sent through the proxy.                                                                                                                                                                                             |
+| `scan.malwareCache.enabled`             |  `true`                                         | If set, cache mechanism will be used to improve scanning performance.                                                                                                                                                                                                       |
 
 </tbody>
 </table>

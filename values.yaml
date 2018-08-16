@@ -233,6 +233,13 @@ vulnerabilityDB:
   ## Default value: a random 32-character alphanumeric string
   password:
 
+scan:
+  ## Enable malware scan cache.
+  ##
+  ## Default value: true
+  malwareCache:
+    enabled: true
+
 images:
   defaults:
     ## Default registry to pull images from. This can be overridden for
