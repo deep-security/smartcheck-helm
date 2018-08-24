@@ -169,43 +169,7 @@ Refer to the `values.yaml` file for a full list of available values to override;
 
 ### Replacing the service certificate
 
-Follow the instructions below to replace the certificate that the service is
-using.
-
-1.  Create a new self-signed certificate (or bring your own):
-
-    ```sh
-    openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
-      -keyout mycert.key \
-      -out mycert.crt
-    ```
-
-2.  Delete and re-add the Kubernetes secret that stores the certificate:
-
-    ```sh
-    kubectl delete secret \
-      --namespace default \
-      deepsecurity-smartcheck-tls-certificate
-
-    kubectl create secret generic \
-      --namespace default \
-      deepsecurity-smartcheck-tls-certificate \
-      --from-file=privateKey=mycert.key \
-      --from-file=certificate=mycert.crt
-    ```
-
-    **IMPORTANT:** Make sure that `mycert.key` and `mycert.crt` in this
-    command match the file names for the key and certificate created in
-    step 1. Do not change the `privateKey=` or `certificate=` parts of
-    the command, or the service will fail to read the secret.
-
-3.  Delete the pods. They will be restarted by the Kubernetes deployment:
-
-    ```sh
-    kubectl delete pods \
-      --namespace default \
-      -l "service=proxy,release=deepsecurity-smartcheck"
-    ```
+See the wiki page [Replacing the service certificate](https://github.com/deep-security/smartcheck-helm/wiki/Replacing-the-service-certificate).
 
 ### Securing Helm
 
