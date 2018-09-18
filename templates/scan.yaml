@@ -127,6 +127,7 @@ spec:
             - --internal-base=http://scan-internal:8081
             - --authorization-url=http://auth-internal:8081
             - --malware-scan-url=http://malware-scan-internal:8081
+            - --content-scan-url=http://content-scan-internal:8081
             - --vulnerability-scan-url=http://vulnerability-scan-internal:8081
             - --oscap-scan-url=http://openscap-scan-internal:8081
             - --content-source-scanner-webhook-url=http://registryviews-internal:8081/api/results
@@ -313,6 +314,14 @@ spec:
         - podSelector:
             matchLabels:
               service: openscap-scan
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+{{- end }}
+        - podSelector:
+            matchLabels:
+              service: content-scan
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}

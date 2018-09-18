@@ -256,6 +256,17 @@ scan:
       ## Default value: 5Gi
       sizeLimit: 5Gi
 
+  contentScan:
+    ## The content scanner uses an ephemeral volume to store working data
+    ## for scans that are in progress. This data includes the uncompressed
+    ## image layer contents.
+    workVolume:
+      ## The amount of space to request for the work volume.
+      ##
+      ## Default value: 1Gi
+      sizeLimit: 1Gi
+
+
 images:
   defaults:
     ## Default registry to pull images from. This can be overridden for
@@ -294,6 +305,8 @@ images:
     repository: auth
   malwareScan:
     repository: vscan
+  contentScan:
+    repository: contentscan
   scan:
     repository: scan
   registryviews:
