@@ -12,11 +12,7 @@ You can watch the status of the proxy pod by running:
 {{- end }}
 
 1. Get the application URL by running these commands:
-{{ if .Values.ingress.enabled }}
-{{- range .Values.ingress.hosts }}
-    echo Application URL: http{{ if $.Values.ingress.tls }}s{{ end }}://{{ . }}{{ $.Values.ingress.path }}
-{{- end }}
-{{- else if contains "NodePort" .Values.service.type }}
+{{- if contains "NodePort" .Values.service.type }}
     export NODE_PORT=$(kubectl get {{ if not (eq "default" .Release.Namespace) }}--namespace {{ .Release.Namespace }} {{ end }}-o jsonpath="{.spec.ports[0].nodePort}" services proxy)
     export NODE_IP=$(kubectl get nodes {{ if not (eq "default" .Release.Namespace) }}--namespace {{ .Release.Namespace }} {{ end }}-o jsonpath="{.items[0].status.addresses[0].address}")
     echo Application URL: https://$NODE_IP:$NODE_PORT

@@ -398,8 +398,6 @@ tolerations:
 affinity:
   defaults: {}
 
-ingress: {}
-
 networkPolicy:
   enabled: true
 
