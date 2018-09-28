@@ -237,6 +237,25 @@ scan:
   malwareCache:
     enabled: true
 
+  openscap:
+    ## The OpenSCAP scanner uses an ephemeral volume to store threat feed
+    ## information. This volume is created when the pod is scheduled on a node
+    ## and is populated by the openscap-feed-consumer container.
+    dataVolume:
+      ## The amount of space to request for the data volume.
+      ##
+      ## Default value: 1Gi
+      sizeLimit: 1Gi
+
+    ## The OpenSCAP scanner uses an ephemeral volume to store working data
+    ## for scans that are in progress. This data includes the compressed
+    ## and uncompressed image layer contents as well as scan results.
+    workVolume:
+      ## The amount of space to request for the work volume.
+      ##
+      ## Default value: 5Gi
+      sizeLimit: 5Gi
+
 images:
   defaults:
     ## Default registry to pull images from. This can be overridden for
@@ -299,6 +318,10 @@ images:
     # Using IfNotPresent instead of the default of Always because this runs every minute out of the box
     imagePullPolicy: IfNotPresent
     repository: k8s-metrics-reporter
+  openscapScan:
+    repository: openscap-scan
+  openscapFeedConsumer:
+    repository: openscap-feed-consumer
 
 replicas: {}
 
@@ -520,6 +543,30 @@ securityContext:
       runAsNonRoot: false
       runAsUser: 0
   metricsReporter: *metrics
+
+  openscapScan:
+    pod:
+      runAsNonRoot: false
+    scanContainer:
+      allowPrivilegeEscalation: false
+      capabilities:
+        add:
+          - SYS_CHROOT
+        drop:
+          - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: false
+      runAsUser: 0
+    feedConsumerContainer:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 1
 
 cursor:
   ## secret is an application cursor secret used to encrypt data within the
