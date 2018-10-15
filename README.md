@@ -4,6 +4,14 @@
 
 Deep Security Smart Check uses the `helm` package manager for Kubernetes.
 
+To install Deep Security Smart Check you must have a running Amazon EKS cluster.
+
+### Creating an Amazon EKS cluster
+
+Follow the [instructions here](https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html) to create an Amazon EKS cluster.
+
+Then create a storage class [as described here](https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html). You will specify the storage class name when you install Deep Security Smart Check.
+
 ### Installing Helm
 
 You will need `helm` version `v2.8.0` or later. There's a handy [quickstart](https://docs.helm.sh/using_helm/#quickstart) that will help you get started, or if you like living dangerously:
@@ -20,7 +28,7 @@ Make sure that your `kubectl` context is set correctly to point to your cluster:
 kubectl config current-context
 ```
 
-_If your `kubectl` context is not pointing to your cluster, use `kubectl config get-contexts` and `kubectl config use-context` to set it, or if you are using Google Cloud Platform follow the instructions in the **Connect to the cluster** dialog available by clicking the **Connect** button beside your cluster information in the console._
+_If your `kubectl` context is not pointing to your cluster, use `kubectl config get-contexts` and `kubectl config use-context` to set it._
 
 Install the `tiller` cluster-side component:
 
@@ -57,14 +65,15 @@ We recommend that you register for a 30-day trial license [code](https://go2.tre
 
 The Helm chart for Deep Security Smart Check is hosted in a public repository on Github.
 
-To install the latest version of Deep Security Smart Check into the default Kubernetes namespace:
+To install Deep Security Smart Check into the default Kubernetes namespace:
 
 ```sh
 helm install \
   --set auth.masterPassword={password} \
   --set activationCode={activation code} \
+  --set persistence.storageClassName={storage class name} \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
+  https://github.com/deep-security/smartcheck-helm/archive/1.0.8-aws-container-marketplace.tar.gz
 ```
 
 _Experienced `helm` users will note that we are using `deepsecurity-smartcheck` as the `helm` release name in these examples. There is no requirement to use this release name._
@@ -93,18 +102,6 @@ Our [docs page](https://deep-security.github.io/smartcheck-docs/) provides links
 
 ## Advanced topics
 
-### Installing a specific version of Deep Security Smart Check
-
-If you want to install a specific version of Deep Security Smart Check, you can use the archive link for the tagged release rather than for `master`. For example, to install Deep Security Smart Check 1.0.8, you can run:
-
-```sh
-helm install \
-  --set auth.masterPassword={password} \
-  --set activationCode={activation code} \
-  --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/1.0.8.tar.gz
-```
-
 ### Using an alternate Kubernetes namespace
 
 To install Deep Security Smart Check into an existing Kubernetes namespace that's different from the current kube config namespace, use the `--namespace` parameter in the `helm install` command:
@@ -113,8 +110,9 @@ To install Deep Security Smart Check into an existing Kubernetes namespace that'
 helm install \
   --namespace {namespace} \
   --set auth.masterPassword={password} \
+  --set persistence.storageClassName={storage class name} \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
+  https://github.com/deep-security/smartcheck-helm/archive/1.0.8-aws-container-marketplace.tar.gz
 ```
 
 ### Overriding configuration defaults
@@ -127,7 +125,7 @@ You can override the defaults in this file by specifying a comma-separated list 
 helm install \
   --set key1=value1,key2=value2,... \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
+  https://github.com/deep-security/smartcheck-helm/archive/1.0.8-aws-container-marketplace.tar.gz
 ```
 
 or by creating a [YAML](http://yaml.org "YAML Ain't Markup Language") file with the specific values you want to override and providing the location of this file on the command line:
@@ -136,7 +134,7 @@ or by creating a [YAML](http://yaml.org "YAML Ain't Markup Language") file with 
 helm install \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
+  https://github.com/deep-security/smartcheck-helm/archive/1.0.8-aws-container-marketplace.tar.gz
 ```
 
 _If you create a file to override the values, make sure to copy the structure from the chart's `values.yaml` file. You only need to provide the values that you are overriding._
@@ -208,112 +206,9 @@ _Note: If you are running Deep Security Smart Check in a namespace other than th
 
 ## Troubleshooting
 
-### Failed to pull image ... certificate signed by unknown authority
-
-If you are using `minikube` and an insecure registry, you will need to tell `minikube` that the registry is insecure. To do this, you will need to first delete and then restart your `minikube` VM:
-
-```sh
-minikube delete
-minikube start --insecure-registry {registry address}
-```
-
-### Failed to pull image ... Please enable or contact project owners to enable the Google Container Registry API
-
-#### Step 1: Check that you have the right repository names in your `overrides.yaml`
-
-If you have copied the Deep Security Smart Check images from their default location to the Google Container Registry and pods are failing to start with an error message that looks like the following:
-
-```text
-Failed to pull image "us.gcr.io/deepsecurity/auth:latest": rpc error: code = 2 desc = Error response from daemon: {"message":"Get https://gcr.io/v2/deepsecurity/auth/manifests/latest: denied: Please enable or contact project owners to enable the Google Container Registry API in Cloud Console at https://console.cloud.google.com/apis/api/containerregistry.googleapis.com/overview?project=deepsecurity before performing this operation."}
-```
-
-with the `deepsecurity` project name, then check to make sure that you have the right project name override in your `overrides.yaml` file. For example, if your project is `amazing-minbari` and your registry endpoint is `gcr.io`, you should have the following in your `overrides.yaml`:
-
-```yaml
-images:
-  defaults:
-    registry: gcr.io
-    project: amazing-minbari
-```
-
-#### Step 2: Ensure that the Google Container Registry API is enabled
-
-If you have confirmed that the project name is set correctly and you are seeing it in the error message, follow the instructions and the link in the error to enable the Google Container Registry API, then delete and re-install the release:
-
-```sh
-helm delete --purge deepsecurity-smartcheck
-helm install \
-  --values overrides.yaml \
-  --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
-```
-
-### Failed to pull image ... pull access denied ... repository does not exist or may require 'docker login'
-
-If the images are stored in a private registry, you will need to use `ImagePullSecrets` to allow your Kubernetes cluster to pull the images from the registry.
-
-#### Creating a Secret with a Docker Config
-
-Run the following command to create a Docker secret, replacing the upper-case values with your values:
-
-```sh
-kubectl create secret docker-registry myregistrykey \
-  --docker-server=DOCKER_REGISTRY_SERVER \
-  --docker-username=DOCKER_USER \
-  --docker-password=DOCKER_PASSWORD \
-  --docker-email=DOCKER_EMAIL
-```
-
-**IMPORTANT:** Make sure you enter your credentials correctly! If you get the values wrong, Docker Hub will lock out your account when it sees repeated failed attempts to download the images.
-
-Then, provide the secret key (`myregistrykey` in the example) to the install process, either on the command line:
-
-```sh
-helm delete --purge deepsecurity-smartcheck
-helm install \
-  --set images.defaults.imagePullSecret=myregistrykey \
-  --values overrides.yaml \
-  --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
-```
-
-or by editing your `overrides.yaml` file to set the `images.defaults.imagePullSecret` attribute and re-installing:
-
-```sh
-helm delete --purge deepsecurity-smartcheck
-helm install \
-  --values overrides.yaml \
-  --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
-```
-
-### What role does my Google Cloud Platform service account need in order for Deep Security Smart Check to work with Google Container Registry?
-
-The service account must have at least the `StorageObjectViewer` role.
-
-### Internal network failures
-
-If you are see errors from the `auth` service like:
-
-```text
-request canceled while waiting for connection
-```
-
-the issue may be caused by a common [Kubernetes installation issue](https://github.com/kubernetes/kubernetes/issues/61593#issuecomment-376405711) where pods cannot talk to themselves using a Kubernetes service.
-
-If you are using Google Kubernetes Engine, first ensure that network policy is enabled on your cluster.
-
-If you are not using Google Kubernetes Engine, try the following command on _all_ worker nodes in your cluster. If you are using `minikube`, use `minikube ssh` to access the worker node.
-
-Depending on your installation, the network interface in the next step may be `cni0` or `docker0`; if trying `cni0` results in an error message, try `docker0`.
-
-```sh
-sudo ip link set cni0 promisc on
-```
-
 ### Pod has unbound PersistentVolumeClaims on Amazon EKS
 
-If you are using `Amazon EKS` and see errors like:
+If you see errors like:
 
 ```text
 pod has unbound PersistentVolumeClaims
@@ -326,5 +221,5 @@ helm install \
   --set persistence.storageClassName={storage class name} \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
+  https://github.com/deep-security/smartcheck-helm/archive/1.0.8-aws-container-marketplace.tar.gz
 ```
