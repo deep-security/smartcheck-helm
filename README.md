@@ -22,13 +22,7 @@ kubectl config current-context
 
 _If your `kubectl` context is not pointing to your cluster, use `kubectl config get-contexts` and `kubectl config use-context` to set it, or if you are using Google Cloud Platform follow the instructions in the **Connect to the cluster** dialog available by clicking the **Connect** button beside your cluster information in the console._
 
-Install the `tiller` cluster-side component:
-
-```sh
-helm init
-```
-
-You will also need to configure a service account for `tiller`:
+Configure a service account for `tiller` and install:
 
 ```sh
 kubectl create serviceaccount \
@@ -39,10 +33,7 @@ kubectl create clusterrolebinding tiller-cluster-role \
   --clusterrole=cluster-admin \
   --serviceaccount=kube-system:tiller
 
-kubectl patch deploy \
-  --namespace kube-system \
-  tiller-deploy \
-  --patch '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+helm init --service-account tiller
 ```
 
 Use `helm version` to confirm that you have at least version `v2.8.0` of the client and server installed.
@@ -162,7 +153,7 @@ Refer to the `values.yaml` file for a full list of available values to override;
 | `proxy.noProxy`                |                                               | If set, is a list of hosts or `host:port` combinations which should not be accessed through the proxy.                                                                                                                                                                      |
 | `proxy.username`               |                                               | If set, is the user name to use to authenticate requests sent through the proxy.                                                                                                                                                                                            |
 | `proxy.password`               |                                               | If set, is the password to use to authenticate requests sent through the proxy.                                                                                                                                                                                             |
-| `scan.malwareCache.enabled`             |  `true`                                         | If set, cache mechanism will be used to improve scanning performance.                                                                                                                                                                                                       |
+| `scan.malwareCache.enabled`    | `true`                                        | If set, cache mechanism will be used to improve scanning performance.                                                                                                                                                                                                       |
 
 </tbody>
 </table>
