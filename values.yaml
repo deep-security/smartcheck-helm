@@ -578,3 +578,9 @@ cursor:
   ##
   ## Default value: a generated password derived from the masterPassword and system details
   secret:
+
+feed:
+  openscap:
+    url: https://dstf.trendmicro.com/oval/manifest.json
+    interval: 24h
+
