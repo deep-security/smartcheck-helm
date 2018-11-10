@@ -66,6 +66,19 @@ _Experienced `helm` users will note that we are using `deepsecurity-smartcheck` 
 
 The install process will display instructions for obtaining the initial username and password and for connecting to Deep Security Smart Check.
 
+### Upgrading Deep Security Smart Check
+
+To upgrade an existing installation of Deep Security Smart Check in the default Kubernetes namespace to the latest version:
+
+```sh
+helm upgrade \
+  --values overrides.yaml \
+  deepsecurity-smartcheck \
+  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
+```
+
+This assumes that you have put any local overrides (for example the activation code and the master password) into a file called `overrides.yaml` in the current directory as described in [Overriding configuration defaults](#overriding-configuration-defaults).
+
 ### Uninstalling Deep Security Smart Check
 
 You can delete all of the resources created for Deep Security Smart Check by running `helm delete`:
