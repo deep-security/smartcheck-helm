@@ -258,7 +258,7 @@ spec:
                 - --application-name=ZA
                 - --product-code=DK
                 - --service=ALL
-                - --report-format=DS64
+                - --report-format=DSSC
                 - --report-format-version=1.0
                 - --target-url=$(TARGET_URL)
                 - --metrics-directory=/data

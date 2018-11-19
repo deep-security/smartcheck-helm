@@ -458,7 +458,7 @@ tasks:
     ## trigger metrics collection.
     ##
     ## Default value: false
-    enabled: false
+    enabled: true
 
     ## schedule controls the schedule for metrics collection. It is a string in
     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
@@ -471,7 +471,7 @@ tasks:
     ## trigger metrics collection.
     ##
     ## Default value: false
-    enabled: false
+    enabled: true
 
     ## schedule controls the schedule for metrics collection. It is a string in
     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
@@ -482,8 +482,8 @@ tasks:
     ## url is the target URL for reporting metrics. If no URL is provided, then metrics
     ## will not be reported.
     ##
-    ## Default value: blank
-    url:
+    ## Default value: https://licenseupdate.trendmicro.com/fb/bifconnect.ashx
+    url: https://licenseupdate.trendmicro.com/fb/bifconnect.ashx
 
 # securityContext specifies the security contexts that we'll apply to the pods.
 securityContext:
