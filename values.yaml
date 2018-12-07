@@ -463,8 +463,8 @@ tasks:
     ## schedule controls the schedule for metrics collection. It is a string in
     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
     ##
-    ## Default value: */1 * * * * (every minute)
-    schedule: "*/1 * * * *"
+    ## Default value: @hourly
+    schedule: "@hourly"
 
   metricsReporter:
     ## enabled controls whether or not to create the Kubernetes Cronjob task that will

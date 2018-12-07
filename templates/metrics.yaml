@@ -65,6 +65,8 @@ metadata:
     {{ $k }}: {{ quote $v }}
 {{- end }}
 spec:
+  startingDeadlineSeconds: 300
+  concurrencyPolicy: Replace
   schedule: {{ quote .Values.tasks.metricsCollector.schedule }}
   successfulJobsHistoryLimit: 0
   jobTemplate:
@@ -203,6 +205,8 @@ metadata:
     {{ $k }}: {{ quote $v }}
 {{- end }}
 spec:
+  startingDeadlineSeconds: 300
+  concurrencyPolicy: Replace
   schedule: {{ quote .Values.tasks.metricsReporter.schedule }}
   successfulJobsHistoryLimit: 0
   jobTemplate:
