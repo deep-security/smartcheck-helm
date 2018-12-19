@@ -1,5 +1,5 @@
 
-License Attributions for DSSC v. 1.1.2 =============================================================================
+License Attributions for DSSC v. 1.1.3 =============================================================================
 This product includes or may include the following:
 
 
