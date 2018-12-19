@@ -251,6 +251,14 @@ spec:
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
               {{ $k }}: {{ quote $v }}
 {{- end }}
+        - podSelector:
+            matchLabels:
+              service: openscap-scan
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+{{- end }}
       ports:
         - protocol: TCP
           port: 5432
