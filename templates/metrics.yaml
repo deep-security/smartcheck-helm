@@ -93,10 +93,10 @@ spec:
 {{- end }}
           {{- $imageDefaults := .Values.images.defaults }}
           {{- with .Values.images.metricsCollector }}
-          {{- $secret := (default $imageDefaults.imagePullSecret .imagePullSecret) | quote }}
+          {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
           {{- if not (eq "" $secret) }}
           imagePullSecrets:
-            - name: {{ $secret }}
+            - name: {{ $secret | quote }}
           {{- end }}
           containers:
             - name: tasks
@@ -232,10 +232,10 @@ spec:
 {{- end }}
           {{- $imageDefaults := .Values.images.defaults }}
           {{- with .Values.images.metricsReporter }}
-          {{- $secret := (default $imageDefaults.imagePullSecret .imagePullSecret) | quote }}
+          {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
           {{- if not (eq "" $secret) }}
           imagePullSecrets:
-            - name: {{ $secret }}
+            - name: {{ $secret | quote }}
           {{- end }}
           containers:
             - name: tasks

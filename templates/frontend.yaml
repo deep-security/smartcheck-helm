@@ -53,10 +53,10 @@ spec:
 {{- end }}
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.frontend }}
-      {{- $secret := (default $imageDefaults.imagePullSecret .imagePullSecret) | quote }}
+      {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
       {{- if not (eq "" $secret) }}
       imagePullSecrets:
-        - name: {{ $secret }}
+        - name: {{ $secret | quote }}
       {{- end }}
       containers:
         - name: frontend
