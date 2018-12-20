@@ -135,6 +135,11 @@ spec:
             - --initial-password=$(INITIAL_PASSWORD)
             - --cursor-encryption-secret=$(CURSOR_ENCRYPTION_SECRET)
             - --token-audience={{ default "deepsecurity-smartcheck" .Values.auth.tokenAudience }}
+{{- if .Values.auth.saml.enabled }}
+            - --saml-entity-id={{ .Values.auth.saml.entityID }}
+            - --saml-assertion-consumer-url={{ .Values.auth.saml.location }}
+            - --saml-max-roles={{ default 10 .Values.auth.saml.maxRoles }}
+{{- end }}
           env:
             - name: PGUSER
               valueFrom:
@@ -279,4 +284,8 @@ spec:
           port: 53
         - protocol: UDP
           port: 53
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
 {{- end }}

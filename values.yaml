@@ -83,6 +83,41 @@ auth:
   ## Default value: {must be provided by the installer}
   masterPassword:
 
+  saml:
+    ## enabled controls whether SAML authentication will be enabled.
+    ##
+    ## `location` is also required to be set for SAML authentication to be fully enabled.
+    ##
+    ## Default value: false
+    enabled: false
+
+    ## location is the location of the SAML assertion consumer service. This should be set to
+    ## the DNS name that your users will use to access Deep Security Smart Check, for example
+    ## `smartcheck.example.com`. If your users will access Deep Security Smart Check on a non-standard
+    ## port, you can include the port number as well, for example `smartcheck.example.com:8443`.
+    ## The value will be expanded to set the URL scheme and path if not provided, so if `location` is
+    ## set to `smartcheck.example.com`, then the final value will be `https://smartcheck.example.com/saml`).
+    ##
+    ## If `location` is not set, then SAML authentication will not be enabled regardless of the
+    ## setting of `enabled`.
+    ##
+    ## Default value: (none)
+    location:
+
+    ## entityID is the SAML entity ID for Deep Security Smart Check as a service provider.
+    ## If not provided, the default is copied from the `location` value after expansion (for example,
+    ## if `location` is set to `smartcheck.example.com`, then `entityID` will be
+    ## `https://smartcheck.example.com/saml`).
+    ##
+    ## Default value: derived from the `location` value.
+    entityID:
+
+    ## maxRoles is the maximum number of roles that Deep Security Smart Check will permit in a
+    ## SAML assertion.
+    ##
+    ## Default value: 10
+    maxRoles: 10
+
   ## roleName is the name of the default administrator role that the system creates on startup.
   ## If a role with this name already exists, no action will be taken.
   ##

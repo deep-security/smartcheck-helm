@@ -212,7 +212,18 @@ data:
 
       }
 
-      location ~ /api/(users|roles|sessions|teams) {
+      location ~ /saml/?$ {
+        limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
+        limit_req_status {{ default 429 $apiRateLimiting.status }};
+
+        proxy_pass         http://auth_server;
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+      }
+
+      location ~ /api/(users|roles|sessions|identity-providers) {
         limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
         limit_req_status {{ default 429 $apiRateLimiting.status }};
 
@@ -224,7 +235,7 @@ data:
         proxy_set_header   X-Forwarded-Host $server_name;
       }
 
-      location ~ /api/(registries|views) {
+      location ~ /api/registries {
         limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
         limit_req_status {{ default 429 $apiRateLimiting.status }};
 
