@@ -174,7 +174,7 @@ Refer to the `values.yaml` file for a full list of available values to override;
 
 ### Replacing the service certificate
 
-See the wiki page [Replacing the service certificate](https://github.com/deep-security/smartcheck-helm/wiki/Replacing-the-service-certificate).
+See the wiki page [Replace the service certificate](https://github.com/deep-security/smartcheck-helm/wiki/Replace-the-service-certificate).
 
 ### Securing Helm
 

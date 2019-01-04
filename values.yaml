@@ -227,6 +227,12 @@ service:
   ## Default value: 80
   httpPort: 80
 
+  ## registryPort is the port where the service will listen for docker registry requests.
+  ## It is only valid when dockerRegistry is enabled.
+  ##
+  ## Default value: 5000
+  registryPort: 5000
+
   ## annotations is arbitrary non-identifying metadata for the `proxy` service.
   ## Some cloud providers support different load balancer settings via annotations.
   ##
@@ -301,6 +307,29 @@ scan:
       ## Default value: 1Gi
       sizeLimit: 1Gi
 
+registry:
+  ## Enable the built-in registry for pre-registry scanning.
+  ##
+  ## Default value: false
+  enabled: false
+
+  ## Authentication for the built-in registry
+  auth:
+    ## User name for authentication to the registry
+    ##
+    ## Default value: empty string
+    username: ""
+
+    ## Password for authentication to the registry
+    ##
+    ## Default value: empty string
+    password: ""
+
+  ## The amount of space to request for the registry data volume
+  ##
+  ## Default value: 5Gi
+  dataVolume:
+    sizeLimit: 10Gi
 
 images:
   defaults:
@@ -389,6 +418,14 @@ images:
   openscapFeedConsumer:
     repository: openscap-feed-consumer
     tag: 1.1.9@sha256:7b68850c0b616bdbe03e495d4a5dcd9d26dcc51058ead1c46cfccbf1d4d16c1d
+  registry:
+    registry: "-"
+    project: library
+    repository: registry
+    tag: 2.7.0
+    pullPolicy: IfNotPresent
+  registryCleaner:
+    repository: registry-cleaner
 
 replicas: {}
 
@@ -549,6 +586,19 @@ tasks:
     ## Default value: https://licenseupdate.trendmicro.com/fb/bifconnect.ashx
     url: https://licenseupdate.trendmicro.com/fb/bifconnect.ashx
 
+  registryCleaner:
+     ## enabled controls whether or not to create the Kubernetes Cronjob task that will
+     ## trigger local registry cleaner.
+     ##
+     ## Default value: true
+     enabled: true
+
+     ## schedule controls the schedule for metrics collection. It is a string in
+     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
+     ##
+     ## Default value: @daily
+     schedule: "@daily"
+
 # securityContext specifies the security contexts that we'll apply to the pods.
 securityContext:
   ## enabled is a global flag controlling whether security contexts are included at all in the manifest
@@ -599,6 +649,10 @@ securityContext:
       readOnlyRootFilesystem: true
       runAsNonRoot: true
   metricsReporter: *metrics
+  registry:
+    pod:
+      runAsUser: 1000
+      fsGroup: 1000
 
 cursor:
   ## secret is an application cursor secret used to encrypt data within the
@@ -615,4 +669,3 @@ feed:
   openscap:
     url: https://dstf.trendmicro.com/oval/manifest.json
     interval: 24h
-
