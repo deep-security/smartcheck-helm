@@ -433,6 +433,10 @@ affinity:
 
 networkPolicy:
   enabled: true
+  ## additionalWebhookTargetPorts is a list of destination port numbers that are allowed for web hook targets
+  ##
+  ## Default value: []
+  additionalWebhookTargetPorts: []
 
 # Scheduled system tasks
 tasks:
