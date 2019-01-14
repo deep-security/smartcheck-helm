@@ -183,7 +183,11 @@ spec:
 {{- end }}
       ports:
         - protocol: TCP
-          port: 8081
+          port: 8082
+    - to: # any
+      ports:
+        - protocol: TCP
+          port: 443
     - to: # any
       ports:
         - protocol: TCP
