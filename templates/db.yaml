@@ -114,7 +114,7 @@ spec:
                 - exec pg_isready -U $POSTGRES_USER
             initialDelaySeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 6
+            failureThreshold: 3
           readinessProbe:
             exec:
               command:
@@ -123,7 +123,7 @@ spec:
                 - exec pg_isready -U $POSTGRES_USER
             initialDelaySeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 6
+            failureThreshold: 60
           env:
             ## POSTGRES_DB
             ## This optional environment variable can be used to define a different name for the default
