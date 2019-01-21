@@ -272,6 +272,8 @@ spec:
                 - --metrics-directory=/data
                 - --flush
               env:
+                - name: APPLICATION_VERSION
+                  value: {{ .Chart.Version | quote }}
                 - name: TARGET_URL
                   value: {{ .Values.tasks.metricsReporter.url }}
                 - name: ACTIVATION_CODE
