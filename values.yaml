@@ -352,6 +352,8 @@ images:
     repository: frontend
   proxy:
     repository: proxy
+  license:
+    repository: license
   vulnerabilityScan:
     repository: vulnerability-scan
   vulnerabilityDB:

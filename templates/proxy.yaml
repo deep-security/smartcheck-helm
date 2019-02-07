@@ -167,6 +167,9 @@ data:
     upstream registryviews_server {
       server registryviews:8080;
     }
+    upstream license_server {
+      server license:8080;
+    }
 
     # Configuration for the server
     server {
@@ -240,6 +243,18 @@ data:
         limit_req_status {{ default 429 $apiRateLimiting.status }};
 
         proxy_pass         http://registryviews_server;
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Host $server_name;
+      }
+
+      location ~ /api/license {
+        limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
+        limit_req_status {{ default 429 $apiRateLimiting.status }};
+
+        proxy_pass         http://license_server;
         proxy_redirect     off;
         proxy_set_header   Host $host;
         proxy_set_header   X-Real-IP $remote_addr;
@@ -320,6 +335,14 @@ spec:
         - podSelector:
             matchLabels:
               service: docs
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+{{- end }}
+        - podSelector:
+            matchLabels:
+              service: license
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
