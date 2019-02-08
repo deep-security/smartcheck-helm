@@ -8,7 +8,7 @@ keywords:
 home: https://github.com/deep-security/smartcheck-helm
 maintainers:
   - name: Trend Micro
-    url: https://www.trendmicro.com/
+    url: https://www.trendmicro.com/smartcheck
 engine: gotpl
 appVersion: "1.1.6"
 deprecated: false
