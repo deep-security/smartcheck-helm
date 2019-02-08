@@ -533,7 +533,7 @@ securityContext:
   enabled: true
 
   ## default is the default security context that we'll apply at the pod and container level.
-  ## if `securityCOntext.enabled` is true, the `pod` value will be inserted into the `Deployment` manifest
+  ## if `securityContext.enabled` is true, the `pod` value will be inserted into the `Deployment` manifest
   ## as part of the pod template and the `container` value will be inserted at the container level.
   default:
     pod:
@@ -546,7 +546,7 @@ securityContext:
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
-      # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": perfect.
+      # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": this seems appropriate.
   db: &databaseSecurityContext
     pod:
       runAsNonRoot: false
