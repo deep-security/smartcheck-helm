@@ -99,14 +99,14 @@ Our [docs page](https://deep-security.github.io/smartcheck-docs/) provides links
 
 ### Installing a specific version of Deep Security Smart Check
 
-If you want to install a specific version of Deep Security Smart Check, you can use the archive link for the tagged release rather than for `master`. For example, to install Deep Security Smart Check 1.1.6, you can run:
+If you want to install a specific version of Deep Security Smart Check, you can use the archive link for the tagged release rather than for `master`. For example, to install Deep Security Smart Check 1.1.7, you can run:
 
 ```sh
 helm install \
   --set auth.masterPassword={password} \
   --set activationCode={activation code} \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/1.1.6.tar.gz
+  https://github.com/deep-security/smartcheck-helm/archive/1.1.7.tar.gz
 ```
 
 ### Using an alternate Kubernetes namespace
