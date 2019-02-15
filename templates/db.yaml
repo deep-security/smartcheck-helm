@@ -182,17 +182,30 @@ spec:
 
 {{ if .Values.persistence.enabled }}
           volumeMounts:
+            - name: varrun
+              mountPath: /var/run/postgresql
+            - name: tmp
+              mountPath: /tmp
             - name: data
-              mountPath: /var/lib/postgresql/data/pgdata
+              mountPath: /var/lib/postgresql/data
               subPath: postgresql-db
 {{ end }}
           resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.db) | indent 12 }}
-{{ if .Values.persistence.enabled }}
       volumes:
+        - name: varrun
+          emptyDir:
+            sizeLimit: 1Mi
+        - name: tmp
+          emptyDir:
+            sizeLimit: 10Mi
         - name: data
+{{ if .Values.persistence.enabled }}
           persistentVolumeClaim:
             claimName: {{ template "smartcheck.fullname" . }}-app-db
+{{ else }}
+          emptyDir:
+            sizeLimit: {{ default "8Gi" .Values.persistence.db.size }}
 {{ end }}
       nodeSelector:
 {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.db) | indent 8 }}
