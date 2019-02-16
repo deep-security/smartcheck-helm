@@ -557,7 +557,7 @@ securityContext:
       privileged: false
       readOnlyRootFilesystem: false
       runAsNonRoot: false
-  proxy: &staticAssetSecurityContext
+  frontend: &staticAssetSecurityContext
     pod:
       runAsNonRoot: false
     container:

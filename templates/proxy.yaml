@@ -91,7 +91,11 @@ spec:
             - containerPort: 8443
               name: https
           volumeMounts:
-            - mountPath: /secrets/
+            - mountPath: /var/run
+              name: varrun
+            - mountPath: /var/cache/nginx
+              name: varcache
+            - mountPath: /secrets
               name: tls-secret
             - mountPath: /etc/nginx/argus
               name: config
@@ -103,6 +107,12 @@ spec:
           resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.proxy) | indent 12 }}
       volumes:
+        - name: varrun
+          emptyDir:
+            sizeLimit: 1Mi
+        - name: varcache
+          emptyDir:
+            sizeLimit: 10Mi
         - name: tls-secret
           secret:
 {{- if not .Values.certificate.secret.name }}
