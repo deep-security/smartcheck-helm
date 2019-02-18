@@ -568,7 +568,6 @@ securityContext:
       readOnlyRootFilesystem: false
       runAsNonRoot: false
   frontend: *staticAssetSecurityContext
-  docs: *staticAssetSecurityContext
   db: &dbSecurityContext
     pod:
       runAsNonRoot: true
