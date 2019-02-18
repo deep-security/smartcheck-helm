@@ -80,6 +80,11 @@ spec:
           ports:
             - containerPort: 8080
               name: external
+          volumeMounts:
+            - mountPath: /var/run
+              name: varrun
+            - mountPath: /var/cache/nginx
+              name: varcache
           # TODO probes
           # livenessProbe:
           # readinessProbe:
@@ -87,6 +92,13 @@ spec:
           env: []
           resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.frontend) | indent 12 }}
+      volumes:
+        - name: varrun
+          emptyDir:
+            sizeLimit: 1Mi
+        - name: varcache
+          emptyDir:
+            sizeLimit: 10Mi
       nodeSelector:
 {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.frontend) | indent 8 }}
       tolerations:
