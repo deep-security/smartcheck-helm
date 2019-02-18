@@ -600,30 +600,6 @@ securityContext:
       runAsUser: 0
   metricsReporter: *metrics
 
-  openscapScan:
-    pod:
-      runAsNonRoot: false
-    scanContainer:
-      allowPrivilegeEscalation: false
-      capabilities:
-        add:
-          - SYS_CHROOT
-        drop:
-          - ALL
-      privileged: false
-      readOnlyRootFilesystem: true
-      runAsNonRoot: false
-      runAsUser: 0
-    feedConsumerContainer:
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-          - ALL
-      privileged: false
-      readOnlyRootFilesystem: true
-      runAsNonRoot: true
-      runAsUser: 1
-
 cursor:
   ## secret is an application cursor secret used to encrypt data within the
   ## cursor. The value is put through PBKDF2 key expansion before being used
