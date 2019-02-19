@@ -121,7 +121,7 @@ spec:
                 - collect
                 - --namespace={{ .Release.Namespace }}
                 - --service=metrics
-                - --metrics-directory=/data
+                - --metrics-directory=/data/metrics
               volumeMounts:
                 - name: data
                   mountPath: /data
@@ -269,7 +269,7 @@ spec:
                 - --report-format=DSSC
                 - --report-format-version=1.0
                 - --target-url=$(TARGET_URL)
-                - --metrics-directory=/data
+                - --metrics-directory=/data/metrics
                 - --flush
               env:
                 - name: APPLICATION_VERSION

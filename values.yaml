@@ -582,11 +582,11 @@ securityContext:
       runAsNonRoot: true
       # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": this seems appropriate.
   vulnerabilityDB: *dbSecurityContext
-  ## GKE mounts persistent volumes as root with mode 0755,
-  ## so these pods need to run as root.
+
   metricsCollector: &metrics
     pod:
-      runAsNonRoot: false
+      runAsNonRoot: true
+      fsGroup: 1
     container:
       allowPrivilegeEscalation: false
       capabilities:
@@ -594,8 +594,7 @@ securityContext:
           - ALL
       privileged: false
       readOnlyRootFilesystem: true
-      runAsNonRoot: false
-      runAsUser: 0
+      runAsNonRoot: true
   metricsReporter: *metrics
 
 cursor:
