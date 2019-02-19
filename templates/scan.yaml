@@ -362,4 +362,8 @@ spec:
       - protocol: TCP
         port: {{ $port }}
 {{- end }}
+{{- range $port := .Values.networkPolicy.additionalRegistryPorts }}
+      - protocol: TCP
+        port: {{ $port }}
+{{- end }}
 {{- end }}

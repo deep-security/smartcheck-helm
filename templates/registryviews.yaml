@@ -299,12 +299,12 @@ spec:
           port: 53
         - protocol: UDP
           port: 53
-    - to: # any
-      ports:
         - protocol: TCP
           port: 80
-    - to: # any
-      ports:
         - protocol: TCP
           port: 443
+{{- range $port := .Values.networkPolicy.additionalRegistryPorts }}
+        - protocol: TCP
+          port: {{ $port }}
+{{- end }}
 {{- end }}

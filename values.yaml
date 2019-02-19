@@ -470,10 +470,16 @@ affinity:
 
 networkPolicy:
   enabled: true
+
   ## additionalWebhookTargetPorts is a list of destination port numbers that are allowed for web hook targets
   ##
   ## Default value: []
   additionalWebhookTargetPorts: []
+
+  ## additionalRegistryPorts is a list of destination port numbers that are allowed for registry connections
+  ##
+  ## Default value: []
+  additionalRegistryPorts: []
 
 # Scheduled system tasks
 tasks:
