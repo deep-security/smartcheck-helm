@@ -557,16 +557,6 @@ securityContext:
       privileged: false
       readOnlyRootFilesystem: false
       runAsNonRoot: false
-  frontend: &staticAssetSecurityContext
-    pod:
-      runAsNonRoot: false
-    container:
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop: []
-      privileged: false
-      readOnlyRootFilesystem: false
-      runAsNonRoot: false
   db: &dbSecurityContext
     pod:
       runAsNonRoot: true
