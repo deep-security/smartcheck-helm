@@ -76,7 +76,7 @@ spec:
 {{- end }}
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.license }}
-      {{- $secret := (default $imageDefaults.imagePullSecret .imagePullSecret) | quote }}
+      {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
       {{- if not (eq "" $secret) }}
       imagePullSecrets:
         - name: {{ $secret }}
