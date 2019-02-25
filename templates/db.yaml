@@ -180,7 +180,6 @@ spec:
                   key: database-password
                   name: {{ template "smartcheck.fullname" . }}-db
 
-{{ if .Values.persistence.enabled }}
           volumeMounts:
             - name: varrun
               mountPath: /var/run/postgresql
@@ -189,7 +188,6 @@ spec:
             - name: data
               mountPath: /var/lib/postgresql/data
               subPath: postgresql-db
-{{ end }}
           resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.db) | indent 12 }}
       volumes:
