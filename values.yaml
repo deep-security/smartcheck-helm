@@ -553,16 +553,7 @@ securityContext:
       readOnlyRootFilesystem: true
       runAsNonRoot: true
       # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": this seems appropriate.
-  vulnerabilityScan: &scanSecurityContext
-    pod:
-      runAsNonRoot: false
-    container:
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop: []
-      privileged: false
-      readOnlyRootFilesystem: false
-      runAsNonRoot: false
+
   db: &dbSecurityContext
     pod:
       runAsNonRoot: true
