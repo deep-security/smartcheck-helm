@@ -196,7 +196,7 @@ spec:
             sizeLimit: 1Mi
         - name: tmp
           emptyDir:
-            sizeLimit: 10Mi
+            sizeLimit: 100Mi
         - name: data
 {{ if .Values.persistence.enabled }}
           persistentVolumeClaim:
