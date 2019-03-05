@@ -61,10 +61,10 @@ spec:
 {{- end }}
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.proxy }}
-      {{- $secret := (default $imageDefaults.imagePullSecret .imagePullSecret) | quote }}
+      {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
       {{- if not (eq "" $secret) }}
       imagePullSecrets:
-        - name: {{ $secret }}
+        - name: {{ $secret | quote }}
       {{- end }}
       containers:
         - name: proxy
@@ -91,7 +91,11 @@ spec:
             - containerPort: 8443
               name: https
           volumeMounts:
-            - mountPath: /secrets/
+            - mountPath: /var/run
+              name: varrun
+            - mountPath: /var/cache/nginx
+              name: varcache
+            - mountPath: /secrets
               name: tls-secret
             - mountPath: /etc/nginx/argus
               name: config
@@ -103,6 +107,12 @@ spec:
           resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.proxy) | indent 12 }}
       volumes:
+        - name: varrun
+          emptyDir:
+            sizeLimit: 1Mi
+        - name: varcache
+          emptyDir:
+            sizeLimit: 10Mi
         - name: tls-secret
           secret:
 {{- if not .Values.certificate.secret.name }}
@@ -167,6 +177,9 @@ data:
     upstream registryviews_server {
       server registryviews:8080;
     }
+    upstream license_server {
+      server license:8080;
+    }
 
     # Configuration for the server
     server {
@@ -212,7 +225,18 @@ data:
 
       }
 
-      location ~ /api/(users|roles|sessions|teams) {
+      location ~ /saml/?$ {
+        limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
+        limit_req_status {{ default 429 $apiRateLimiting.status }};
+
+        proxy_pass         http://auth_server;
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+      }
+
+      location ~ /api/(users|roles|sessions|identity-providers) {
         limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
         limit_req_status {{ default 429 $apiRateLimiting.status }};
 
@@ -224,11 +248,23 @@ data:
         proxy_set_header   X-Forwarded-Host $server_name;
       }
 
-      location ~ /api/(registries|views) {
+      location ~ /api/registries {
         limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
         limit_req_status {{ default 429 $apiRateLimiting.status }};
 
         proxy_pass         http://registryviews_server;
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Host $server_name;
+      }
+
+      location ~ /api/license {
+        limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
+        limit_req_status {{ default 429 $apiRateLimiting.status }};
+
+        proxy_pass         http://license_server;
         proxy_redirect     off;
         proxy_set_header   Host $host;
         proxy_set_header   X-Real-IP $remote_addr;
@@ -309,6 +345,14 @@ spec:
         - podSelector:
             matchLabels:
               service: docs
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+{{- end }}
+        - podSelector:
+            matchLabels:
+              service: license
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}

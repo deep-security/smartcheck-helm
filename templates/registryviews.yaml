@@ -76,10 +76,10 @@ spec:
 {{- end }}
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.registryviews }}
-      {{- $secret := (default $imageDefaults.imagePullSecret .imagePullSecret) | quote }}
+      {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
       {{- if not (eq "" $secret) }}
       imagePullSecrets:
-        - name: {{ $secret }}
+        - name: {{ $secret | quote }}
       {{- end }}
       containers:
         - name: registryviews
@@ -127,6 +127,7 @@ spec:
             - --internal-base=http://registryviews:8081
             - --authorization-url=http://auth-internal:8081
             - --scan-url=http://scan-internal:8081
+            - --license-url=http://license-internal:8081
             - --database-connection-string=postgres:postgres://db/registryviewsdb?sslmode=disable&connect_timeout=5 # seconds
             - --database-secret=$(DB_SECRET)
             - --cursor-encryption-secret=$(CURSOR_ENCRYPTION_SECRET)
@@ -269,6 +270,14 @@ spec:
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
               {{ $k }}: {{ quote $v }}
 {{- end }}
+        - podSelector:
+            matchLabels:
+              service: license
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+{{- end }}
       ports:
         - protocol: TCP
           port: 8081
@@ -290,12 +299,12 @@ spec:
           port: 53
         - protocol: UDP
           port: 53
-    - to: # any
-      ports:
         - protocol: TCP
           port: 80
-    - to: # any
-      ports:
         - protocol: TCP
           port: 443
+{{- range $port := .Values.networkPolicy.additionalRegistryPorts }}
+        - protocol: TCP
+          port: {{ $port }}
+{{- end }}
 {{- end }}

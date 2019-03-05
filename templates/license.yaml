@@ -1,9 +1,30 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: malware-scan-internal
+  name: license
   labels:
-    service: malware-scan
+    service: license
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{ $k }}: {{ quote $v }}
+{{- end }}
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      name: external
+  selector:
+    service: license
+    release: {{ .Release.Name }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: license-internal
+  labels:
+    service: license-internal
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -12,40 +33,41 @@ metadata:
 spec:
   ports:
     - port: 8081
-      targetPort: 8081
       protocol: TCP
       name: internal
   selector:
-    service: malware-scan
+    service: license
     release: {{ .Release.Name }}
 
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: malware-scan
+  name: license
   labels:
-    service: malware-scan
+    service: license
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    metrics: include
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
 {{- end }}
 spec:
-  replicas: {{ default 1 .Values.replicas.malwareScan }}
+  replicas: {{ default 1 .Values.replicas.license }}
   template:
     metadata:
       labels:
-        service: malware-scan
+        service: license
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
+        metrics: include
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
         {{ $k }}: {{ quote $v }}
 {{- end }}
     spec:
       automountServiceAccountToken: false
 {{- $securityContextEnabled := .Values.securityContext.enabled }}
-{{- $securityContext := default .Values.securityContext.default .Values.securityContext.malwareScan }}
+{{- $securityContext := default .Values.securityContext.default .Values.securityContext.license }}
 {{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}
 {{- $containerSecurityContext := default .Values.securityContext.default.container $securityContext.container }}
 {{- if $securityContextEnabled }}
@@ -53,14 +75,14 @@ spec:
 {{ toYaml $podSecurityContext | indent 8 }}
 {{- end }}
       {{- $imageDefaults := .Values.images.defaults }}
-      {{- with .Values.images.malwareScan }}
+      {{- with .Values.images.license }}
       {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
       {{- if not (eq "" $secret) }}
       imagePullSecrets:
-        - name: {{ $secret | quote }}
+        - name: {{ $secret }}
       {{- end }}
       containers:
-        - name: malware-scan
+        - name: license
 {{- if $securityContextEnabled }}
           securityContext:
 {{ toYaml $containerSecurityContext | indent 12 }}
@@ -79,14 +101,37 @@ spec:
           imagePullPolicy: {{ default (default "Always" $imageDefaults.pullPolicy) .pullPolicy }}
           {{- end }}
           ports:
+            - containerPort: 8080
+              name: external
             - containerPort: 8081
               name: internal
-          # TODO probes
-          # livenessProbe:
-          # readinessProbe:
+            - containerPort: 8082
+              name: metrics
+            - containerPort: 8083
+              name: health
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8083
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8083
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
           args:
-            - --license-url=http://license-internal:8081
+            - --internal-base=http://license-internal:8081
+            - --authorization-url=http://auth-internal:8081
           env:
+            - name: HTTP_PROXY
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
+                  key: httpProxy
             - name: HTTPS_PROXY
               valueFrom:
                 configMapKeyRef:
@@ -97,19 +142,32 @@ spec:
                 configMapKeyRef:
                   name: {{ template "smartcheck.fullname" . }}-outbound-proxy
                   key: noProxy
-          volumeMounts:
-            - name: tmp
-              mountPath: /tmp
+            - name: PROXY_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
+                  key: username
+            - name: PROXY_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
+                  key: password
           resources:
-{{ toYaml (default .Values.resources.defaults .Values.resources.malwareScan) | indent 12 }}
+{{ toYaml (default .Values.resources.defaults .Values.resources.license) | indent 12 }}
+          volumeMounts:
+            - name: activation-code
+              mountPath: /data/license
       volumes:
-        - name: tmp
-          emptyDir:
-            sizeLimit: "200Mi"
+        - name: activation-code
+          secret:
+            secretName: {{ template "smartcheck.fullname" . }}-activation-code
+            items:
+              - key: code
+                path: code
       nodeSelector:
-{{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.malwareScan) | indent 8 }}
+{{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.license) | indent 8 }}
       tolerations:
-{{ toYaml (default .Values.tolerations.defaults .Values.tolerations.malwareScan) | indent 8 }}
+{{ toYaml (default .Values.tolerations.defaults .Values.tolerations.license) | indent 8 }}
       restartPolicy: Always
 
 {{ if .Values.networkPolicy.enabled }}
@@ -117,9 +175,9 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: malware-scan
+  name: license
   labels:
-    service: malware-scan
+    service: license
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -128,7 +186,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      service: malware-scan
+      service: license
       release: {{ .Release.Name }}
       heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -139,22 +197,50 @@ spec:
     - Egress
   ingress:
     - from:
-        - podSelector:
-            matchLabels:
-              service: scan
-              release: {{ .Release.Name }}
-              heritage: {{ .Release.Service }}
+      - podSelector:
+          matchLabels:
+            service: proxy
+            release: {{ .Release.Name }}
+            heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
-              {{ $k }}: {{ quote $v }}
+            {{ $k }}: {{ quote $v }}
+{{- end }}
+      ports:
+        - protocol: TCP
+          port: 8080
+    - from:
+      - podSelector:
+          matchLabels:
+            service: registryviews
+            release: {{ .Release.Name }}
+            heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+            {{ $k }}: {{ quote $v }}
+{{- end }}
+      - podSelector:
+          matchLabels:
+            service: malware-scan
+            release: {{ .Release.Name }}
+            heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+            {{ $k }}: {{ quote $v }}
 {{- end }}
       ports:
         - protocol: TCP
           port: 8081
+    - from: # any -- this is for metrics
+      ports:
+        - protocol: TCP
+          port: 8082
+    - from: # any -- this should just be kubelet for health probes
+      ports:
+        - protocol: TCP
+          port: 8083
   egress:
     - to:
         - podSelector:
             matchLabels:
-              service: license
+              service: auth
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -171,10 +257,10 @@ spec:
           port: 53
     - to: # any
       ports:
-        - protocol: TCP
-          port: 443
-    - to: # any - TODO do we really need port 80? What is served on port 80?
+      - protocol: TCP
+        port: 80
+    - to: # any
       ports:
-        - protocol: TCP
-          port: 80
+      - protocol: TCP
+        port: 443
 {{- end }}

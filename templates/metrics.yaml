@@ -1,3 +1,4 @@
+{{ if (and .Values.persistence.enabled .Values.tasks.metricsCollector.enabled) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -26,7 +27,6 @@ spec:
   clusterIP: None
   sessionAffinity: None
 
-{{ if (and .Values.persistence.enabled .Values.tasks.metricsCollector.enabled) }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -52,7 +52,7 @@ spec:
 
 {{ end }}
 ---
-{{ if .Values.tasks.metricsCollector.enabled }}
+{{ if (and .Values.persistence.enabled .Values.tasks.metricsCollector.enabled) }}
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -65,6 +65,8 @@ metadata:
     {{ $k }}: {{ quote $v }}
 {{- end }}
 spec:
+  startingDeadlineSeconds: 300
+  concurrencyPolicy: Replace
   schedule: {{ quote .Values.tasks.metricsCollector.schedule }}
   successfulJobsHistoryLimit: 0
   jobTemplate:
@@ -91,10 +93,10 @@ spec:
 {{- end }}
           {{- $imageDefaults := .Values.images.defaults }}
           {{- with .Values.images.metricsCollector }}
-          {{- $secret := (default $imageDefaults.imagePullSecret .imagePullSecret) | quote }}
+          {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
           {{- if not (eq "" $secret) }}
           imagePullSecrets:
-            - name: {{ $secret }}
+            - name: {{ $secret | quote }}
           {{- end }}
           containers:
             - name: tasks
@@ -119,7 +121,7 @@ spec:
                 - collect
                 - --namespace={{ .Release.Namespace }}
                 - --service=metrics
-                - --metrics-directory=/data
+                - --metrics-directory=/data/metrics
               volumeMounts:
                 - name: data
                   mountPath: /data
@@ -141,7 +143,7 @@ spec:
 {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.metricsCollector) | indent 12 }}
 {{ end }}
 
-{{ if .Values.networkPolicy.enabled }}
+{{ if (and .Values.networkPolicy.enabled .Values.persistence.enabled .Values.tasks.metricsCollector.enabled) }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -181,7 +183,11 @@ spec:
 {{- end }}
       ports:
         - protocol: TCP
-          port: 8081
+          port: 8082
+    - to: # any
+      ports:
+        - protocol: TCP
+          port: 443
     - to: # any
       ports:
         - protocol: TCP
@@ -190,7 +196,7 @@ spec:
           port: 53
 {{- end }}
 ---
-{{ if .Values.tasks.metricsReporter.enabled }}
+{{ if (and .Values.persistence.enabled .Values.tasks.metricsReporter.enabled) }}
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -203,6 +209,8 @@ metadata:
     {{ $k }}: {{ quote $v }}
 {{- end }}
 spec:
+  startingDeadlineSeconds: 300
+  concurrencyPolicy: Replace
   schedule: {{ quote .Values.tasks.metricsReporter.schedule }}
   successfulJobsHistoryLimit: 0
   jobTemplate:
@@ -228,10 +236,10 @@ spec:
 {{- end }}
           {{- $imageDefaults := .Values.images.defaults }}
           {{- with .Values.images.metricsReporter }}
-          {{- $secret := (default $imageDefaults.imagePullSecret .imagePullSecret) | quote }}
+          {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
           {{- if not (eq "" $secret) }}
           imagePullSecrets:
-            - name: {{ $secret }}
+            - name: {{ $secret | quote }}
           {{- end }}
           containers:
             - name: tasks
@@ -258,12 +266,14 @@ spec:
                 - --application-name=ZA
                 - --product-code=DK
                 - --service=ALL
-                - --report-format=DS64
+                - --report-format=DSSC
                 - --report-format-version=1.0
                 - --target-url=$(TARGET_URL)
-                - --metrics-directory=/data
+                - --metrics-directory=/data/metrics
                 - --flush
               env:
+                - name: APPLICATION_VERSION
+                  value: {{ .Chart.Version | quote }}
                 - name: TARGET_URL
                   value: {{ .Values.tasks.metricsReporter.url }}
                 - name: ACTIVATION_CODE
@@ -317,7 +327,7 @@ spec:
 {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.metricsReporter) | indent 12 }}
 {{ end }}
 
-{{ if .Values.networkPolicy.enabled }}
+{{ if (and .Values.networkPolicy.enabled .Values.persistence.enabled .Values.tasks.metricsReporter.enabled) }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -359,7 +369,7 @@ spec:
         - protocol: UDP
           port: 53
 {{- end }}
-{{ if .Values.tasks.metricsCollector.enabled }}
+{{ if (and .Values.persistence.enabled .Values.tasks.metricsCollector.enabled) }}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -388,6 +398,9 @@ rules:
   - apiGroups: [""]
     resources: ["endpoints"]
     verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

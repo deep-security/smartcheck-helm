@@ -76,10 +76,10 @@ spec:
 {{- end }}
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.auth }}
-      {{- $secret := (default $imageDefaults.imagePullSecret .imagePullSecret) | quote }}
+      {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
       {{- if not (eq "" $secret) }}
       imagePullSecrets:
-        - name: {{ $secret }}
+        - name: {{ $secret | quote }}
       {{- end }}
       containers:
         - name: auth
@@ -125,7 +125,7 @@ spec:
             failureThreshold: 6
           args:
             - --internal-base=http://auth-internal:8081
-            - --authorization-url=http://auth-internal:8081
+            - --authorization-url=http://localhost:8081 # see https://github.com/kubernetes/kubernetes/issues/61593
             - --database-connection-string=postgres:postgres://db/authdb?sslmode=disable&connect_timeout=5 # seconds
             - --database-secret=$(DB_SECRET)
             - --initial-role={{ default "admin" .Values.auth.roleName }}
@@ -135,6 +135,11 @@ spec:
             - --initial-password=$(INITIAL_PASSWORD)
             - --cursor-encryption-secret=$(CURSOR_ENCRYPTION_SECRET)
             - --token-audience={{ default "deepsecurity-smartcheck" .Values.auth.tokenAudience }}
+{{- if .Values.auth.saml.enabled }}
+            - --saml-entity-id={{ .Values.auth.saml.entityID }}
+            - --saml-assertion-consumer-url={{ .Values.auth.saml.location }}
+            - --saml-max-roles={{ default 10 .Values.auth.saml.maxRoles }}
+{{- end }}
           env:
             - name: PGUSER
               valueFrom:
@@ -237,6 +242,14 @@ spec:
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
               {{ $k }}: {{ quote $v }}
 {{- end }}
+        - podSelector:
+            matchLabels:
+              service: license
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+{{- end }}
       ports:
         - protocol: TCP
           port: 8081
@@ -279,4 +292,8 @@ spec:
           port: 53
         - protocol: UDP
           port: 53
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
 {{- end }}

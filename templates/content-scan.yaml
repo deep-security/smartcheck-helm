@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: malware-scan-internal
+  name: content-scan-internal
   labels:
-    service: malware-scan
+    service: content-scan
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -16,27 +16,27 @@ spec:
       protocol: TCP
       name: internal
   selector:
-    service: malware-scan
+    service: content-scan
     release: {{ .Release.Name }}
 
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: malware-scan
+  name: content-scan
   labels:
-    service: malware-scan
+    service: content-scan
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
 {{- end }}
 spec:
-  replicas: {{ default 1 .Values.replicas.malwareScan }}
+  replicas: {{ default 1 .Values.replicas.contentScan }}
   template:
     metadata:
       labels:
-        service: malware-scan
+        service: content-scan
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -45,7 +45,7 @@ spec:
     spec:
       automountServiceAccountToken: false
 {{- $securityContextEnabled := .Values.securityContext.enabled }}
-{{- $securityContext := default .Values.securityContext.default .Values.securityContext.malwareScan }}
+{{- $securityContext := default .Values.securityContext.default .Values.securityContext.contentScan }}
 {{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}
 {{- $containerSecurityContext := default .Values.securityContext.default.container $securityContext.container }}
 {{- if $securityContextEnabled }}
@@ -53,14 +53,14 @@ spec:
 {{ toYaml $podSecurityContext | indent 8 }}
 {{- end }}
       {{- $imageDefaults := .Values.images.defaults }}
-      {{- with .Values.images.malwareScan }}
+      {{- with .Values.images.contentScan }}
       {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
       {{- if not (eq "" $secret) }}
       imagePullSecrets:
         - name: {{ $secret | quote }}
       {{- end }}
       containers:
-        - name: malware-scan
+        - name: content-scan
 {{- if $securityContextEnabled }}
           securityContext:
 {{ toYaml $containerSecurityContext | indent 12 }}
@@ -85,31 +85,21 @@ spec:
           # livenessProbe:
           # readinessProbe:
           args:
-            - --license-url=http://license-internal:8081
-          env:
-            - name: HTTPS_PROXY
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
-                  key: httpsProxy
-            - name: NO_PROXY
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
-                  key: noProxy
+              - --bind-port=8081
+          env: []
           volumeMounts:
-            - name: tmp
+            - name: tmp-folder
               mountPath: /tmp
           resources:
-{{ toYaml (default .Values.resources.defaults .Values.resources.malwareScan) | indent 12 }}
+{{ toYaml (default .Values.resources.defaults .Values.resources.contentScan) | indent 12 }}
       volumes:
-        - name: tmp
+        - name: tmp-folder
           emptyDir:
-            sizeLimit: "200Mi"
+            sizeLimit: {{ default "1Gi" .Values.scan.contentScan.workVolume.sizeLimit | quote  }}
       nodeSelector:
-{{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.malwareScan) | indent 8 }}
+{{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.contentScan) | indent 8 }}
       tolerations:
-{{ toYaml (default .Values.tolerations.defaults .Values.tolerations.malwareScan) | indent 8 }}
+{{ toYaml (default .Values.tolerations.defaults .Values.tolerations.contentScan) | indent 8 }}
       restartPolicy: Always
 
 {{ if .Values.networkPolicy.enabled }}
@@ -117,9 +107,9 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: malware-scan
+  name: content-scan
   labels:
-    service: malware-scan
+    service: content-scan
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -128,7 +118,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      service: malware-scan
+      service: content-scan
       release: {{ .Release.Name }}
       heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -154,7 +144,7 @@ spec:
     - to:
         - podSelector:
             matchLabels:
-              service: license
+              service: scan
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -169,12 +159,4 @@ spec:
           port: 53
         - protocol: UDP
           port: 53
-    - to: # any
-      ports:
-        - protocol: TCP
-          port: 443
-    - to: # any - TODO do we really need port 80? What is served on port 80?
-      ports:
-        - protocol: TCP
-          port: 80
 {{- end }}

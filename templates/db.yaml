@@ -79,10 +79,10 @@ spec:
 {{- end }}
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.db }}
-      {{- $secret := (default $imageDefaults.imagePullSecret .imagePullSecret) | quote }}
+      {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
       {{- if not (eq "" $secret) }}
       imagePullSecrets:
-        - name: {{ $secret }}
+        - name: {{ $secret | quote }}
       {{- end }}
       containers:
         - name: db
@@ -114,7 +114,7 @@ spec:
                 - exec pg_isready -U $POSTGRES_USER
             initialDelaySeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 6
+            failureThreshold: 3
           readinessProbe:
             exec:
               command:
@@ -123,7 +123,7 @@ spec:
                 - exec pg_isready -U $POSTGRES_USER
             initialDelaySeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 6
+            failureThreshold: 60
           env:
             ## POSTGRES_DB
             ## This optional environment variable can be used to define a different name for the default
@@ -180,19 +180,30 @@ spec:
                   key: database-password
                   name: {{ template "smartcheck.fullname" . }}-db
 
-{{ if .Values.persistence.enabled }}
           volumeMounts:
+            - name: varrun
+              mountPath: /var/run/postgresql
+            - name: tmp
+              mountPath: /tmp
             - name: data
-              mountPath: /var/lib/postgresql/data/pgdata
+              mountPath: /var/lib/postgresql/data
               subPath: postgresql-db
-{{ end }}
           resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.db) | indent 12 }}
-{{ if .Values.persistence.enabled }}
       volumes:
+        - name: varrun
+          emptyDir:
+            sizeLimit: 1Mi
+        - name: tmp
+          emptyDir:
+            sizeLimit: 100Mi
         - name: data
+{{ if .Values.persistence.enabled }}
           persistentVolumeClaim:
             claimName: {{ template "smartcheck.fullname" . }}-app-db
+{{ else }}
+          emptyDir:
+            sizeLimit: {{ default "8Gi" .Values.persistence.db.size }}
 {{ end }}
       nodeSelector:
 {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.db) | indent 8 }}
@@ -246,6 +257,14 @@ spec:
         - podSelector:
             matchLabels:
               service: auth
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+{{- end }}
+        - podSelector:
+            matchLabels:
+              service: openscap-scan
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}

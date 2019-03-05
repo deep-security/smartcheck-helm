@@ -30,13 +30,7 @@ kubectl config current-context
 
 _If your `kubectl` context is not pointing to your cluster, use `kubectl config get-contexts` and `kubectl config use-context` to set it._
 
-Install the `tiller` cluster-side component:
-
-```sh
-helm init
-```
-
-You will also need to configure a service account for `tiller`:
+Configure a service account for `tiller` and install:
 
 ```sh
 kubectl create serviceaccount \
@@ -47,10 +41,7 @@ kubectl create clusterrolebinding tiller-cluster-role \
   --clusterrole=cluster-admin \
   --serviceaccount=kube-system:tiller
 
-kubectl patch deploy \
-  --namespace kube-system \
-  tiller-deploy \
-  --patch '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+helm init --service-account tiller
 ```
 
 Use `helm version` to confirm that you have at least version `v2.8.0` of the client and server installed.
@@ -83,6 +74,19 @@ _Experienced `helm` users will note that we are using `deepsecurity-smartcheck` 
 ### Connecting to Deep Security Smart Check
 
 The install process will display instructions for obtaining the initial username and password and for connecting to Deep Security Smart Check.
+
+### Upgrading Deep Security Smart Check
+
+To upgrade an existing installation of Deep Security Smart Check in the default Kubernetes namespace to the latest version:
+
+```sh
+helm upgrade \
+  --values overrides.yaml \
+  deepsecurity-smartcheck \
+  https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
+```
+
+This assumes that you have put any local overrides (for example the activation code and the master password) into a file called `overrides.yaml` in the current directory as described in [Overriding configuration defaults](#overriding-configuration-defaults).
 
 ### Uninstalling Deep Security Smart Check
 
@@ -143,24 +147,25 @@ _If you create a file to override the values, make sure to copy the structure fr
 
 Refer to the `values.yaml` file for a full list of available values to override; some common keys are listed here:
 
-| Key                            | Default value                                 | Description                                                                                                                                                                                                                                                                 |
-| ------------------------------ | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `auth.masterPassword`          | None                                          | The master password to use when generating passwords within the system, ensuring that each installation of Deep Security Smart Check has different passwords.                                                                                                               |
-| `auth.userName`                | `administrator`                               | The name of the default administrator user that the system will create on startup.                                                                                                                                                                                          |
-| `activationCode`               | None                                          | The activation code to use. The activation code is required if you wish to receive updated malware patterns.                                                                                                                                                                |
-| `auth.userName`                | `administrator`                               | The name of the default administrator user that the system will create on startup.                                                                                                                                                                                          |
-| `auth.password`                | `{a random 16-character alphanumeric string}` | The default password assigned to the default administrator. `helm` will provide instructions for retrieving the initial password as part of the installation process.                                                                                                       |
-| `certificate.commonName`       | `example.com`                                 | The server name to use in the default self-signed certificate created for the service.                                                                                                                                                                                      |
-| `service.type`                 | `LoadBalancer`                                | The Kubernetes service type to create. This must be one of `LoadBalancer`, `ClusterIP`, or `NodePort`.                                                                                                                                                                      |
-| `persistence.enabled`          | `true`                                        | Whether a persistent volume should be created for the Deep Security Smart Check databases. **If no persistent volume claim is created, all database content will be lost when the database container restarts.**                                                            |
-| `persistence.storageClassName` | None                                          | If set, will be used as the storage class for the persistent volume claim that is created for the Deep Security Smart Check databases.                                                                                                                                      |
-| `networkPolicy.enabled`        | `false`                                       | **EXPERIMENTAL:** Whether Kubernetes `NetworkPolicy` resources should be created for the deployed pods.                                                                                                                                                                     |
-| `proxy.httpProxy`              |                                               | If set, will be used as the proxy for HTTP traffic from Deep Security Smart Check. The value may be either a complete URL or a `host[:port]`, in which case the `http` scheme is assumed.                                                                                   |
-| `proxy.httpsProxy`             |                                               | If set, will be used as the proxy for HTTPS traffic from Deep Security Smart Check. If `httpsProxy` is not set, `httpProxy` is also checked and will be used if set. The value may be either a complete URL or a `host[:port]`, in which case the `http` scheme is assumed. |
-| `proxy.noProxy`                |                                               | If set, is a list of hosts or `host:port` combinations which should not be accessed through the proxy.                                                                                                                                                                      |
-| `proxy.username`               |                                               | If set, is the user name to use to authenticate requests sent through the proxy.                                                                                                                                                                                            |
-| `proxy.password`               |                                               | If set, is the password to use to authenticate requests sent through the proxy.                                                                                                                                                                                             |
-| `scan.malwareCache.enabled`             |  `true`                                         | If set, cache mechanism will be used to improve scanning performance.                                                                                                                                                                                                       |
+| Key                                          | Default value                                 | Description                                                                                                                                                                                                                                                                 |
+| -------------------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `activationCode`                             | None                                          | The activation code to use. The activation code is required if you wish to receive updated malware patterns.                                                                                                                                                                |
+| `auth.masterPassword`                        | None                                          | The master password to use when generating passwords within the system, ensuring that each installation of Deep Security Smart Check has different passwords.                                                                                                               |
+| `auth.userName`                              | `administrator`                               | The name of the default administrator user that the system will create on startup.                                                                                                                                                                                          |
+| `auth.password`                              | `{a random 16-character alphanumeric string}` | The default password assigned to the default administrator. `helm` will provide instructions for retrieving the initial password as part of the installation process.                                                                                                       |
+| `certificate.commonName`                     | `example.com`                                 | The server name to use in the default self-signed certificate created for the service.                                                                                                                                                                                      |
+| `service.type`                               | `LoadBalancer`                                | The Kubernetes service type to create. This must be one of `LoadBalancer`, `ClusterIP`, or `NodePort`.                                                                                                                                                                      |
+| `persistence.enabled`                        | `true`                                        | Whether a persistent volume should be created for the Deep Security Smart Check databases. **If no persistent volume claim is created, all database content will be lost when the database container restarts.**                                                            |
+| `persistence.storageClassName`               | None                                          | If set, will be used as the storage class for the persistent volume claim that is created for the Deep Security Smart Check databases.                                                                                                                                      |
+| `networkPolicy.enabled`                      | `true`                                        | Whether Kubernetes `NetworkPolicy` resources should be created for the deployed pods.                                                                                                                                                                                       |
+| `networkPolicy.additionalWebhookTargetPorts` | None                                          | If set, will be used as a list of destination port numbers that are allowed for web hook targets.                                                                                                                                                                           |
+| `networkPolicy.additionalRegistryPorts`      | None                                          | If set, will be used as a list of destination port numbers that are allowed for connections to registries.                                                                                                                                                                  |
+| `proxy.httpProxy`                            |                                               | If set, will be used as the proxy for HTTP traffic from Deep Security Smart Check. The value may be either a complete URL or a `host[:port]`, in which case the `http` scheme is assumed.                                                                                   |
+| `proxy.httpsProxy`                           |                                               | If set, will be used as the proxy for HTTPS traffic from Deep Security Smart Check. If `httpsProxy` is not set, `httpProxy` is also checked and will be used if set. The value may be either a complete URL or a `host[:port]`, in which case the `http` scheme is assumed. |
+| `proxy.noProxy`                              |                                               | If set, is a list of hosts or `host:port` combinations which should not be accessed through the proxy.                                                                                                                                                                      |
+| `proxy.username`                             |                                               | If set, is the user name to use to authenticate requests sent through the proxy.                                                                                                                                                                                            |
+| `proxy.password`                             |                                               | If set, is the password to use to authenticate requests sent through the proxy.                                                                                                                                                                                             |
+| `scan.malwareCache.enabled`                  | `true`                                        | If set, cache mechanism will be used to improve scanning performance.                                                                                                                                                                                                       |
 
 </tbody>
 </table>

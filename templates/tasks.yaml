@@ -11,6 +11,8 @@ metadata:
     {{ $k }}: {{ quote $v }}
 {{- end }}
 spec:
+  startingDeadlineSeconds: 300
+  concurrencyPolicy: Replace
   schedule: {{ quote .Values.tasks.scan.schedule }}
   successfulJobsHistoryLimit: 0
   jobTemplate:
@@ -36,10 +38,10 @@ spec:
 {{- end }}
           {{- $imageDefaults := .Values.images.defaults }}
           {{- with .Values.images.tasks }}
-          {{- $secret := (default $imageDefaults.imagePullSecret .imagePullSecret) | quote }}
+          {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
           {{- if not (eq "" $secret) }}
           imagePullSecrets:
-            - name: {{ $secret }}
+            - name: {{ $secret | quote }}
           {{- end }}
           containers:
             - name: tasks
