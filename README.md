@@ -64,7 +64,7 @@ helm install \
   --set activationCode={activation code} \
   --set persistence.storageClassName={storage class name} \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/1.0.8-aws-container-marketplace.tar.gz
+  https://github.com/deep-security/smartcheck-helm/archive/1.1.9-aws-container-marketplace.tar.gz
 ```
 
 _Experienced `helm` users will note that we are using `deepsecurity-smartcheck` as the `helm` release name in these examples. There is no requirement to use this release name._
@@ -116,7 +116,7 @@ helm install \
   --set auth.masterPassword={password} \
   --set persistence.storageClassName={storage class name} \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/1.0.8-aws-container-marketplace.tar.gz
+  https://github.com/deep-security/smartcheck-helm/archive/1.1.9-aws-container-marketplace.tar.gz
 ```
 
 ### Overriding configuration defaults
@@ -129,7 +129,7 @@ You can override the defaults in this file by specifying a comma-separated list 
 helm install \
   --set key1=value1,key2=value2,... \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/1.0.8-aws-container-marketplace.tar.gz
+  https://github.com/deep-security/smartcheck-helm/archive/1.1.9-aws-container-marketplace.tar.gz
 ```
 
 or by creating a [YAML](http://yaml.org "YAML Ain't Markup Language") file with the specific values you want to override and providing the location of this file on the command line:
@@ -138,7 +138,7 @@ or by creating a [YAML](http://yaml.org "YAML Ain't Markup Language") file with 
 helm install \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/1.0.8-aws-container-marketplace.tar.gz
+  https://github.com/deep-security/smartcheck-helm/archive/1.1.9-aws-container-marketplace.tar.gz
 ```
 
 _If you create a file to override the values, make sure to copy the structure from the chart's `values.yaml` file. You only need to provide the values that you are overriding._
@@ -226,5 +226,5 @@ helm install \
   --set persistence.storageClassName={storage class name} \
   --values overrides.yaml \
   --name deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/1.0.8-aws-container-marketplace.tar.gz
+  https://github.com/deep-security/smartcheck-helm/archive/1.1.9-aws-container-marketplace.tar.gz
 ```
