@@ -311,7 +311,7 @@ images:
     ##
     ## Default value: blank
     # registry:
-    registry: 217273820646.dkr.ecr.us-east-1.amazonaws.com
+    registry: 117940112483.dkr.ecr.us-east-1.amazonaws.com
 
     ## Default project / organization to pull images from. This can be
     ## overridden for each image by specifying the project attribute at the
@@ -319,11 +319,11 @@ images:
     ##
     ## Default value: deepsecurity
     # project: deepsecurity
-    project: fc103704-423a-40d8-9a08-a13c4ca94f95/cg-0000008
+    project: fc103704-423a-40d8-9a08-a13c4ca94f95/cg-1678606459
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.1.9
+    tag: 1.1.9-latest
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
