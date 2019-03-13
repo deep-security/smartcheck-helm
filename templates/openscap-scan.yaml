@@ -103,6 +103,7 @@ spec:
             - --database-connection-string=postgres:postgres://db/openscapscandb?sslmode=disable&connect_timeout=5 # seconds
             - --database-secret=$(DB_SECRET)
             - --cursor-encryption-secret=$(CURSOR_ENCRYPTION_SECRET)
+            - --checklists-folder=data
           env:
             - name: PGUSER
               valueFrom:
@@ -208,6 +209,7 @@ spec:
             {{- end }}
             - --authorization-token=$(ACTIVATION_CODE)
             - --initial-oval-file=/initial-oval.xml
+            - --initial-checklists-directory=/initial-checklists
           env:
             - name: HTTP_PROXY
               valueFrom:
