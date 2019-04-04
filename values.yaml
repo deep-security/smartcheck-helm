@@ -318,12 +318,12 @@ registry:
     ## User name for authentication to the registry
     ##
     ## Default value: empty string
-    username: ""
+    username: ''
 
     ## Password for authentication to the registry
     ##
     ## Default value: empty string
-    password: ""
+    password: ''
 
   ## The amount of space to request for the registry data volume
   ##
@@ -350,7 +350,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.1.9
+    tag: 1.2.0
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -365,67 +365,68 @@ images:
     # secretKey:
   db:
     repository: db
-    tag: 1.1.9@sha256:88916c86e6b3227833c8a875fad83f0d41a23a1c9137e9a1fb96b20a4f604b5d
+    tag: 1.2.0@sha256:88916c86e6b3227833c8a875fad83f0d41a23a1c9137e9a1fb96b20a4f604b5d
   auth:
     repository: auth
-    tag: 1.1.9@sha256:9692a2941e5afccbd1aa4cb5c88b5154e5e9039f4e3c3e16445c060ac7f4f21d
+    tag: 1.2.0@sha256:091096192de98f7fb58e78c61f5ba464cff2efec0a9246efa0673d75a361658e
   malwareScan:
     repository: vscan
-    tag: 1.1.9@sha256:15335e028bfba2c995fbea97f169074323fb60db7080c3340153a42f47d26a46
+    tag: 1.2.0@sha256:5cc3ca04e7908c06e2dcb05f3c3c6a0c4f4f5d13ff27fb94588982ca8216a24c
   contentScan:
     repository: contentscan
-    tag: 1.1.9@sha256:05c487b574d56e2d2af976c72820f51638f84969caf171201ed984391ae51240
+    tag: 1.2.0@sha256:05c487b574d56e2d2af976c72820f51638f84969caf171201ed984391ae51240
   scan:
     repository: scan
-    tag: 1.1.9@sha256:46d5c09cd634c9091b5fc278b986455247cb924723f85c5a65da6a7194b73d93
+    tag: 1.2.0@sha256:58227a5ff5426764ad13159aa26b4e02a5175caa026c9f6588d80f8463f3957b
   registryviews:
     repository: registryviews
-    tag: 1.1.9@sha256:f2c4e6095ec0ce94fae794c354b7600caecbec133dc128f41210636f9b9e0f95
+    tag: 1.2.0@sha256:919e5574d857ddb89a677ed162443653575d424377a83de6e4e0d58686db1bd6
   docs:
     repository: api-docs
-    tag: 1.1.9@sha256:c5fc95f09dd72f812e16f9eba85626cfa7aee7b9814bab05b168d1b091d06308
+    tag: 1.2.0@sha256:996d04dd025a857ca04a8001cca77761d11d673103e404783c3d3beb438c890b
   frontend:
     repository: frontend
-    tag: 1.1.9@sha256:20a788f9364cfbe1fdbef603bd66b022bfdefad86dad276f0c6966dab9b4f21d
+    tag: 1.2.0@sha256:d5bbd6ce4463fe435c78b9510118f5beaea19d8ab279a99516abb8e264ddfc0c
   proxy:
     repository: proxy
-    tag: 1.1.9@sha256:5ab769263223ac5e2e4e78003a815bc5b79cd1c3e8538c846645e0812eb7d38d
+    tag: 1.2.0@sha256:b00a29445e53e2924668d7c0fc7f429f21ac7617b22d6f31655be8bedec187f6
   license:
     repository: license
-    tag: 1.1.9@sha256:6e01de6a092726d11e2b4b7c7485b086ecb961ddb379d8386daca06eaaee1634
+    tag: 1.2.0@sha256:0d4044eae2aa73d8798a19f79d80ebbd400e30a7674c9547641b5efce059f11b
   vulnerabilityScan:
     repository: vulnerability-scan
-    tag: 1.1.9@sha256:ffa87f5153480d75a0d80cd97701ee1645a54e63a32428c95d2e76df746b52c9
+    tag: 1.2.0@sha256:ffa87f5153480d75a0d80cd97701ee1645a54e63a32428c95d2e76df746b52c9
   vulnerabilityDB:
     repository: vulnerability-db
-    tag: 1.1.9@sha256:b3adc0d8199c57d36cb51185ce73b9db6a3820d1a59ec69c8002d8b6729e0ebf
+    tag: 1.2.0@sha256:fe02c5e59437a097ea32e68af784f403abfd00824bf588aeea949fe270c8710d
   tasks:
     repository: tasks
-    tag: 1.1.9@sha256:f25db97308d33581a11d9460781ad13cd603ca0de9b0c3c598fa0bd21279ec7c
+    tag: 1.2.0@sha256:f25db97308d33581a11d9460781ad13cd603ca0de9b0c3c598fa0bd21279ec7c
   metricsCollector:
     # Using IfNotPresent instead of the default of Always because this runs every minute out of the box
     imagePullPolicy: IfNotPresent
     repository: k8s-metrics-reporter
-    tag: 1.1.9@sha256:664c9500bdaa9a5a93830b2b5103bf4a5892e130cf253c605d780df304b03411
+    tag: 1.2.0@sha256:664c9500bdaa9a5a93830b2b5103bf4a5892e130cf253c605d780df304b03411
   metricsReporter:
     # Using IfNotPresent instead of the default of Always because this runs every minute out of the box
     imagePullPolicy: IfNotPresent
     repository: k8s-metrics-reporter
-    tag: 1.1.9@sha256:664c9500bdaa9a5a93830b2b5103bf4a5892e130cf253c605d780df304b03411
+    tag: 1.2.0@sha256:664c9500bdaa9a5a93830b2b5103bf4a5892e130cf253c605d780df304b03411
   openscapScan:
     repository: openscap-scan
-    tag: 1.1.9@sha256:c3fb75d1cfadb6f5c64df045d06eb6928e5de3901933e86942c8484b8a3a8d89
+    tag: 1.2.0@sha256:714ecb3b1b4aab04e053c6416b2b72d7e9cc2b043e59d95f07e5db1bdb83097e
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    tag: 1.1.9@sha256:7b68850c0b616bdbe03e495d4a5dcd9d26dcc51058ead1c46cfccbf1d4d16c1d
+    tag: 1.2.0@sha256:27fc4e7db12ee2c5bcd9bac8740a502ba574f6a3afc0e6dfb7d369db0cc3cac4
   registry:
-    registry: "-"
+    registry: '-'
     project: library
     repository: registry
     tag: 2.7.0
     pullPolicy: IfNotPresent
   registryCleaner:
     repository: registry-cleaner
+    tag: 1.2.0@sha256:e0945b0511baf68a8d7b61fe49d2dc0bcae421c8e77028e8092f267cb498c950
 
 replicas: {}
 
@@ -591,13 +592,13 @@ tasks:
      ## trigger local registry cleaner.
      ##
      ## Default value: true
-     enabled: true
+    enabled: true
 
      ## schedule controls the schedule for metrics collection. It is a string in
      ## [cron](https://en.wikipedia.org/wiki/Cron) format.
      ##
      ## Default value: @daily
-     schedule: "@daily"
+    schedule: '@daily'
 
 # securityContext specifies the security contexts that we'll apply to the pods.
 securityContext:
