@@ -280,15 +280,6 @@ data:
     }
 {{ if .Values.registry.enabled }}
 
-    ## Set a variable to help us decide if we need to add the
-    ## 'Docker-Distribution-Api-Version' header.
-    ## The registry always sets this header.
-    ## In the case of nginx performing auth, the header is unset
-    ## since nginx is auth-ing before proxying.
-    map $upstream_http_docker_distribution_api_version $docker_distribution_api_version {
-    '' 'registry/2.0';
-    }
-
     upstream registry_server {
       server registry:5000;
     }
@@ -336,10 +327,6 @@ data:
         proxy_set_header   X-Forwarded-Host $host:$server_port;
         proxy_set_header   X-Forwarded-Proto $scheme;
         proxy_read_timeout 900;
-
-        ## If $docker_distribution_api_version is empty, the header is not added.
-        ## See the map directive above where this variable is defined.
-        add_header 'Docker-Distribution-Api-Version' $docker_distribution_api_version always;
       }
     }
 {{- end }}
