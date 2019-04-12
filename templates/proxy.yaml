@@ -303,10 +303,10 @@ data:
 
       # required to avoid HTTP 405 Not allowed.
       location / {
-        proxy_set_header   X-Forwarded-Host $host:$server_port;
-        proxy_set_header   Host $host;
+        proxy_set_header   Host $http_host;
         proxy_set_header   X-Real-IP $remote_addr;
         proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Host $server_name;
         proxy_set_header   X-Forwarded-Proto $scheme;
         proxy_read_timeout 900;
       }
@@ -321,10 +321,10 @@ data:
 
         proxy_pass         https://registry_server;
         proxy_redirect     off;
-        proxy_set_header   Host $host;
+        proxy_set_header   Host $http_host;
         proxy_set_header   X-Real-IP $remote_addr;
         proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header   X-Forwarded-Host $host:$server_port;
+        proxy_set_header   X-Forwarded-Host $server_name;
         proxy_set_header   X-Forwarded-Proto $scheme;
         proxy_read_timeout 900;
       }
