@@ -419,11 +419,8 @@ images:
     repository: openscap-feed-consumer
     tag: 1.2.1@sha256:d0e492924a666f766d928d3f358b9e558bdc0c9b02932de77b330116bef4708d
   registry:
-    registry: '-'
-    project: library
     repository: registry
-    tag: 2.7.0
-    pullPolicy: IfNotPresent
+    tag: latest
   registryCleaner:
     repository: registry-cleaner
     tag: 1.2.1@sha256:e0945b0511baf68a8d7b61fe49d2dc0bcae421c8e77028e8092f267cb498c950

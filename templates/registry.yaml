@@ -16,6 +16,7 @@ data:
     log:
       fields:
         service: registry
+      formatter: json
     storage:
       cache:
         blobdescriptor: inmemory
@@ -110,6 +111,7 @@ spec:
         imagePullPolicy: {{ default (default "IfNotPresent" $imageDefaults.pullPolicy) .pullPolicy }}
         {{- end }}
         command:
+          - /entrypoint.sh
           - /bin/registry
           - serve
           - /etc/docker/registry/config.yml
@@ -180,7 +182,7 @@ spec:
         imagePullPolicy: {{ default (default "IfNotPresent" $imageDefaults.pullPolicy) .pullPolicy }}
         {{- end }}
         command: ["/bin/sh", "-c"]
-        args: ["while true; /bin/registry garbage-collect /etc/docker/registry/config.yml || true; do sleep 3600; done"]
+        args: ["while true; ./entrypoint.sh /bin/registry garbage-collect /etc/docker/registry/config.yml || true; do sleep 3600; done"]
         env:
           - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
             value: "/var/lib/registry"
