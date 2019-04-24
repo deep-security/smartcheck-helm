@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: registry-config
+  name: {{ template "smartcheck.fullname" . }}-registry-config
   labels:
     service: registry
     release: {{ .Release.Name }}
@@ -246,7 +246,7 @@ spec:
             sizeLimit: {{ default "10Gi" .Values.registry.dataVolume.sizeLimit | quote }}
         - name: registry-config
           configMap:
-            name: registry-config
+            name: {{ template "smartcheck.fullname" . }}-registry-config
         - name: tls-secret
           secret:
             secretName: {{ required "certificate.secret.name is required when enabling pre-registry scanning. See https://github.com/deepsecurity/smartcheck-helm/wiki/Replace-the-service-certificate for instructions on replacing the default certificate." .Values.certificate.secret.name }}
