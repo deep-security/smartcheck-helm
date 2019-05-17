@@ -421,5 +421,4 @@ roleRef:
   kind: Role
   name: {{ template "smartcheck.fullname" . }}-metrics-collector-role
   apiGroup: rbac.authorization.k8s.io
-  namespace: {{ .Release.Namespace }}
 {{- end }}
