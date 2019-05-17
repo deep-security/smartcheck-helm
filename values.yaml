@@ -350,7 +350,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.5
+    tag: 1.2.6
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -365,65 +365,65 @@ images:
     # secretKey:
   db:
     repository: db
-    tag: 1.2.5@sha256:3aaacfbbaad46b1fb88827ebe9e9a701ee484c1abe4eec63059351c901025d58
+    tag: 1.2.6@sha256:3aaacfbbaad46b1fb88827ebe9e9a701ee484c1abe4eec63059351c901025d58
   auth:
     repository: auth
-    tag: 1.2.5@sha256:722305431d6fd025af7b4efbe8abb0c6a4a6aa5a023e5bc2cb75ddccc2335258
+    tag: 1.2.6@sha256:722305431d6fd025af7b4efbe8abb0c6a4a6aa5a023e5bc2cb75ddccc2335258
   malwareScan:
     repository: vscan
-    tag: 1.2.5@sha256:dfbb63971a96ee2a0ba635750e23b328b3d4e1fa72e3e1c01fc34859a31a29ee
+    tag: 1.2.6@sha256:d00cf3e00981d813ab4ea3fb18f2dc9f903cfa3157cf5d90d0f734253807ca53
   contentScan:
     repository: contentscan
-    tag: 1.2.5@sha256:2d00fa2c2f808222a178b8cbcb7022deaa4c2a2833faef36de2a72658f27945f
+    tag: 1.2.6@sha256:2d00fa2c2f808222a178b8cbcb7022deaa4c2a2833faef36de2a72658f27945f
   scan:
     repository: scan
-    tag: 1.2.5@sha256:f525206b2be45a3d81431e0adbc7187e63b869ed71d81f14ab5c73ccc0b55211
+    tag: 1.2.6@sha256:20e3b38c0c917a5c329d16630c829301c7338f8be2327249bf5138c298d791d8
   registryviews:
     repository: registryviews
-    tag: 1.2.5@sha256:a50676abd3c053f392c6aecb0131f811527c95a809d6070009c81c12626be040
+    tag: 1.2.6@sha256:b4578a6f85540774dcac7aaef019e001d321ea0056f83e72ee219aa43c41a00f
   docs:
     repository: api-docs
-    tag: 1.2.5@sha256:4a516dcd4b7b7f6e56bc9883e047b9a8cc6e043d61fd3720b2f791cc57521aaa
+    tag: 1.2.6@sha256:a0f5874f28fec5f5416e74226777bc8d4c532a62fff1fcdd4f8210e5f01015e7
   frontend:
     repository: frontend
-    tag: 1.2.5@sha256:efcfe20dab9588b3c46abb03b8903ad551d9ddb5d53686ebe01e6a8670ebb00a
+    tag: 1.2.6@sha256:c06b9f52767d0799eb49f0670f7e6f4aa2f0c9f49bf535292206e414e5408885
   proxy:
     repository: proxy
-    tag: 1.2.5@sha256:c030615368020f57596bd6725b478bc6a23e2e017f4f6e6f179686e183928510
+    tag: 1.2.6@sha256:c030615368020f57596bd6725b478bc6a23e2e017f4f6e6f179686e183928510
   license:
     repository: license
-    tag: 1.2.5@sha256:756fae1cb6174bc127126bf7b3fbfc7f9968189de0ca2d5c4da7459f11d69325
+    tag: 1.2.6@sha256:756fae1cb6174bc127126bf7b3fbfc7f9968189de0ca2d5c4da7459f11d69325
   vulnerabilityScan:
     repository: vulnerability-scan
-    tag: 1.2.5@sha256:3ed5e0dd10c09f364e6cca33207a965f20ff088a09e26d6c07c23dcadf9e5667
+    tag: 1.2.6@sha256:45b195a35324c1288e4ea254b3642bc4eabef54e9a262780525aa0791171a095
   vulnerabilityDB:
     repository: vulnerability-db
-    tag: 1.2.5@sha256:21a9bfad9138b2d3c148c4564b1210ac91f3383feff5cdcca22a96b7ef4446f4
+    tag: 1.2.6@sha256:2e19dacc3a1d93c6cbc40ff5677214211de87d8cd9b21817b92d151b508ce9d2
   tasks:
     repository: tasks
-    tag: 1.2.5@sha256:e24547f1a3d89aae942e2c8442170ef069a8bb7b82c51af7f2a1b08757fe3ff2
+    tag: 1.2.6@sha256:e24547f1a3d89aae942e2c8442170ef069a8bb7b82c51af7f2a1b08757fe3ff2
   metricsCollector:
     # Using IfNotPresent instead of the default of Always because this runs every minute out of the box
     imagePullPolicy: IfNotPresent
     repository: k8s-metrics-reporter
-    tag: 1.2.5@sha256:6867cdb9b244432e811f1b5887dfdd5c36c73b81471d8f1d98e8c983abe8a86b
+    tag: 1.2.6@sha256:6867cdb9b244432e811f1b5887dfdd5c36c73b81471d8f1d98e8c983abe8a86b
   metricsReporter:
     # Using IfNotPresent instead of the default of Always because this runs every minute out of the box
     imagePullPolicy: IfNotPresent
     repository: k8s-metrics-reporter
-    tag: 1.2.5@sha256:6867cdb9b244432e811f1b5887dfdd5c36c73b81471d8f1d98e8c983abe8a86b
+    tag: 1.2.6@sha256:6867cdb9b244432e811f1b5887dfdd5c36c73b81471d8f1d98e8c983abe8a86b
   openscapScan:
     repository: openscap-scan
-    tag: 1.2.5@sha256:9eea2579b6dc1bc04a181ed28205fe9d1eccad85e5c4fea0420a44c171b17306
+    tag: 1.2.6@sha256:9eea2579b6dc1bc04a181ed28205fe9d1eccad85e5c4fea0420a44c171b17306
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    tag: 1.2.5@sha256:6a16728a12ae7a2d02e2d490da6bec94e1877763b8f299f2621c856f60fe3901
+    tag: 1.2.6@sha256:429f07a2f7b25d0c6dfe7bdac310023da842c2e83404db2097121d57fc5025c1
   registry:
     repository: registry
-    tag: 1.2.5@sha256:609ded6788d9b8b231a817575df322f396c201b2d56f34c17cfd74d767509230
+    tag: 1.2.6@sha256:609ded6788d9b8b231a817575df322f396c201b2d56f34c17cfd74d767509230
   registryCleaner:
     repository: registry-cleaner
-    tag: 1.2.5@sha256:b08b1cacb06f6162cd8a01ee92f938d3d4df9a28b18156f12e77c46a5518d4a6
+    tag: 1.2.6@sha256:b08b1cacb06f6162cd8a01ee92f938d3d4df9a28b18156f12e77c46a5518d4a6
 
 replicas: {}
 
