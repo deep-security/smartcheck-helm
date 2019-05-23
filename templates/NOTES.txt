@@ -47,3 +47,12 @@ You can watch the status of the proxy pod by running:
 {{- if not (eq "default" .Release.Namespace) }}
     Namespace: {{ .Release.Namespace -}}
 {{- end }}
+
+{{ if not .Values.persistence.enabled -}}
+###############################################################################
+#####                                                                     #####
+#####  WARNING: Persistence is disabled! You will lose your data if the   #####
+#####  database pods are terminated.                                      #####
+#####                                                                     #####
+###############################################################################
+{{- end -}}
