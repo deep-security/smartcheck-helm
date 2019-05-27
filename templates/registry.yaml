@@ -62,6 +62,7 @@ metadata:
     service: registry
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    appVersion: {{ .Chart.AppVersion }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
 {{- end }}
@@ -74,6 +75,7 @@ spec:
         service: registry
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
+        appVersion: {{ .Chart.AppVersion }}
   {{- range $k, $v := (default (dict) .Values.extraLabels) }}
       {{ $k }}: {{ quote $v }}
   {{- end }}
@@ -103,14 +105,7 @@ spec:
         {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
         {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
         {{- $tag := (default $imageDefaults.tag .tag) }}
-
-        {{- if eq (default "" .registry) "-" }}
-        image: {{ printf "%s:%s" $repository $tag | quote }}
-        {{- else if eq (default "-" $imageDefaults.registry) "-" }}
-        image: {{ printf "%s:%s" $repository $tag | quote }}
-        {{- else }}
-        image: {{ printf "%s/%s:%s" (default $imageDefaults.registry .registry) $repository $tag | quote }}
-        {{- end }}
+        image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
         imagePullPolicy: {{ default (default "IfNotPresent" $imageDefaults.pullPolicy) .pullPolicy }}
         {{- end }}
         command:
@@ -174,14 +169,7 @@ spec:
         {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
         {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
         {{- $tag := (default $imageDefaults.tag .tag) }}
-
-        {{- if eq (default "" .registry) "-" }}
-        image: {{ printf "%s:%s" $repository $tag | quote }}
-        {{- else if eq (default "-" $imageDefaults.registry) "-" }}
-        image: {{ printf "%s:%s" $repository $tag | quote }}
-        {{- else }}
-        image: {{ printf "%s/%s:%s" (default $imageDefaults.registry .registry) $repository $tag | quote }}
-        {{- end }}
+        image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
         imagePullPolicy: {{ default (default "IfNotPresent" $imageDefaults.pullPolicy) .pullPolicy }}
         {{- end }}
         command: ["/bin/sh", "-c"]
@@ -206,14 +194,7 @@ spec:
         {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
         {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
         {{- $tag := (default $imageDefaults.tag .tag) }}
-
-        {{- if eq (default "" .registry) "-" }}
-        image: {{ printf "%s:%s" $repository $tag | quote }}
-        {{- else if eq (default "-" $imageDefaults.registry) "-" }}
-        image: {{ printf "%s:%s" $repository $tag | quote }}
-        {{- else }}
-        image: {{ printf "%s/%s:%s" (default $imageDefaults.registry .registry) $repository $tag | quote }}
-        {{- end }}
+        image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
         imagePullPolicy: {{ default (default "Always" $imageDefaults.pullPolicy) .pullPolicy }}
         {{- end }}
         resources:
@@ -252,14 +233,7 @@ spec:
         {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
         {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
         {{- $tag := (default $imageDefaults.tag .tag) }}
-
-        {{- if eq (default "" .registry) "-" }}
-        image: {{ printf "%s:%s" $repository $tag | quote }}
-        {{- else if eq (default "-" $imageDefaults.registry) "-" }}
-        image: {{ printf "%s:%s" $repository $tag | quote }}
-        {{- else }}
-        image: {{ printf "%s/%s:%s" (default $imageDefaults.registry .registry) $repository $tag | quote }}
-        {{- end }}
+        image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
         imagePullPolicy: {{ default (default "IfNotPresent" $imageDefaults.pullPolicy) .pullPolicy }}
         {{- end }}
         env:

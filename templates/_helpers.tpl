@@ -30,3 +30,22 @@ Create chart name and version as used by the chart label.
 {{- define "smartcheck.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{/*
+Create an image source.
+*/}}
+{{- define "image.source" -}}
+{{- if or (eq (default "" .registry) "-") (eq (default "-" .imageDefaults.registry) "-") -}}
+{{- if .digest -}}
+{{- printf "%s@%s" .repository .digest | quote -}}
+{{- else -}}
+{{- printf "%s:%s" .repository .tag | quote -}}
+{{- end -}}
+{{- else -}}
+{{- if .digest -}}
+{{- printf "%s/%s@%s" (default .imageDefaults.registry .registry) .repository .digest | quote -}}
+{{- else -}}
+{{- printf "%s/%s:%s" (default .imageDefaults.registry .registry) .repository .tag | quote -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}

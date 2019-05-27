@@ -365,65 +365,65 @@ images:
     # secretKey:
   db:
     repository: db
-    tag: 1.2.7@sha256:3aaacfbbaad46b1fb88827ebe9e9a701ee484c1abe4eec63059351c901025d58
+    digest: sha256:3aaacfbbaad46b1fb88827ebe9e9a701ee484c1abe4eec63059351c901025d58
   auth:
     repository: auth
-    tag: 1.2.7@sha256:722305431d6fd025af7b4efbe8abb0c6a4a6aa5a023e5bc2cb75ddccc2335258
+    digest: sha256:722305431d6fd025af7b4efbe8abb0c6a4a6aa5a023e5bc2cb75ddccc2335258
   malwareScan:
     repository: vscan
-    tag: 1.2.7@sha256:2607715e13d9654f31effecc386d5601da46b2bdedb77a3e18de3037bb257249
+    digest: sha256:2607715e13d9654f31effecc386d5601da46b2bdedb77a3e18de3037bb257249
   contentScan:
     repository: contentscan
-    tag: 1.2.7@sha256:2d00fa2c2f808222a178b8cbcb7022deaa4c2a2833faef36de2a72658f27945f
+    digest: sha256:2d00fa2c2f808222a178b8cbcb7022deaa4c2a2833faef36de2a72658f27945f
   scan:
     repository: scan
-    tag: 1.2.7@sha256:8b310e9df88891d0febde0568af0c8f4717927adf94ddaa92d28f45e2763ac5b
+    digest: sha256:8b310e9df88891d0febde0568af0c8f4717927adf94ddaa92d28f45e2763ac5b
   registryviews:
     repository: registryviews
-    tag: 1.2.7@sha256:b4578a6f85540774dcac7aaef019e001d321ea0056f83e72ee219aa43c41a00f
+    digest: sha256:b4578a6f85540774dcac7aaef019e001d321ea0056f83e72ee219aa43c41a00f
   docs:
     repository: api-docs
-    tag: 1.2.7@sha256:3dabe0b18cb5b8c7c856745ffaaed3ac91bd8767ed6b420754555876cb1f437c
+    digest: sha256:3dabe0b18cb5b8c7c856745ffaaed3ac91bd8767ed6b420754555876cb1f437c
   frontend:
     repository: frontend
-    tag: 1.2.7@sha256:00711b27d5383b6a9595d3621045a1d5ccb2db2f85776e9dc3e8a307d866a599
+    digest: sha256:00711b27d5383b6a9595d3621045a1d5ccb2db2f85776e9dc3e8a307d866a599
   proxy:
     repository: proxy
-    tag: 1.2.7@sha256:c030615368020f57596bd6725b478bc6a23e2e017f4f6e6f179686e183928510
+    digest: sha256:c030615368020f57596bd6725b478bc6a23e2e017f4f6e6f179686e183928510
   license:
     repository: license
-    tag: 1.2.7@sha256:756fae1cb6174bc127126bf7b3fbfc7f9968189de0ca2d5c4da7459f11d69325
+    digest: sha256:756fae1cb6174bc127126bf7b3fbfc7f9968189de0ca2d5c4da7459f11d69325
   vulnerabilityScan:
     repository: vulnerability-scan
-    tag: 1.2.7@sha256:45b195a35324c1288e4ea254b3642bc4eabef54e9a262780525aa0791171a095
+    digest: sha256:45b195a35324c1288e4ea254b3642bc4eabef54e9a262780525aa0791171a095
   vulnerabilityDB:
     repository: vulnerability-db
-    tag: 1.2.7@sha256:c6a619fd613bd9f7707b37a8ea0ae803b1fa6552e2a4c26cb9518b3ce07bb6e1
+    digest: sha256:c6a619fd613bd9f7707b37a8ea0ae803b1fa6552e2a4c26cb9518b3ce07bb6e1
   tasks:
     repository: tasks
-    tag: 1.2.7@sha256:e24547f1a3d89aae942e2c8442170ef069a8bb7b82c51af7f2a1b08757fe3ff2
+    digest: sha256:e24547f1a3d89aae942e2c8442170ef069a8bb7b82c51af7f2a1b08757fe3ff2
   metricsCollector:
     # Using IfNotPresent instead of the default of Always because this runs every minute out of the box
     imagePullPolicy: IfNotPresent
     repository: k8s-metrics-reporter
-    tag: 1.2.7@sha256:6867cdb9b244432e811f1b5887dfdd5c36c73b81471d8f1d98e8c983abe8a86b
+    digest: sha256:6867cdb9b244432e811f1b5887dfdd5c36c73b81471d8f1d98e8c983abe8a86b
   metricsReporter:
     # Using IfNotPresent instead of the default of Always because this runs every minute out of the box
     imagePullPolicy: IfNotPresent
     repository: k8s-metrics-reporter
-    tag: 1.2.7@sha256:6867cdb9b244432e811f1b5887dfdd5c36c73b81471d8f1d98e8c983abe8a86b
+    digest: sha256:6867cdb9b244432e811f1b5887dfdd5c36c73b81471d8f1d98e8c983abe8a86b
   openscapScan:
     repository: openscap-scan
-    tag: 1.2.7@sha256:9eea2579b6dc1bc04a181ed28205fe9d1eccad85e5c4fea0420a44c171b17306
+    digest: sha256:9eea2579b6dc1bc04a181ed28205fe9d1eccad85e5c4fea0420a44c171b17306
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    tag: 1.2.7@sha256:fb1c56a7b870ee7c1bf26df556ac92a96bf8793f88db0a609dc77c09421d607d
+    digest: sha256:fb1c56a7b870ee7c1bf26df556ac92a96bf8793f88db0a609dc77c09421d607d
   registry:
     repository: registry
-    tag: 1.2.7@sha256:609ded6788d9b8b231a817575df322f396c201b2d56f34c17cfd74d767509230
+    digest: sha256:609ded6788d9b8b231a817575df322f396c201b2d56f34c17cfd74d767509230
   registryCleaner:
     repository: registry-cleaner
-    tag: 1.2.7@sha256:1f2a39a24dcba13ef54a25b19d52bfc4216083e1cbc622a4b6180ee07bd077a5
+    digest: sha256:1f2a39a24dcba13ef54a25b19d52bfc4216083e1cbc622a4b6180ee07bd077a5
 
 replicas: {}
 
