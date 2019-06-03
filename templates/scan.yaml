@@ -129,6 +129,9 @@ spec:
             - --database-connection-string=postgres:postgres://db/scandb?sslmode=disable&connect_timeout=5 # seconds
             - --database-secret=$(DB_SECRET)
             - --cursor-encryption-secret=$(CURSOR_ENCRYPTION_SECRET)
+            {{- with .Values.scan.results }}
+            - --scan-retention-period={{ default 0 .ttl }}
+            {{- end }}
             {{if not .Values.scan.malwareCache.enabled}}
             - --malware-scan-cache-ttl=0s
             {{end}}
