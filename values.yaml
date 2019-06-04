@@ -362,7 +362,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.7
+    tag: 1.2.8
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -380,62 +380,62 @@ images:
     digest: sha256:3aaacfbbaad46b1fb88827ebe9e9a701ee484c1abe4eec63059351c901025d58
   auth:
     repository: auth
-    digest: sha256:722305431d6fd025af7b4efbe8abb0c6a4a6aa5a023e5bc2cb75ddccc2335258
+    digest: sha256:ed8f092a96a36e6c962c3e40eba09c10829a5d44910a53610a1b73a926f99440
   malwareScan:
     repository: vscan
-    digest: sha256:2607715e13d9654f31effecc386d5601da46b2bdedb77a3e18de3037bb257249
+    digest: sha256:94412cd55f3da9728962947642523ca77690fb0529b2c9eeedabf1652f95978e
   contentScan:
     repository: contentscan
-    digest: sha256:2d00fa2c2f808222a178b8cbcb7022deaa4c2a2833faef36de2a72658f27945f
+    digest: sha256:58ad21431a43daa864379e02933461e850cf00aad41597ea05b7469f78843c22
   scan:
     repository: scan
-    digest: sha256:8b310e9df88891d0febde0568af0c8f4717927adf94ddaa92d28f45e2763ac5b
+    digest: sha256:9745a97ccf2cf106e347bf447171d546beccedfec1ec2100f9292f38f7a27737
   registryviews:
     repository: registryviews
-    digest: sha256:b4578a6f85540774dcac7aaef019e001d321ea0056f83e72ee219aa43c41a00f
+    digest: sha256:c7def936c3811dad1e1a7d02a694c1b1b204031f810892d363074d6ffd3a610f
   docs:
     repository: api-docs
-    digest: sha256:3dabe0b18cb5b8c7c856745ffaaed3ac91bd8767ed6b420754555876cb1f437c
+    digest: sha256:00008e41dbddc78c69928e4644924f67ec24bc93bbd3385519d995653f839c67
   frontend:
     repository: frontend
-    digest: sha256:00711b27d5383b6a9595d3621045a1d5ccb2db2f85776e9dc3e8a307d866a599
+    digest: sha256:193d90c5bec8929a40898fd98f9a569a13cc2cb9004b7ba255d7d0545035a6c5
   proxy:
     repository: proxy
     digest: sha256:c030615368020f57596bd6725b478bc6a23e2e017f4f6e6f179686e183928510
   license:
     repository: license
-    digest: sha256:756fae1cb6174bc127126bf7b3fbfc7f9968189de0ca2d5c4da7459f11d69325
+    digest: sha256:3e241168b0981db0f2d7c4beec4e5ed4058e134dbb9f2264903c197ac295d777
   vulnerabilityScan:
     repository: vulnerability-scan
     digest: sha256:45b195a35324c1288e4ea254b3642bc4eabef54e9a262780525aa0791171a095
   vulnerabilityDB:
     repository: vulnerability-db
-    digest: sha256:c6a619fd613bd9f7707b37a8ea0ae803b1fa6552e2a4c26cb9518b3ce07bb6e1
+    digest: sha256:e48114bf0e624c5a142c3a24342880aaaddaf16186effe84a55cd823cd502811
   tasks:
     repository: tasks
-    digest: sha256:e24547f1a3d89aae942e2c8442170ef069a8bb7b82c51af7f2a1b08757fe3ff2
+    digest: sha256:0444f7360bbd8663d3e9f9240b6bb6f7495cfc982a85c95a3a922ba85a99f4d9
   metricsCollector:
     # Using IfNotPresent instead of the default of Always because this runs every minute out of the box
     imagePullPolicy: IfNotPresent
     repository: k8s-metrics-reporter
-    digest: sha256:6867cdb9b244432e811f1b5887dfdd5c36c73b81471d8f1d98e8c983abe8a86b
+    digest: sha256:e526f5603aee4d47cf7114e50ee3d3e5ed112aa4bfac90a4ffe5d5d146aea73c
   metricsReporter:
     # Using IfNotPresent instead of the default of Always because this runs every minute out of the box
     imagePullPolicy: IfNotPresent
     repository: k8s-metrics-reporter
-    digest: sha256:6867cdb9b244432e811f1b5887dfdd5c36c73b81471d8f1d98e8c983abe8a86b
+    digest: sha256:e526f5603aee4d47cf7114e50ee3d3e5ed112aa4bfac90a4ffe5d5d146aea73c
   openscapScan:
     repository: openscap-scan
     digest: sha256:9eea2579b6dc1bc04a181ed28205fe9d1eccad85e5c4fea0420a44c171b17306
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    digest: sha256:fb1c56a7b870ee7c1bf26df556ac92a96bf8793f88db0a609dc77c09421d607d
+    digest: sha256:64299bec14b29fe29f7a41e8002996245c1582f9d33fef23798cc69cff1ff825
   registry:
     repository: registry
     digest: sha256:609ded6788d9b8b231a817575df322f396c201b2d56f34c17cfd74d767509230
   registryCleaner:
     repository: registry-cleaner
-    digest: sha256:1f2a39a24dcba13ef54a25b19d52bfc4216083e1cbc622a4b6180ee07bd077a5
+    digest: sha256:4db646881d12ef78764d2204671e6a1aa3e871a366cec199bc103c680d50cc4f
 
 replicas: {}
 
