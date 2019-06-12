@@ -332,4 +332,5 @@ spec:
       ports:
       - protocol: TCP
         port: 443
+    {{- include "smartcheck.networkpolicy.outbound" . | nindent 4 }}
 {{- end }}

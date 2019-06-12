@@ -364,4 +364,5 @@ spec:
       - protocol: TCP
         port: {{ $port }}
 {{- end }}
+    {{- include "smartcheck.networkpolicy.outbound" . | nindent 4 }}
 {{- end }}

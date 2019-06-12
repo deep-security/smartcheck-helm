@@ -545,6 +545,11 @@ networkPolicy:
   ## Default value: []
   additionalRegistryPorts: []
 
+  ## additionalOutboundPorts is a list of destination port numbers that are allowed for outbound connections
+  ##
+  ## Default value: []
+  additionalOutboundPorts: []
+
 # Scheduled system tasks
 tasks:
   # The scan task will periodically trigger scans on views that have the `schedule`

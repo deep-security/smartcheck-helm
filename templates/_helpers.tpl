@@ -49,3 +49,18 @@ Create an image source.
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+Provide network policy for additional outbound ports
+*/}}
+{{- define "smartcheck.networkpolicy.outbound" -}}
+{{ if .Values.networkPolicy.enabled }}
+{{- range $port := .Values.networkPolicy.additionalOutboundPorts }}
+- to: # any
+  ports:
+    - protocol: TCP
+      port: {{ $port }}
+{{- end }}
+{{- end }}
+{{- end -}}{{/*define*/}}
