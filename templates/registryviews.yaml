@@ -17,6 +17,8 @@ spec:
   selector:
     service: registryviews
     release: {{ .Release.Name }}
+---
+{{ include "smartcheck.service.database.secret" (dict "Chart" .Chart "Values" .Values "Release" .Release "service" "registryviews") }}
 
 ---
 apiVersion: v1
@@ -76,6 +78,9 @@ spec:
       securityContext:
       {{ toYaml $podSecurityContext | indent 8 }}
       {{- end }}{{/* if $securityContextEnabled */}}
+      initContainers:
+        - {{ include "smartcheck.db-initcontainer" (dict "Values" .Values "Chart" .Chart "Release" .Release "service" "registryviews") | nindent 10 | trim }}
+
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.registryviews }}
       {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
@@ -120,33 +125,28 @@ spec:
           args:
             - --internal-base=http://registryviews:8081
             - --authorization-url=http://auth-internal:8081
+            - --database-connection-string=postgres:postgres://
+            - --database-secret=$(DB_SECRET)
             - --scan-url=http://scan-internal:8081
             - --license-url=http://license-internal:8081
-            - --database-connection-string=postgres:postgres://db/registryviewsdb?sslmode=disable&connect_timeout=5 # seconds
-            - --database-secret=$(DB_SECRET)
           env:
-            - name: PGUSER
-              valueFrom:
-                secretKeyRef:
-                  key: database-user
-                  name: {{ template "smartcheck.fullname" . }}-db
-            - name: PGPASSWORD
-              valueFrom:
-                secretKeyRef:
-                  key: database-password
-                  name: {{ template "smartcheck.fullname" . }}-db
-            - name: DB_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: database-secret
-                  name: {{ template "smartcheck.fullname" . }}-db
-            - name: CURSOR_ENCRYPTION_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: secret
-                  name: {{ template "smartcheck.fullname" . }}-cursor
+            {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "registryviews") | nindent 12 }}
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
+          volumeMounts:
+            {{- $volumeMounts := include "smartcheck.db-trust-volume-mount" . | nindent 12 }}
+            {{- if (trim $volumeMounts) }}
+            {{- $volumeMounts }}
+            {{- else }}
+            []
+            {{- end }}{{/* if $volumeMounts */}}
           resources: {{ toYaml (default .Values.resources.defaults .Values.resources.registryviews) | nindent 12 }}
+      volumes:
+        {{- $volumes := include "smartcheck.db-trust-volume" . | nindent 8 }}
+        {{- if (trim $volumes) }}
+        {{- $volumes }}
+        {{- else }}
+        []
+        {{- end }}{{/* if $volumes */}}
       nodeSelector: {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.registryviews) | nindent 8 }}
       tolerations: {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.registryviews) | nindent 8 }}
       restartPolicy: Always

@@ -18,6 +18,9 @@ spec:
     service: openscap-scan
     release: {{ .Release.Name }}
 ---
+{{ include "smartcheck.service.database.secret" (dict "Chart" .Chart "Values" .Values "Release" .Release "service" "openscapscan") }}
+
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -52,6 +55,9 @@ spec:
       {{- if $securityContextEnabled }}
       securityContext: {{ toYaml $podSecurityContext | nindent 8 }}
       {{- end }}{{/* if $securityContextEnabled */}}
+      initContainers:
+        - {{ include "smartcheck.db-initcontainer" (dict "Values" .Values "Chart" .Chart "Release" .Release "service" "openscapscan") | nindent 10 | trim }}
+
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.openscapScan }}
       {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
@@ -92,30 +98,11 @@ spec:
           args:
             - --internal-base=http://openscap-scan-internal:8081
             - --authorization-url=http://auth-internal:8081
-            - --database-connection-string=postgres:postgres://db/openscapscandb?sslmode=disable&connect_timeout=5 # seconds
+            - --database-connection-string=postgres:postgres://
             - --database-secret=$(DB_SECRET)
             - --checklists-folder=data
           env:
-            - name: PGUSER
-              valueFrom:
-                secretKeyRef:
-                  key: database-user
-                  name: {{ template "smartcheck.fullname" . }}-db
-            - name: PGPASSWORD
-              valueFrom:
-                secretKeyRef:
-                  key: database-password
-                  name: {{ template "smartcheck.fullname" . }}-db
-            - name: DB_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: database-secret
-                  name: {{ template "smartcheck.fullname" . }}-db
-            - name: CURSOR_ENCRYPTION_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: secret
-                  name: {{ template "smartcheck.fullname" . }}-cursor
+            {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "openscapscan") | nindent 12 }}
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
           volumeMounts:
             - name: data
@@ -123,6 +110,7 @@ spec:
               readOnly: true
             - name: work
               mountPath: /work
+            {{- include "smartcheck.db-trust-volume-mount" . | nindent 12 }}
           resources: {{ toYaml (default .Values.resources.defaults .Values.resources.openscapScan) | nindent 12 }}
 
         {{- with .Values.images.openscapFeedConsumer }}
@@ -189,6 +177,7 @@ spec:
         - name: work
           emptyDir:
             sizeLimit: {{ default "5Gi" .Values.scan.openscap.workVolume.sizeLimit | quote }}
+        {{- include "smartcheck.db-trust-volume" . | nindent 8 }}
 
 {{ if .Values.networkPolicy.enabled }}
 ---

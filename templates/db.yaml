@@ -1,3 +1,4 @@
+{{- if not .Values.db.host -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -269,3 +270,4 @@ spec:
         - protocol: TCP
           port: 5432
 {{- end }}
+{{- end -}}{{/* if not .Values.db.host */}}

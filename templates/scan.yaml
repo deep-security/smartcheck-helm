@@ -17,6 +17,8 @@ spec:
   selector:
     service: scan
     release: {{ .Release.Name }}
+---
+{{ include "smartcheck.service.database.secret" (dict "Chart" .Chart "Values" .Values "Release" .Release "service" "scan") }}
 
 ---
 apiVersion: v1
@@ -75,6 +77,9 @@ spec:
       {{- if $securityContextEnabled }}
       securityContext: {{ toYaml $podSecurityContext | nindent 8 }}
       {{- end }}{{/* if $securityContextEnabled */}}
+      initContainers:
+        - {{ include "smartcheck.db-initcontainer" (dict "Values" .Values "Chart" .Chart "Release" .Release "service" "scan") | nindent 10 | trim }}
+
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.scan }}
       {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
@@ -119,13 +124,13 @@ spec:
           args:
             - --internal-base=http://scan-internal:8081
             - --authorization-url=http://auth-internal:8081
+            - --database-connection-string=postgres:postgres://
+            - --database-secret=$(DB_SECRET)
             - --malware-scan-url=http://malware-scan-internal:8081
             - --content-scan-url=http://content-scan-internal:8081
             - --vulnerability-scan-url=http://vulnerability-scan-internal:8081
             - --oscap-scan-url=http://openscap-scan-internal:8081
             - --content-source-scanner-webhook-url=http://registryviews-internal:8081/api/results
-            - --database-connection-string=postgres:postgres://db/scandb?sslmode=disable&connect_timeout=5 # seconds
-            - --database-secret=$(DB_SECRET)
             {{- with .Values.scan.results }}
             - --scan-retention-period={{ default 0 .ttl }}
             {{- end }}
@@ -133,28 +138,23 @@ spec:
             - --malware-scan-cache-ttl=0s
             {{end}}
           env:
-            - name: PGUSER
-              valueFrom:
-                secretKeyRef:
-                  key: database-user
-                  name: {{ template "smartcheck.fullname" . }}-db
-            - name: PGPASSWORD
-              valueFrom:
-                secretKeyRef:
-                  key: database-password
-                  name: {{ template "smartcheck.fullname" . }}-db
-            - name: DB_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: database-secret
-                  name: {{ template "smartcheck.fullname" . }}-db
-            - name: CURSOR_ENCRYPTION_SECRET
-              valueFrom:
-                secretKeyRef:
-                  key: secret
-                  name: {{ template "smartcheck.fullname" . }}-cursor
+            {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "scan") | nindent 12 }}
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
+          volumeMounts:
+            {{- $volumeMounts := include "smartcheck.db-trust-volume-mount" . | nindent 12 }}
+            {{- if (trim $volumeMounts) }}
+            {{- $volumeMounts }}
+            {{- else }}
+            []
+            {{- end }}{{/* if $volumeMounts */}}
           resources: {{ toYaml (default .Values.resources.defaults .Values.resources.scan) | nindent 12 }}
+      volumes:
+        {{- $volumes := include "smartcheck.db-trust-volume" . | nindent 8 }}
+        {{- if (trim $volumes) }}
+        {{- $volumes }}
+        {{- else }}
+        []
+        {{- end }}{{/* if $volumes */}}
       nodeSelector: {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.scan) | nindent 8 }}
       tolerations: {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.scan) | nindent 8 }}
       restartPolicy: Always
