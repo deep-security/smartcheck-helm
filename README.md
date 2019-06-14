@@ -6,10 +6,10 @@ Deep Security Smart Check uses the `helm` package manager for Kubernetes.
 
 ### Installing Helm
 
-You will need `helm` version `v2.8.0` or later. There's a handy [quickstart](https://docs.helm.sh/using_helm/#quickstart) that will help you get started, or if you like living dangerously:
+You will need `helm` version `v2.14.0` or later. There's a handy [quickstart](https://docs.helm.sh/using_helm/#quickstart) that will help you get started, or if you like living dangerously:
 
 ```sh
-curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash
+curl -L https://git.io/get_helm.sh | bash
 ```
 
 Helm has a cluster-side component called `tiller` that needs to be installed as well.
