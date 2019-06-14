@@ -1,4 +1,3 @@
----
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,9 +6,9 @@ metadata:
     service: openscap-scan-internal
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
-{{- end }}
+    {{- end }}{{/* range .Values.extraLabels */}}
 spec:
   ports:
     - port: 8081
@@ -28,9 +27,9 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
     appVersion: {{ .Chart.AppVersion }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
-{{- end }}
+    {{- end }}{{/* range .Values.extraLabels */}}
 spec:
   replicas: {{ default 1 .Values.replicas.openscapScan }}
   template:
@@ -40,39 +39,37 @@ spec:
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
         appVersion: {{ .Chart.AppVersion }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+        {{- range $k, $v := (default (dict) .Values.extraLabels) }}
         {{ $k }}: {{ quote $v }}
-{{- end }}
+        {{- end }}{{/* range .Values.extraLabels */}}
     spec:
       automountServiceAccountToken: false
-{{- $securityContextEnabled := .Values.securityContext.enabled }}
-{{- $securityContext := default .Values.securityContext.default .Values.securityContext.openscapScan }}
-{{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}
-{{- $openscapScanContainerSecurityContext := default .Values.securityContext.default.container $securityContext.scanContainer }}
-{{- $openscapFeedConsumerContainerSecurityContext := default .Values.securityContext.default.container $securityContext.feedConsumerContainer}}
-{{- if $securityContextEnabled }}
-      securityContext:
-{{ toYaml $podSecurityContext | indent 8 }}
-{{- end }}
+      {{- $securityContextEnabled := .Values.securityContext.enabled }}
+      {{- $securityContext := default .Values.securityContext.default .Values.securityContext.openscapScan }}
+      {{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}
+      {{- $openscapScanContainerSecurityContext := default .Values.securityContext.default.container $securityContext.scanContainer }}
+      {{- $openscapFeedConsumerContainerSecurityContext := default .Values.securityContext.default.container $securityContext.feedConsumerContainer}}
+      {{- if $securityContextEnabled }}
+      securityContext: {{ toYaml $podSecurityContext | nindent 8 }}
+      {{- end }}{{/* if $securityContextEnabled */}}
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.openscapScan }}
       {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
-      {{- if not (eq "" $secret) }}
+      {{- if $secret }}
       imagePullSecrets:
         - name: {{ $secret | quote }}
-      {{- end }}
+      {{- end }}{{/* if $secret */}}
       containers:
         - name: openscap-scan
-{{- if $securityContextEnabled }}
-          securityContext:
-{{ toYaml $openscapScanContainerSecurityContext | indent 12 }}
-{{- end }}
+          {{- if $securityContextEnabled }}
+          securityContext: {{ toYaml $openscapScanContainerSecurityContext | nindent 12 }}
+          {{- end }}{{/* if $securityContextEnabled */}}
           {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
           {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
           {{- $tag := (default $imageDefaults.tag .tag) }}
           image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
           imagePullPolicy: {{ default (default "Always" $imageDefaults.pullPolicy) .pullPolicy }}
-          {{- end }}
+          {{- end }}{{/* with .Values.images.openscapScan */}}
           ports:
             - containerPort: 8081
               name: internal
@@ -127,21 +124,19 @@ spec:
               readOnly: true
             - name: work
               mountPath: /work
-          resources:
-{{ toYaml (default .Values.resources.defaults .Values.resources.openscapScan) | indent 12 }}
+          resources: {{ toYaml (default .Values.resources.defaults .Values.resources.openscapScan) | nindent 12 }}
 
-{{- with .Values.images.openscapFeedConsumer }}
+        {{- with .Values.images.openscapFeedConsumer }}
         - name: openscap-feed-consumer
-{{- if $securityContextEnabled }}
-          securityContext:
-{{ toYaml $openscapFeedConsumerContainerSecurityContext | indent 12 }}
-{{- end }}
+          {{- if $securityContextEnabled }}
+          securityContext: {{ toYaml $openscapFeedConsumerContainerSecurityContext | nindent 12 }}
+          {{- end }}{{/* if $securityContextEnabled */}}
           {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
           {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
           {{- $tag := (default $imageDefaults.tag .tag) }}
           image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
           imagePullPolicy: {{ default (default "Always" $imageDefaults.pullPolicy) .pullPolicy }}
-          {{- end }}
+          {{- end }}{{/* with .Values.images.openscapFeedConsumer */}}
           ports:
             - containerPort: 8083
               name: health
@@ -165,12 +160,12 @@ spec:
             {{- if hasKey .Values.feed "openscap" }}
             {{- if hasKey .Values.feed.openscap "url" }}
             - --feed-url={{ .Values.feed.openscap.url }}
-            {{- end }}
+            {{- end }}{{/* if hasKey .values.feed.openscap "url" */}}
             {{- if hasKey .Values.feed.openscap "interval" }}
             - --every={{ .Values.feed.openscap.interval }}
-            {{- end }}
-            {{- end }}
-            {{- end }}
+            {{- end }}{{/* if hasKey .values.feed.openscap "interval" */}}
+            {{- end }}{{/* if hasKey .Values.feed "openscap" */}}
+            {{- end }}{{/* if hasKey .Values "feed" */}}
             - --authorization-token=$(ACTIVATION_CODE)
             - --initial-oval-file=/initial-oval.xml
             - --initial-checklists-directory=/initial-checklists
@@ -184,12 +179,9 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
-          resources:
-{{ toYaml (default .Values.resources.defaults .Values.resources.openscapFeedConsumer) | indent 12 }}
-      nodeSelector:
-{{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.openscapScan) | indent 8 }}
-      tolerations:
-{{ toYaml (default .Values.tolerations.defaults .Values.tolerations.openscapScan) | indent 8 }}
+          resources: {{ toYaml (default .Values.resources.defaults .Values.resources.openscapFeedConsumer) | nindent 12 }}
+      nodeSelector: {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.openscapScan) | nindent 8 }}
+      tolerations: {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.openscapScan) | nindent 8 }}
       restartPolicy: Always
       volumes:
         - name: data
@@ -209,18 +201,18 @@ metadata:
     service: openscap-scan
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
-{{- end }}
+    {{- end }}{{/* range .Values.extraLabels */}}
 spec:
   podSelector:
     matchLabels:
       service: openscap-scan
       release: {{ .Release.Name }}
       heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+      {{- range $k, $v := (default (dict) .Values.extraLabels) }}
       {{ $k }}: {{ quote $v }}
-{{- end }}
+      {{- end }}{{/* range .Values.extraLabels */}}
   policyTypes:
     - Ingress
     - Egress
@@ -231,9 +223,9 @@ spec:
             service: scan
             release: {{ .Release.Name }}
             heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+            {{- range $k, $v := (default (dict) .Values.extraLabels) }}
             {{ $k }}: {{ quote $v }}
-{{- end }}
+            {{- end }}{{/* range .Values.extraLabels */}}
       ports:
         - protocol: TCP
           port: 8081
@@ -257,4 +249,4 @@ spec:
       - protocol: TCP
         port: 443
     {{- include "smartcheck.networkpolicy.outbound" . | nindent 4 }}
-{{- end }}
+{{- end }}{{/* if .Values.networkPolicy.enabled */}}

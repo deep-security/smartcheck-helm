@@ -6,9 +6,9 @@ metadata:
     service: auth
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
-{{- end }}
+    {{- end }}{{/* range .Values.extraLabels */}}
 spec:
   ports:
     - port: 8080
@@ -27,9 +27,9 @@ metadata:
     service: auth-internal
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
-{{- end }}
+    {{- end }}{{/* range .Values.extraLabels */}}
 spec:
   ports:
     - port: 8081
@@ -50,9 +50,9 @@ metadata:
     heritage: {{ .Release.Service }}
     appVersion: {{ .Chart.AppVersion }}
     metrics: include
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
-{{- end }}
+    {{- end }}{{/* range .Values.extraLabels */}}
 spec:
   replicas: {{ default 1 .Values.replicas.auth }}
   template:
@@ -63,38 +63,36 @@ spec:
         heritage: {{ .Release.Service }}
         appVersion: {{ .Chart.AppVersion }}
         metrics: include
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+        {{- range $k, $v := (default (dict) .Values.extraLabels) }}
         {{ $k }}: {{ quote $v }}
-{{- end }}
+        {{- end }}{{/* range .Values.extraLabels */}}
     spec:
       automountServiceAccountToken: false
-{{- $securityContextEnabled := .Values.securityContext.enabled }}
-{{- $securityContext := default .Values.securityContext.default .Values.securityContext.auth }}
-{{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}
-{{- $containerSecurityContext := default .Values.securityContext.default.container $securityContext.container }}
-{{- if $securityContextEnabled }}
-      securityContext:
-{{ toYaml $podSecurityContext | indent 8 }}
-{{- end }}
+      {{- $securityContextEnabled := .Values.securityContext.enabled }}
+      {{- $securityContext := default .Values.securityContext.default .Values.securityContext.auth }}
+      {{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}
+      {{- $containerSecurityContext := default .Values.securityContext.default.container $securityContext.container }}
+      {{- if $securityContextEnabled }}
+      securityContext: {{ toYaml $podSecurityContext | nindent 8 }}
+      {{- end }}{{/* if $securityContextEnabled */}}
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.auth }}
       {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
-      {{- if not (eq "" $secret) }}
+      {{- if $secret }}
       imagePullSecrets:
         - name: {{ $secret | quote }}
-      {{- end }}
+      {{- end }}{{/* if $secret */}}
       containers:
         - name: auth
-{{- if $securityContextEnabled }}
-          securityContext:
-{{ toYaml $containerSecurityContext | indent 12 }}
-{{- end }}
+          {{- if $securityContextEnabled }}
+          securityContext: {{ toYaml $containerSecurityContext | nindent 12 }}
+          {{- end }}
           {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
           {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
           {{- $tag := (default $imageDefaults.tag .tag) }}
           image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
           imagePullPolicy: {{ default (default "Always" $imageDefaults.pullPolicy) .pullPolicy }}
-          {{- end }}
+          {{- end }}{{/* with .Values.images.auth */}}
           ports:
             - containerPort: 8080
               name: external
@@ -130,11 +128,11 @@ spec:
             - --initial-password=$(INITIAL_PASSWORD)
             - --cursor-encryption-secret=$(CURSOR_ENCRYPTION_SECRET)
             - --token-audience={{ default "deepsecurity-smartcheck" .Values.auth.tokenAudience }}
-{{- if .Values.auth.saml.enabled }}
+            {{- if .Values.auth.saml.enabled }}
             - --saml-entity-id={{ .Values.auth.saml.entityID }}
             - --saml-assertion-consumer-url={{ .Values.auth.saml.location }}
             - --saml-max-roles={{ default 10 .Values.auth.saml.maxRoles }}
-{{- end }}
+            {{- end }}{{/* if .Values.auth.saml.enabled */}}
           env:
             - name: PGUSER
               valueFrom:
@@ -167,12 +165,9 @@ spec:
                 secretKeyRef:
                   key: secret
                   name: {{ template "smartcheck.fullname" . }}-cursor
-          resources:
-{{ toYaml (default .Values.resources.defaults .Values.resources.auth) | indent 12 }}
-      nodeSelector:
-{{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.auth) | indent 8 }}
-      tolerations:
-{{ toYaml (default .Values.tolerations.defaults .Values.tolerations.auth) | indent 8 }}
+          resources: {{ toYaml (default .Values.resources.defaults .Values.resources.auth) | nindent 12 }}
+      nodeSelector: {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.auth) | nindent 8 }}
+      tolerations: {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.auth) | nindent 8 }}
       restartPolicy: Always
 
 {{ if .Values.networkPolicy.enabled }}
@@ -185,18 +180,18 @@ metadata:
     service: auth
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
-{{- end }}
+    {{- end }}{{/* range .Values.extraLabels */}}
 spec:
   podSelector:
     matchLabels:
       service: auth
       release: {{ .Release.Name }}
       heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+      {{- range $k, $v := (default (dict) .Values.extraLabels) }}
       {{ $k }}: {{ quote $v }}
-{{- end }}
+      {{- end }}{{/* range .Values.extraLabels */}}
   policyTypes:
     - Ingress
     - Egress
@@ -207,9 +202,9 @@ spec:
               service: proxy
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{- range $k, $v := (default (dict) .Values.extraLabels) }}
               {{ $k }}: {{ quote $v }}
-{{- end }}
+              {{- end }}{{/* range .Values.extraLabels */}}
       ports:
         - protocol: TCP
           port: 8080
@@ -219,33 +214,33 @@ spec:
               service: registryviews
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{- range $k, $v := (default (dict) .Values.extraLabels) }}
               {{ $k }}: {{ quote $v }}
-{{- end }}
+              {{- end }}{{/* range .Values.extraLabels */}}
         - podSelector:
             matchLabels:
               service: scan
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{- range $k, $v := (default (dict) .Values.extraLabels) }}
               {{ $k }}: {{ quote $v }}
-{{- end }}
+              {{- end }}{{/* range .Values.extraLabels */}}
         - podSelector:
             matchLabels:
               service: auth
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{- range $k, $v := (default (dict) .Values.extraLabels) }}
               {{ $k }}: {{ quote $v }}
-{{- end }}
+              {{- end }}{{/* range .Values.extraLabels */}}
         - podSelector:
             matchLabels:
               service: license
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{- range $k, $v := (default (dict) .Values.extraLabels) }}
               {{ $k }}: {{ quote $v }}
-{{- end }}
+              {{- end }}{{/* range .Values.extraLabels */}}
       ports:
         - protocol: TCP
           port: 8081
@@ -268,4 +263,4 @@ spec:
           port: 443
         - protocol: TCP
           port: 80
-{{- end }}
+{{- end }}{{/* if networkPolicy.enabled */}}
