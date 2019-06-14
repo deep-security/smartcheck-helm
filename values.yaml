@@ -367,8 +367,8 @@ images:
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
     ##
-    ## Default value: Always
-    # pullPolicy: Always
+    ## Default value: IfNotPresent
+    pullPolicy: IfNotPresent
 
     ## Default secret for pulling images. This can be overridden for each
     ## image by specifying the secretKey attribute at the image level.
@@ -415,13 +415,11 @@ images:
     repository: tasks
     digest: sha256:0444f7360bbd8663d3e9f9240b6bb6f7495cfc982a85c95a3a922ba85a99f4d9
   metricsCollector:
-    # Using IfNotPresent instead of the default of Always because this runs every minute out of the box
+    # Using IfNotPresent instead of the default because this runs every minute out of the box
     imagePullPolicy: IfNotPresent
     repository: k8s-metrics-reporter
     digest: sha256:e526f5603aee4d47cf7114e50ee3d3e5ed112aa4bfac90a4ffe5d5d146aea73c
   metricsReporter:
-    # Using IfNotPresent instead of the default of Always because this runs every minute out of the box
-    imagePullPolicy: IfNotPresent
     repository: k8s-metrics-reporter
     digest: sha256:e526f5603aee4d47cf7114e50ee3d3e5ed112aa4bfac90a4ffe5d5d146aea73c
   openscapScan:
