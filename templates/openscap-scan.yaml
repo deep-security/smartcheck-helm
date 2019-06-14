@@ -246,42 +246,14 @@ spec:
         - protocol: TCP
           port: 8083
   egress:
-    - to:
-        - podSelector:
-            matchLabels:
-              service: scan
-              release: {{ .Release.Name }}
-              heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
-              {{ $k }}: {{ quote $v }}
-{{- end }}
-      ports:
-        - protocol: TCP
-          port: 8081
-    - to:
-        - podSelector:
-            matchLabels:
-              service: db
-              release: {{ .Release.Name }}
-              heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
-              {{ $k }}: {{ quote $v }}
-{{- end }}
-      ports:
-        - protocol: TCP
-          port: 5432
-    - to: # any
-      ports:
-        - protocol: TCP
-          port: 53
-        - protocol: UDP
-          port: 53
+    {{- include "smartcheck.to-dns-networkpolicy" . | nindent 4 }}
+    {{- include "smartcheck.to-db-networkpolicy" . | nindent 4 }}
+    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "scan")) | nindent 4 }}
+    # allow egress for feed consumer
     - to: # any
       ports:
       - protocol: TCP
         port: 80
-    - to: # any
-      ports:
       - protocol: TCP
         port: 443
     {{- include "smartcheck.networkpolicy.outbound" . | nindent 4 }}

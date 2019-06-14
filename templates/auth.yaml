@@ -258,36 +258,12 @@ spec:
         - protocol: TCP
           port: 8083
   egress:
-    - to:
-        - podSelector:
-            matchLabels:
-              service: db
-              release: {{ .Release.Name }}
-              heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
-              {{ $k }}: {{ quote $v }}
-{{- end }}
-      ports:
-        - protocol: TCP
-          port: 5432
-    - to:
-        - podSelector:
-            matchLabels:
-              service: auth
-              release: {{ .Release.Name }}
-              heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
-              {{ $k }}: {{ quote $v }}
-{{- end }}
-      ports:
-        - protocol: TCP
-          port: 8081
+    {{- include "smartcheck.to-dns-networkpolicy" . | nindent 4 }}
+    {{- include "smartcheck.to-db-networkpolicy" . | nindent 4 }}
+    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "auth")) | nindent 4 }}
+    # allow egress on ports 443 / 80 for access to SAML metadata
     - to: # any
       ports:
-        - protocol: TCP
-          port: 53
-        - protocol: UDP
-          port: 53
         - protocol: TCP
           port: 443
         - protocol: TCP

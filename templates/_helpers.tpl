@@ -99,3 +99,42 @@ Provide HTTP proxy environment variables
       name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
       key: password
 {{- end -}}{{/*define*/}}
+
+
+{{- define "smartcheck.to-internal-service-networkpolicy" -}}
+- to:
+    {{- $release := .Release.Name -}}
+    {{- $heritage := .Release.Service -}}
+    {{- $extraLabels := default (dict) .Values.extraLabels -}}
+    {{ range default (list) .services }}
+    - podSelector:
+        matchLabels:
+          service: {{ . }}
+          release: {{ $release }}
+          heritage: {{ $heritage }}
+          {{- range $k, $v := $extraLabels }}
+          {{ $k }}: {{ quote $v }}
+          {{- end }}{{/* range $extraLabels */}}
+    {{- end -}}{{/* range .services */}}
+  ports:
+    - protocol: TCP
+      port: 8081
+{{- end -}}{{/* define */}}
+
+
+{{- define "smartcheck.to-dns-networkpolicy" -}}
+- to: # any
+  ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+{{- end -}}{{/* define */}}
+
+
+{{- define "smartcheck.to-db-networkpolicy" -}}
+- to: # any
+  ports:
+    - protocol: TCP
+      port: 5432
+{{- end -}}{{/* define */}}
