@@ -371,10 +371,10 @@ images:
     pullPolicy: IfNotPresent
 
     ## Default secret for pulling images. This can be overridden for each
-    ## image by specifying the secretKey attribute at the image level.
+    ## image by specifying the imagePullSecret attribute at the image level.
     ##
     ## Default value: none
-    # secretKey:
+    # imagePullSecret:
   db:
     repository: db
     digest: sha256:3aaacfbbaad46b1fb88827ebe9e9a701ee484c1abe4eec63059351c901025d58
