@@ -124,7 +124,6 @@ spec:
             - --license-url=http://license-internal:8081
             - --database-connection-string=postgres:postgres://db/registryviewsdb?sslmode=disable&connect_timeout=5 # seconds
             - --database-secret=$(DB_SECRET)
-            - --cursor-encryption-secret=$(CURSOR_ENCRYPTION_SECRET)
           env:
             - name: PGUSER
               valueFrom:

@@ -94,7 +94,6 @@ spec:
             - --authorization-url=http://auth-internal:8081
             - --database-connection-string=postgres:postgres://db/openscapscandb?sslmode=disable&connect_timeout=5 # seconds
             - --database-secret=$(DB_SECRET)
-            - --cursor-encryption-secret=$(CURSOR_ENCRYPTION_SECRET)
             - --checklists-folder=data
           env:
             - name: PGUSER
