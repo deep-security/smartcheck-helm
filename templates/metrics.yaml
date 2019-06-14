@@ -262,6 +262,7 @@ spec:
                 - --metrics-directory=/data/metrics
                 - --flush
               env:
+                {{- include "smartcheck.proxy.env" . | nindent 16 }}
                 - name: APPLICATION_VERSION
                   value: {{ .Chart.Version | quote }}
                 - name: TARGET_URL
@@ -271,31 +272,6 @@ spec:
                     secretKeyRef:
                       name: {{ template "smartcheck.fullname" . }}-activation-code
                       key: code
-                - name: HTTP_PROXY
-                  valueFrom:
-                    configMapKeyRef:
-                      name: {{ template "smartcheck.fullname" . }}-outbound-proxy
-                      key: httpProxy
-                - name: HTTPS_PROXY
-                  valueFrom:
-                    configMapKeyRef:
-                      name: {{ template "smartcheck.fullname" . }}-outbound-proxy
-                      key: httpsProxy
-                - name: NO_PROXY
-                  valueFrom:
-                    configMapKeyRef:
-                      name: {{ template "smartcheck.fullname" . }}-outbound-proxy
-                      key: noProxy
-                - name: PROXY_USER
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
-                      key: username
-                - name: PROXY_PASS
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
-                      key: password
               volumeMounts:
                 - name: data
                   mountPath: /data

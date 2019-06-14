@@ -115,36 +115,12 @@ spec:
                 secretKeyRef:
                   key: database-secret
                   name: {{ template "smartcheck.fullname" . }}-db
-            - name: HTTP_PROXY
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
-                  key: httpProxy
-            - name: HTTPS_PROXY
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
-                  key: httpsProxy
-            - name: NO_PROXY
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
-                  key: noProxy
-            - name: PROXY_USER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
-                  key: username
-            - name: PROXY_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
-                  key: password
             - name: CURSOR_ENCRYPTION_SECRET
               valueFrom:
                 secretKeyRef:
                   key: secret
                   name: {{ template "smartcheck.fullname" . }}-cursor
+            {{- include "smartcheck.proxy.env" . | nindent 12 }}
           volumeMounts:
             - name: data
               mountPath: /data
@@ -199,31 +175,7 @@ spec:
             - --initial-oval-file=/initial-oval.xml
             - --initial-checklists-directory=/initial-checklists
           env:
-            - name: HTTP_PROXY
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
-                  key: httpProxy
-            - name: HTTPS_PROXY
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
-                  key: httpsProxy
-            - name: NO_PROXY
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
-                  key: noProxy
-            - name: PROXY_USER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
-                  key: username
-            - name: PROXY_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
-                  key: password
+            {{- include "smartcheck.proxy.env" . | nindent 12 }}
             - name: ACTIVATION_CODE
               valueFrom:
                 secretKeyRef:

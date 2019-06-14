@@ -6,6 +6,7 @@ Expand the name of the chart.
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
@@ -24,12 +25,14 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 {{- end -}}
 
+
 {{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "smartcheck.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
 
 {{/*
 Create an image source.
@@ -63,4 +66,36 @@ Provide network policy for additional outbound ports
       port: {{ $port }}
 {{- end }}
 {{- end }}
+{{- end -}}{{/*define*/}}
+
+
+{{/*
+Provide HTTP proxy environment variables
+*/}}
+{{- define "smartcheck.proxy.env" -}}
+- name: HTTP_PROXY
+  valueFrom:
+    configMapKeyRef:
+      name: {{ template "smartcheck.fullname" . }}-outbound-proxy
+      key: httpProxy
+- name: HTTPS_PROXY
+  valueFrom:
+    configMapKeyRef:
+      name: {{ template "smartcheck.fullname" . }}-outbound-proxy
+      key: httpsProxy
+- name: NO_PROXY
+  valueFrom:
+    configMapKeyRef:
+      name: {{ template "smartcheck.fullname" . }}-outbound-proxy
+      key: noProxy
+- name: PROXY_USER
+  valueFrom:
+    secretKeyRef:
+      name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
+      key: username
+- name: PROXY_PASS
+  valueFrom:
+    secretKeyRef:
+      name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
+      key: password
 {{- end -}}{{/*define*/}}

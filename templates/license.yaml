@@ -122,31 +122,7 @@ spec:
             - --internal-base=http://license-internal:8081
             - --authorization-url=http://auth-internal:8081
           env:
-            - name: HTTP_PROXY
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
-                  key: httpProxy
-            - name: HTTPS_PROXY
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
-                  key: httpsProxy
-            - name: NO_PROXY
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy
-                  key: noProxy
-            - name: PROXY_USER
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
-                  key: username
-            - name: PROXY_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-outbound-proxy-credentials
-                  key: password
+            {{- include "smartcheck.proxy.env" . | nindent 12 }}
           resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.license) | indent 12 }}
           volumeMounts:

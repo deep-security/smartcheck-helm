@@ -151,6 +151,7 @@ spec:
                 secretKeyRef:
                   key: database-secret
                   name: {{ template "smartcheck.fullname" . }}-db
+            {{- include "smartcheck.proxy.env" . | nindent 12 }}
             - name: INITIAL_USER
               valueFrom:
                 secretKeyRef:
