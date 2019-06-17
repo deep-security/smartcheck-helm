@@ -327,6 +327,8 @@ env:
       secretKeyRef:
         key: database-password
         name: {{ template "smartcheck.fullname" . }}-db
+  - name: PGCONNECT_TIMEOUT
+    value: "5"
   - name: SERVICE_DB
     value: {{ .service }}db
   - name: SERVICE_USER
