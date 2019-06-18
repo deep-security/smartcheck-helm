@@ -659,6 +659,7 @@ securityContext:
       readOnlyRootFilesystem: true
       runAsNonRoot: true
       # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": this seems appropriate.
+      runAsUser: 1
 
   db: &dbSecurityContext
     pod:
@@ -673,6 +674,7 @@ securityContext:
       readOnlyRootFilesystem: true
       runAsNonRoot: true
       # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": this seems appropriate.
+      runAsUser: 70
 
   metricsCollector: &metrics
     pod:
@@ -686,6 +688,7 @@ securityContext:
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
+      runAsUser: 1
   metricsReporter: *metrics
   registry:
     pod:
