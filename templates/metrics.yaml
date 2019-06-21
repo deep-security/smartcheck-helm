@@ -1,4 +1,4 @@
-{{ if (and .Values.persistence.enabled .Values.tasks.metricsCollector.enabled) }}
+{{ if (and .Values.tasks.metricsCollector.enabled .Values.tasks.metricsReporter.enabled) }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -7,9 +7,9 @@ metadata:
     service: metrics
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
-{{- end }}
+    {{- end }}
 spec:
   ports:
     - name: metrics
@@ -20,146 +20,123 @@ spec:
     metrics: include
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
-{{- end }}
+    {{- end }}
   type: ClusterIP
   clusterIP: None
   sessionAffinity: None
-
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
+apiVersion: extensions/v1beta1
+kind: Deployment
 metadata:
-  name: {{ template "smartcheck.fullname" . }}-metrics
+  name: metrics
   labels:
-    task: metrics
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
-    {{ $k }}: {{ quote $v }}
-{{- end }}
-spec:
-  accessModes:
-    - ReadWriteOnce
-{{- $storageClassName := default (default "" .Values.persistence.storageClassName) .Values.persistence.metrics.storageClassName }}
-{{- if $storageClassName }}
-  storageClassName: {{ $storageClassName }}
-{{- end }}
-  resources:
-    requests:
-      storage: {{ default "1Mi" .Values.persistence.metrics.size }}
-
-{{ end }}
----
-{{ if (and .Values.persistence.enabled .Values.tasks.metricsCollector.enabled) }}
-apiVersion: batch/v1beta1
-kind: CronJob
-metadata:
-  name: metrics-collector
-  labels:
-    task: metrics-collector
+    service: metrics
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
     appVersion: {{ .Chart.AppVersion }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
-{{- end }}
+    {{- end }}
 spec:
-  startingDeadlineSeconds: 300
-  concurrencyPolicy: Replace
-  schedule: {{ quote .Values.tasks.metricsCollector.schedule }}
-  successfulJobsHistoryLimit: 0
-  jobTemplate:
+  # Intentionally don't want to support multiple replicas here
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        service: metrics
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+        appVersion: {{ .Chart.AppVersion }}
+        {{- range $k, $v := (default (dict) .Values.extraLabels) }}
+        {{ $k }}: {{ quote $v }}
+        {{- end }}
     spec:
-      template:
-        metadata:
-          labels:
-            task: metrics-collector
-            release: {{ .Release.Name }}
-            heritage: {{ .Release.Service }}
-            appVersion: {{ .Chart.AppVersion }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
-            {{ $k }}: {{ quote $v }}
-{{- end }}
-        spec:
-          serviceAccountName: {{ template "smartcheck.fullname" . }}-metrics-collector
-          automountServiceAccountToken: true
-{{- $securityContextEnabled := .Values.securityContext.enabled }}
-{{- $securityContext := default .Values.securityContext.default .Values.securityContext.metricsCollector }}
-{{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}
-{{- $containerSecurityContext := default .Values.securityContext.default.container $securityContext.container }}
-{{- if $securityContextEnabled }}
-          securityContext:
-{{ toYaml $podSecurityContext | indent 12 }}
-{{- end }}
-          {{- $imageDefaults := .Values.images.defaults }}
-          {{- with .Values.images.metricsCollector }}
-          {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
-          {{- if not (eq "" $secret) }}
-          imagePullSecrets:
-            - name: {{ $secret | quote }}
+      serviceAccountName: {{ template "smartcheck.fullname" . }}-metrics-collector
+      automountServiceAccountToken: true
+      {{- $securityContextEnabled := .Values.securityContext.enabled }}
+      {{- $securityContext := default .Values.securityContext.default .Values.securityContext.metricsCollector }}
+      {{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}
+      {{- $containerSecurityContext := default .Values.securityContext.default.container $securityContext.container }}
+      {{- if $securityContextEnabled }}
+      securityContext: {{ toYaml $podSecurityContext | nindent 8 }}
+      {{- end }}
+      {{- $imageDefaults := .Values.images.defaults }}
+      {{- with .Values.images.metrics }}
+      {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
+      {{- if not (eq "" $secret) }}
+      imagePullSecrets:
+        - name: {{ $secret | quote }}
+      {{- end }}
+      containers:
+        - name: metrics
+          {{- if $securityContextEnabled }}
+          securityContext: {{ toYaml $containerSecurityContext | nindent 12 }}
           {{- end }}
-          containers:
-            - name: tasks
-{{- if $securityContextEnabled }}
-              securityContext:
-{{ toYaml $containerSecurityContext | indent 16 }}
-{{- end }}
-              {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
-              {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
-              {{- $tag := (default $imageDefaults.tag .tag) }}
-              image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
-              imagePullPolicy: {{ default (default "Always" $imageDefaults.pullPolicy) .pullPolicy }}
-              {{- end }}
-              args:
-                - collect
-                - --namespace={{ .Release.Namespace }}
-                - --service=metrics
-                - --metrics-directory=/data/metrics
-              volumeMounts:
-                - name: data
-                  mountPath: /data
-              resources:
-{{ toYaml (default .Values.resources.defaults .Values.resources.metricsCollector) | indent 16 }}
-          restartPolicy: Never
-          volumes:
+          {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
+          {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
+          {{- $tag := (default $imageDefaults.tag .tag) }}
+          image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
+          imagePullPolicy: {{ default (default "Always" $imageDefaults.pullPolicy) .pullPolicy }}
+          {{- end }}
+          args:
+            - run
+            - --namespace={{ .Release.Namespace }}
+            - --metrics-service=metrics
+            - --metrics-directory=/data/metrics
+            - --activation-code=$(ACTIVATION_CODE)
+            - --application-name=ZA
+            - --product-code=DK
+            - --service=ALL
+            - --report-format=DSSC
+            - --report-format-version=1.0
+            - --target-url=$(TARGET_URL)
+            - --metrics-directory=/data/metrics
+            - --flush
+          env:
+            - name: APPLICATION_VERSION
+              value: {{ .Chart.Version | quote }}
+            - name: TARGET_URL
+              value: {{ .Values.tasks.metricsReporter.url }}
+            - name: ACTIVATION_CODE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "smartcheck.fullname" . }}-activation-code
+                  key: code
+            {{- include "smartcheck.proxy.env" . | nindent 12 }}
+          volumeMounts:
             - name: data
-{{- if .Values.persistence.enabled }}
-              persistentVolumeClaim:
-                claimName: {{ template "smartcheck.fullname" . }}-metrics
-{{- else }}
-              emptyDir: {}
-{{- end }}
-          restartPolicy: OnFailure
-          nodeSelector:
-{{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.metricsCollector) | indent 12 }}
-          tolerations:
-{{ toYaml (default .Values.tolerations.defaults .Values.tolerations.metricsCollector) | indent 12 }}
-{{ end }}
-
-{{ if (and .Values.networkPolicy.enabled .Values.persistence.enabled .Values.tasks.metricsCollector.enabled) }}
+              mountPath: /data
+          resources: {{ toYaml (default .Values.resources.defaults .Values.resources.metrics) | nindent 12 }}
+          restartPolicy: Never
+      volumes:
+        - name: data
+          emptyDir: {}
+      restartPolicy: Always
+      nodeSelector: {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.metrics) | nindent 8 }}
+      tolerations: {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.metrics) | nindent 8 }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: metrics-collector
+  name: metrics
   labels:
-    task: metrics-collector
+    service: metrics
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
-{{- end }}
+    {{- end }}
 spec:
   podSelector:
     matchLabels:
-      task: metrics-collector
+      service: metrics
       release: {{ .Release.Name }}
       heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+      {{- range $k, $v := (default (dict) .Values.extraLabels) }}
       {{ $k }}: {{ quote $v }}
-{{- end }}
+      {{- end }}
   policyTypes:
     - Ingress
     - Egress
@@ -173,9 +150,9 @@ spec:
               metrics: include
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{- range $k, $v := (default (dict) .Values.extraLabels) }}
               {{ $k }}: {{ quote $v }}
-{{- end }}
+              {{- end }}
       ports:
         - protocol: TCP
           port: 8082
@@ -183,159 +160,10 @@ spec:
       ports:
         - protocol: TCP
           port: 443
-    - to: # any
-      ports:
-        - protocol: TCP
-          port: 53
-        - protocol: UDP
-          port: 53
-{{- end }}
----
-{{ if (and .Values.persistence.enabled .Values.tasks.metricsReporter.enabled) }}
-apiVersion: batch/v1beta1
-kind: CronJob
-metadata:
-  name: metrics-reporter
-  labels:
-    task: metrics-reporter
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-    appVersion: {{ .Chart.AppVersion }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
-    {{ $k }}: {{ quote $v }}
-{{- end }}
-spec:
-  startingDeadlineSeconds: 300
-  concurrencyPolicy: Replace
-  schedule: {{ quote .Values.tasks.metricsReporter.schedule }}
-  successfulJobsHistoryLimit: 0
-  jobTemplate:
-    spec:
-      template:
-        metadata:
-          labels:
-            task: metrics-reporter
-            release: {{ .Release.Name }}
-            heritage: {{ .Release.Service }}
-            appVersion: {{ .Chart.AppVersion }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
-            {{ $k }}: {{ quote $v }}
-{{- end }}
-        spec:
-          automountServiceAccountToken: false
-{{- $securityContextEnabled := .Values.securityContext.enabled }}
-{{- $securityContext := default .Values.securityContext.default .Values.securityContext.metricsReporter }}
-{{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}
-{{- $containerSecurityContext := default .Values.securityContext.default.container $securityContext.container }}
-{{- if $securityContextEnabled }}
-          securityContext:
-{{ toYaml $podSecurityContext | indent 12 }}
-{{- end }}
-          {{- $imageDefaults := .Values.images.defaults }}
-          {{- with .Values.images.metricsReporter }}
-          {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
-          {{- if not (eq "" $secret) }}
-          imagePullSecrets:
-            - name: {{ $secret | quote }}
-          {{- end }}
-          containers:
-            - name: tasks
-{{- if $securityContextEnabled }}
-              securityContext:
-{{ toYaml $containerSecurityContext | indent 16 }}
-{{- end }}
-              {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
-              {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
-              {{- $tag := (default $imageDefaults.tag .tag) }}
-              image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
-              imagePullPolicy: {{ default (default "Always" $imageDefaults.pullPolicy) .pullPolicy }}
-              {{- end }}
-              args:
-                - report
-                - --activation-code=$(ACTIVATION_CODE)
-                - --application-name=ZA
-                - --product-code=DK
-                - --service=ALL
-                - --report-format=DSSC
-                - --report-format-version=1.0
-                - --target-url=$(TARGET_URL)
-                - --metrics-directory=/data/metrics
-                - --flush
-              env:
-                {{- include "smartcheck.proxy.env" . | nindent 16 }}
-                - name: APPLICATION_VERSION
-                  value: {{ .Chart.Version | quote }}
-                - name: TARGET_URL
-                  value: {{ .Values.tasks.metricsReporter.url }}
-                - name: ACTIVATION_CODE
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ template "smartcheck.fullname" . }}-activation-code
-                      key: code
-              volumeMounts:
-                - name: data
-                  mountPath: /data
-              resources:
-{{ toYaml (default .Values.resources.defaults .Values.resources.metricsReporter) | indent 16 }}
-          restartPolicy: Never
-          volumes:
-            - name: data
-{{- if .Values.persistence.enabled }}
-              persistentVolumeClaim:
-                claimName: {{ template "smartcheck.fullname" . }}-metrics
-{{- else }}
-              emptyDir: {}
-{{- end }}
-          restartPolicy: OnFailure
-          nodeSelector:
-{{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.metricsReporter) | indent 12 }}
-          tolerations:
-{{ toYaml (default .Values.tolerations.defaults .Values.tolerations.metricsReporter) | indent 12 }}
-{{ end }}
-
-{{ if (and .Values.networkPolicy.enabled .Values.persistence.enabled .Values.tasks.metricsReporter.enabled) }}
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: metrics-reporter
-  labels:
-    task: metrics-reporter
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
-    {{ $k }}: {{ quote $v }}
-{{- end }}
-spec:
-  podSelector:
-    matchLabels:
-      task: metrics-reporter
-      release: {{ .Release.Name }}
-      heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
-      {{ $k }}: {{ quote $v }}
-{{- end }}
-  policyTypes:
-    - Ingress
-    - Egress
-  ingress:
-    - from:
-      ports:
-  egress:
-    - to: # any
-      ports:
-        - protocol: TCP
-          port: 443
         - protocol: TCP
           port: 80
-    - to: # any
-      ports:
-        - protocol: TCP
-          port: 53
-        - protocol: UDP
-          port: 53
-{{- end }}
-{{ if (and .Values.persistence.enabled .Values.tasks.metricsCollector.enabled) }}
+    {{- include "smartcheck.to-dns-networkpolicy" . | nindent 4 }}
+    {{- include "smartcheck.networkpolicy.outbound" . | nindent 4 }}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -345,9 +173,9 @@ metadata:
     task: metrics-collector
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
-{{- end }}
+    {{- end }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -357,9 +185,9 @@ metadata:
     task: metrics-collector
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
-{{- end }}
+    {{- end }}
 rules:
   - apiGroups: [""]
     resources: ["endpoints"]
@@ -376,9 +204,9 @@ metadata:
     task: metrics-collector
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
     {{ $k }}: {{ quote $v }}
-{{- end }}
+    {{- end }}
 subjects:
   - kind: ServiceAccount
     name: {{ template "smartcheck.fullname" . }}-metrics-collector
@@ -387,4 +215,5 @@ roleRef:
   kind: Role
   name: {{ template "smartcheck.fullname" . }}-metrics-collector-role
   apiGroup: rbac.authorization.k8s.io
-{{- end }}
+
+{{ end }}{{/* if (and .Values.tasks.metricsCollector.enabled .Values.tasks.metricsReporter.enabled) */}}

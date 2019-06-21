@@ -452,14 +452,8 @@ images:
   tasks:
     repository: tasks
     digest: sha256:0444f7360bbd8663d3e9f9240b6bb6f7495cfc982a85c95a3a922ba85a99f4d9
-  metricsCollector:
-    # Using IfNotPresent instead of the default because this runs every minute out of the box
-    imagePullPolicy: IfNotPresent
+  metrics:
     repository: k8s-metrics-reporter
-    digest: sha256:e526f5603aee4d47cf7114e50ee3d3e5ed112aa4bfac90a4ffe5d5d146aea73c
-  metricsReporter:
-    repository: k8s-metrics-reporter
-    digest: sha256:e526f5603aee4d47cf7114e50ee3d3e5ed112aa4bfac90a4ffe5d5d146aea73c
   openscapScan:
     repository: openscap-scan
     digest: sha256:9eea2579b6dc1bc04a181ed28205fe9d1eccad85e5c4fea0420a44c171b17306
@@ -508,22 +502,6 @@ persistence:
     ##
     ## Default: blank
     storageClassName:
-
-  metrics:
-    ## size is the amount of persistent volume storage to request for the metrics collector and reporter.
-    ##
-    ## Default value: 1Mi
-    size: 1Mi #?
-
-    ## storageClassName is the name of the storage class that should be used for persistent volume
-    ## used by the metrics collector and reporter. If no value is specified, then the value of
-    ## `persistence.storageClassName` is used.
-    ##
-    ## Reference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class
-    ##
-    ## Default: blank
-    storageClassName:
-
 
 resources:
   defaults: {}
@@ -594,30 +572,18 @@ tasks:
   # The metrics collector will periodically retrieve metrics from pods that have the
   # `metrics: include` label.
   metricsCollector:
-    ## enabled controls whether or not to create the Kubernetes Cronjob task that will
-    ## trigger metrics collection.
+    ## enabled controls whether or not to create the Kubernetes pod that will perform
+    ## metrics collection.
     ##
-    ## Default value: false
+    ## Default value: true
     enabled: true
-
-    ## schedule controls the schedule for metrics collection. It is a string in
-    ## [cron](https://en.wikipedia.org/wiki/Cron) format.
-    ##
-    ## Default value: @hourly
-    schedule: '@hourly'
 
   metricsReporter:
-    ## enabled controls whether or not to create the Kubernetes Cronjob task that will
-    ## trigger metrics collection.
+    ## enabled controls whether or not to create the Kubernetes pod that will perform
+    ## metrics reporting.
     ##
-    ## Default value: false
+    ## Default value: true
     enabled: true
-
-    ## schedule controls the schedule for metrics collection. It is a string in
-    ## [cron](https://en.wikipedia.org/wiki/Cron) format.
-    ##
-    ## Default value: @weekly (once a week, at midnight UTC on Sunday)
-    schedule: '@weekly'
 
     ## url is the target URL for reporting metrics. If no URL is provided, then metrics
     ## will not be reported.
@@ -676,20 +642,6 @@ securityContext:
       # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": this seems appropriate.
       runAsUser: 70
 
-  metricsCollector: &metrics
-    pod:
-      runAsNonRoot: true
-      fsGroup: 1
-    container:
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-        - ALL
-      privileged: false
-      readOnlyRootFilesystem: true
-      runAsNonRoot: true
-      runAsUser: 1
-  metricsReporter: *metrics
   registry:
     pod:
       runAsUser: 1000
