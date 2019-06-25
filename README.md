@@ -62,6 +62,8 @@ _Experienced `helm` users will note that we are using `deepsecurity-smartcheck` 
 
 **Note:** If you do not have an activation code then omit the `--set activationCode={activation code}` line.
 
+**Note:** This installs Deep Security Smart Check with an in-cluster database, which requires a persistent volume. Your cluster must support creating persistent volumes to work with the in-cluster database. See [Use an external database](https://github.com/deep-security/smartcheck-helm/wiki/Use-an-external-database) to learn how to use an external database with Deep Security Smart Check.
+
 ### Connecting to Deep Security Smart Check
 
 The install process will display instructions for obtaining the initial username and password and for connecting to Deep Security Smart Check.
