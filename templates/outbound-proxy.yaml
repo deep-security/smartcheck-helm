@@ -12,4 +12,4 @@ metadata:
 data:
   httpProxy: {{ quote (default "" .Values.proxy.httpProxy) }}
   httpsProxy: {{ quote (default "" .Values.proxy.httpsProxy) }}
-  noProxy: {{ default "" .Values.proxy.noProxy | join "," | quote }}
+  noProxy: {{ (append (default (list) .Values.proxy.noProxy) "scan-internal") | join "," | quote }}
