@@ -403,7 +403,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.9
+    tag: 1.2.10
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -418,10 +418,10 @@ images:
     # imagePullSecret:
   db:
     repository: db
-    digest: sha256:3aaacfbbaad46b1fb88827ebe9e9a701ee484c1abe4eec63059351c901025d58
+    digest: sha256:ca23762a61229105fe19918aa2df2e0594ea0bee6ae68800f31ee42155d03402
   auth:
     repository: auth
-    digest: sha256:ffee019d6497ccd14edb68eef15455aeb75a3cfc0b976c2409e6eb033e21d3e8
+    digest: sha256:5f94bbf8bfaba420104a0dcd5e9c92d03eadc643db621e0f372fc07370625244
   malwareScan:
     repository: vscan
     digest: sha256:cf62977f0a81256a9811a17a1c6c14911dc47b481375e1bb03dfb895d9088111
@@ -430,16 +430,16 @@ images:
     digest: sha256:58ad21431a43daa864379e02933461e850cf00aad41597ea05b7469f78843c22
   scan:
     repository: scan
-    digest: sha256:b43ff8a8c45d013b07ba094be2581d793abea438e1a2573f1a9e956cc8f29864
+    digest: sha256:92dedb3df8df77b696a1c876b2c41d22f22d887cf75c5e093b136669f14e7d53
   registryviews:
     repository: registryviews
-    digest: sha256:07f2bd8381e9dd60f06e792bb1e5ae92b15d48271bcd965458bfb0c7af71457a
+    digest: sha256:6673cbba3fe914746e786be79f4e86cb56e6b20cee9a2d677378c9af7de9fe9d
   docs:
     repository: api-docs
-    digest: sha256:a5fdac69917c618f8919ecb3c9733be8e15c52cb8880d58c5988ade94adc6940
+    digest: sha256:bd978cd78a38ae1d9453dd7d5e8cda97e7a774149c8ea3f06f0256f9f609d683
   frontend:
     repository: frontend
-    digest: sha256:2342cd994a5861755908bd2999c2ce80b62c0d6b35d77c546d03bf9cac4f816d
+    digest: sha256:20384ec8d2f79233e2dab5ea0c50d8ae43b364c6d30cd48832e73fee34512d03
   proxy:
     repository: proxy
     digest: sha256:c030615368020f57596bd6725b478bc6a23e2e017f4f6e6f179686e183928510
@@ -454,12 +454,13 @@ images:
     digest: sha256:0444f7360bbd8663d3e9f9240b6bb6f7495cfc982a85c95a3a922ba85a99f4d9
   metrics:
     repository: k8s-metrics-reporter
+    digest: sha256:420d5726e9cf3c7ad88862035867ed5d0266cc2869510cdd7320133d03352164
   openscapScan:
     repository: openscap-scan
     digest: sha256:9eea2579b6dc1bc04a181ed28205fe9d1eccad85e5c4fea0420a44c171b17306
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    digest: sha256:1e21e1e093164562bc1812328746075ed1d14902e5233738eb17e166ac21d030
+    digest: sha256:f82c602ff5da6426a3623ef112187553b78fa321bb782d17b8b7dccd21e6b441
   registry:
     repository: registry
     digest: sha256:609ded6788d9b8b231a817575df322f396c201b2d56f34c17cfd74d767509230
@@ -468,9 +469,11 @@ images:
     digest: sha256:4db646881d12ef78764d2204671e6a1aa3e871a366cec199bc103c680d50cc4f
   dbInitializer:
     repository: db-initializer
+    digest: sha256:216952d5921ea5d149eac976cc0f88fccdf46905bc0d9615a3a997706f1c5035
   vulnDBInitializer:
     repository: vuln-db-initializer
 
+    digest: sha256:5b3fc14a16acbe41c66f35dfa76bb92ce4dedf1f7a9b78a0ff20c6fea291c523
 replicas: {}
 
 persistence:
@@ -627,7 +630,7 @@ securityContext:
       # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": this seems appropriate.
       runAsUser: 1
 
-  db: &dbSecurityContext
+  db:
     pod:
       runAsNonRoot: true
       fsGroup: 70
