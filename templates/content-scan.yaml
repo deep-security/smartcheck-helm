@@ -34,6 +34,10 @@ metadata:
 {{- end }}
 spec:
   replicas: {{ default 1 .Values.replicas.contentScan }}
+  selector:
+    matchLabels:
+      service: content-scan
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:

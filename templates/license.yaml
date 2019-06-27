@@ -55,6 +55,10 @@ metadata:
 {{- end }}
 spec:
   replicas: {{ default 1 .Values.replicas.license }}
+  selector:
+    matchLabels:
+      service: license
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:

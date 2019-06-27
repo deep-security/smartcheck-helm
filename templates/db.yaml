@@ -60,6 +60,10 @@ metadata:
 {{- end }}
 spec:
   replicas: {{ default 1 .Values.replicas.db }}
+  selector:
+    matchLabels:
+      service: db
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:

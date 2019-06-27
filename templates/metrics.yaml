@@ -42,6 +42,10 @@ metadata:
 spec:
   # Intentionally don't want to support multiple replicas here
   replicas: 1
+  selector:
+    matchLabels:
+      service: metrics
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:

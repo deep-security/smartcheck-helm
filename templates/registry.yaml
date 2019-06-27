@@ -69,6 +69,10 @@ metadata:
 spec:
   replicas: {{ default 1 .Values.replicas.registry }}
   minReadySeconds: 5
+  selector:
+    matchLabels:
+      service: registry
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:

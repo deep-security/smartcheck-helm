@@ -48,6 +48,10 @@ metadata:
 {{- end }}
 spec:
   replicas: {{ default 1 .Values.replicas.proxy }}
+  selector:
+    matchLabels:
+      service: proxy
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:

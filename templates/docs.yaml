@@ -33,6 +33,10 @@ metadata:
 {{- end }}
 spec:
   replicas: {{ default 1 .Values.replicas.docs }}
+  selector:
+    matchLabels:
+      service: docs
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:

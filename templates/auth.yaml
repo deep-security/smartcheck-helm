@@ -58,6 +58,10 @@ metadata:
     {{- end }}{{/* range .Values.extraLabels */}}
 spec:
   replicas: {{ default 1 .Values.replicas.auth }}
+  selector:
+    matchLabels:
+      service: auth
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:
