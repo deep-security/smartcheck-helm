@@ -109,7 +109,6 @@ spec:
             - name: data
               mountPath: /data
           resources: {{ toYaml (default .Values.resources.defaults .Values.resources.metrics) | nindent 12 }}
-          restartPolicy: Never
       volumes:
         - name: data
           emptyDir: {}
