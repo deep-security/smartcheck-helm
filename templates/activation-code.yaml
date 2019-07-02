@@ -11,4 +11,4 @@ metadata:
 {{- end }}
 type: Opaque
 data:
-  code: {{ default "" .Values.activationCode | b64enc | quote }}
+  code: {{ default "" .Values.activationCode | toString | b64enc | quote }}

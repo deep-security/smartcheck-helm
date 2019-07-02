@@ -47,8 +47,8 @@ metadata:
 type: Opaque
 data:
   {{- if (and .Values.registry.auth.username .Values.registry.auth.password) }}
-  username: {{ .Values.registry.auth.username | b64enc }}
-  password: {{ .Values.registry.auth.password | b64enc }}
+  username: {{ .Values.registry.auth.username | toString | b64enc }}
+  password: {{ .Values.registry.auth.password | toString | b64enc }}
   {{- end }}
   haSharedSecret: {{ randAlphaNum 16 | b64enc | quote }}
 
