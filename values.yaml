@@ -403,7 +403,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.11
+    tag: 1.2.12
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -430,16 +430,16 @@ images:
     digest: sha256:58ad21431a43daa864379e02933461e850cf00aad41597ea05b7469f78843c22
   scan:
     repository: scan
-    digest: sha256:92dedb3df8df77b696a1c876b2c41d22f22d887cf75c5e093b136669f14e7d53
+    digest: sha256:ef1e66c829ab29851dffea8103ff9ac00b0fc14b34c880acbdffabce48df2bdd
   registryviews:
     repository: registryviews
-    digest: sha256:6673cbba3fe914746e786be79f4e86cb56e6b20cee9a2d677378c9af7de9fe9d
+    digest: sha256:8e3928a192cb595566bf6f06e808e9b32b499fb3cec43c01c059257f5a236365
   docs:
     repository: api-docs
-    digest: sha256:bd978cd78a38ae1d9453dd7d5e8cda97e7a774149c8ea3f06f0256f9f609d683
+    digest: sha256:4a6fe7b38e0aefb7de389ee114b5059b471aa9d2a7d68c50a4b1e26b09e6e8ad
   frontend:
     repository: frontend
-    digest: sha256:20384ec8d2f79233e2dab5ea0c50d8ae43b364c6d30cd48832e73fee34512d03
+    digest: sha256:b2b59f1396a3457eecc47ececbdd820ab2460cddbd6d3d83dc35a5701f1e5688
   proxy:
     repository: proxy
     digest: sha256:c030615368020f57596bd6725b478bc6a23e2e017f4f6e6f179686e183928510
@@ -460,7 +460,7 @@ images:
     digest: sha256:9eea2579b6dc1bc04a181ed28205fe9d1eccad85e5c4fea0420a44c171b17306
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    digest: sha256:aedbb89ccf44f2cc4a36a81b5ffbe7d264e83fb4c7ea1534a8fdec523c0bd207
+    digest: sha256:1859f72be2483fa713b6d0771f89ecd544439177088e23c04715da65dbedc81d
   registry:
     repository: registry
     digest: sha256:609ded6788d9b8b231a817575df322f396c201b2d56f34c17cfd74d767509230
@@ -473,7 +473,7 @@ images:
   vulnDBInitializer:
     repository: vuln-db-initializer
 
-    digest: sha256:64b9add36d952e29c58e0b6dbd7571a3e10c8180b5ffb140ce2dab28b7a24a19
+    digest: sha256:9f35348acc7ab59bec9efc32c6bd69d2d86bfcecebec1cfa02ec3ca35f6cc923
 replicas: {}
 
 persistence:
