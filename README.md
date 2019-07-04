@@ -2,9 +2,13 @@
 
 ## Getting started
 
-Deep Security Smart Check uses the `helm` package manager for Kubernetes.
+### Getting an activation code
+
+We recommend that you register for a 30-day trial license [code](https://go2.trendmicro.com/geoip/trial-168). Deep Security Smart Check will operate without an activation code; however, malware pattern updates will not be available and you will see a warning message in the administration console.
 
 ### Installing Helm
+
+Deep Security Smart Check uses the `helm` package manager for Kubernetes.
 
 You will need `helm` version `v2.14.1` or later. There's a handy [quickstart](https://docs.helm.sh/using_helm/#quickstart) that will help you get started, or if you like living dangerously:
 
@@ -39,10 +43,6 @@ helm init --service-account tiller
 Use `helm version` to confirm that you have at least version `v2.8.0` of the client and server installed.
 
 _Note: the commands above will give `tiller` full cluster administrator privileges. Review [Securing your Helm Installation](https://docs.helm.sh/using_helm/#securing-your-helm-installation) for help on what to consider when setting up Helm in your cluster._
-
-### Getting an activation code
-
-We recommend that you register for a 30-day trial license [code](https://go2.trendmicro.com/geoip/trial-168). Deep Security Smart Check will operate without an activation code; however, malware pattern updates will not be available and you will see a warning message in the administration console.
 
 ### Installing Deep Security Smart Check
 
