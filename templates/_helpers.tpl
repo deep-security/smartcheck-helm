@@ -181,7 +181,7 @@ metadata:
 type: Opaque
 data:
   database-user: {{ derivePassword 1 "maximum" (toString (required "You must provide a value for auth.masterPassword. Use --set auth.masterPassword={password} or include a value in your overrides.yaml file. If you are upgrading, use --reuse-values to preserve the original value." .Values.auth.masterPassword)) (join "-" (list .service "db-user")) .Release.Name | toString | b64enc | quote }}
-  database-password: {{ derivePassword 1 "maximum" (toString .Values.auth.masterPassword) (join "-" (list .service "db-password")) .Release.Name | toString | b64enc | quote }}
+  database-password: {{ derivePassword 1 "maximum" (toString .Values.auth.masterPassword) (join "-" (list .service "db-password" "2")) .Release.Name | toString | b64enc | quote }}
   {{ if .Values.db.secret -}}
   database-secret: {{ .Values.db.secret | toString | b64enc | quote }}
   {{ else -}}
