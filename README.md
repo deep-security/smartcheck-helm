@@ -42,7 +42,7 @@ kubectl create clusterrolebinding tiller-cluster-role \
 helm init --service-account tiller
 ```
 
-Use `helm version` to confirm that you have at least version `v2.8.0` of the client and server installed.
+Use `helm version` to confirm that you have at least version `v2.14.1` of the client and server installed.
 
 _Note: the commands above will give `tiller` full cluster administrator privileges. Review [Securing your Helm Installation](https://docs.helm.sh/using_helm/#securing-your-helm-installation) for help on what to consider when setting up Helm in your cluster._
 
