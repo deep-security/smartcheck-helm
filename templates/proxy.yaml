@@ -47,6 +47,11 @@ metadata:
     {{ $k }}: {{ quote $v }}
 {{- end }}
 spec:
+  # We set revisionHistoryLimit to 0 because rollback should be done
+  # using `helm rollback` rather than with `kubectl rollout undo`, so
+  # we don't need to keep the old `ReplicaSet`s around.
+  # https://kubernetes.io/docs/concepts/workloads/controllers/deployment
+  revisionHistoryLimit: 0
   replicas: {{ default 1 .Values.replicas.proxy }}
   selector:
     matchLabels:
