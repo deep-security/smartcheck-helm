@@ -59,6 +59,13 @@ metadata:
     {{ $k }}: {{ quote $v }}
 {{- end }}
 spec:
+  # We use `Recreate` as the update strategy because a rolling update
+  # will not work -- the new pod won't come up because it can't mount
+  # the ReadWriteOnce PV.
+  strategy:
+    type: Recreate
+    # Providing an explicitly-null rollingUpdate because of helm#5144
+    rollingUpdate: null
   # We set revisionHistoryLimit to 0 because rollback should be done
   # using `helm rollback` rather than with `kubectl rollout undo`, so
   # we don't need to keep the old `ReplicaSet`s around.
