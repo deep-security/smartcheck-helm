@@ -27,6 +27,8 @@ spec:
   clusterIP: None
   sessionAffinity: None
 ---
+{{ include "smartcheck.service.database.secret" (dict "Chart" .Chart "Values" .Values "Release" .Release "service" "metrics") }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -71,6 +73,9 @@ spec:
       {{- if $securityContextEnabled }}
       securityContext: {{ toYaml $podSecurityContext | nindent 8 }}
       {{- end }}
+      initContainers:
+        - {{ include "smartcheck.db-initcontainer" (dict "Values" .Values "Chart" .Chart "Release" .Release "service" "metrics") | nindent 10 | trim }}
+
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.metrics }}
       {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
@@ -113,17 +118,21 @@ spec:
                 secretKeyRef:
                   name: {{ template "smartcheck.fullname" . }}-activation-code
                   key: code
+            {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "metrics") | nindent 12 }}
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
           volumeMounts:
             - name: data
               mountPath: /data
+            {{- $volumeMounts := include "smartcheck.db-trust-volume-mount" . | nindent 12 }}
           resources: {{ toYaml (default .Values.resources.defaults .Values.resources.metrics) | nindent 12 }}
       volumes:
+        {{- $volumes := include "smartcheck.db-trust-volume" . | nindent 8 }}
         - name: data
           emptyDir: {}
       restartPolicy: Always
       nodeSelector: {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.metrics) | nindent 8 }}
       tolerations: {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.metrics) | nindent 8 }}
+{{ if .Values.networkPolicy.enabled }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -171,7 +180,9 @@ spec:
         - protocol: TCP
           port: 80
     {{- include "smartcheck.to-dns-networkpolicy" . | nindent 4 }}
+    {{- include "smartcheck.to-db-networkpolicy" . | nindent 4 }}
     {{- include "smartcheck.networkpolicy.outbound" . | nindent 4 }}
+{{- end }}{{/* if .Values.networkPolicy.enabled */}}
 ---
 apiVersion: v1
 kind: ServiceAccount
