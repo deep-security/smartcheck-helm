@@ -595,16 +595,16 @@ tasks:
     url: https://licenseupdate.trendmicro.com/fb/bifconnect.ashx
 
   registryCleaner:
-     ## enabled controls whether or not to create the Kubernetes Cronjob task that will
-     ## trigger local registry cleaner.
-     ##
-     ## Default value: true
+    ## enabled controls whether or not to create the Kubernetes Cronjob task that will
+    ## trigger local registry cleaner.
+    ##
+    ## Default value: true
     enabled: true
 
-     ## schedule controls the schedule for metrics collection. It is a string in
-     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
-     ##
-     ## Default value: @daily
+    ## schedule controls the schedule for metrics collection. It is a string in
+    ## [cron](https://en.wikipedia.org/wiki/Cron) format.
+    ##
+    ## Default value: @daily
     schedule: '@daily'
 
 # securityContext specifies the security contexts that we'll apply to the pods.
