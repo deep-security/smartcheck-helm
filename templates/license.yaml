@@ -130,6 +130,9 @@ spec:
           args:
             - --internal-base=http://license-internal:8081
             - --authorization-url=http://auth-internal:8081
+            {{- if .Values.telemetry.enabled }}
+            - --telemetry-endpoint=http://metrics-internal:8081
+            {{- end }}
           env:
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
           resources:
@@ -217,18 +220,7 @@ spec:
         - protocol: TCP
           port: 8083
   egress:
-    - to:
-        - podSelector:
-            matchLabels:
-              service: auth
-              release: {{ .Release.Name }}
-              heritage: {{ .Release.Service }}
-{{- range $k, $v := (default (dict) .Values.extraLabels) }}
-              {{ $k }}: {{ quote $v }}
-{{- end }}
-      ports:
-        - protocol: TCP
-          port: 8081
+    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "auth" "metrics")) | nindent 4 }}
     - to: # any
       ports:
         - protocol: TCP

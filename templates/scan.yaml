@@ -146,6 +146,9 @@ spec:
             {{if not .Values.scan.malwareCache.enabled}}
             - --malware-scan-cache-ttl=0s
             {{end}}
+            {{- if .Values.telemetry.enabled }}
+            - --telemetry-endpoint=http://metrics-internal:8081
+            {{- end }}
           env:
             {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "scan") | nindent 12 }}
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
@@ -253,7 +256,7 @@ spec:
   egress:
     {{- include "smartcheck.to-dns-networkpolicy" . | nindent 4 }}
     {{- include "smartcheck.to-db-networkpolicy" . | nindent 4 }}
-    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "auth" "registryviews" "malware-scan" "vulnerability-scan" "content-scan" "openscap-scan")) | nindent 4 }}
+    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "auth" "registryviews" "malware-scan" "vulnerability-scan" "content-scan" "openscap-scan" "metrics")) | nindent 4 }}
     - to: # any
       ports:
       - protocol: TCP

@@ -138,6 +138,9 @@ spec:
             - --database-secret=$(DB_SECRET)
             - --scan-url=http://scan-internal:8081
             - --license-url=http://license-internal:8081
+            {{- if .Values.telemetry.enabled }}
+            - --telemetry-endpoint=http://metrics-internal:8081
+            {{- end }}
           env:
             {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "registryviews") | nindent 12 }}
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
@@ -230,7 +233,7 @@ spec:
   egress:
     {{- include "smartcheck.to-dns-networkpolicy" . | nindent 4 }}
     {{- include "smartcheck.to-db-networkpolicy" . | nindent 4 }}
-    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "auth" "scan" "license")) | nindent 4 }}
+    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "auth" "scan" "license" "metrics")) | nindent 4 }}
     # allow egress to registries on 80, 443, and any provided additional ports
     - to: # any
       ports:
@@ -242,5 +245,5 @@ spec:
         - protocol: TCP
           port: {{ $port }}
         {{- end }}{{/* range .Values.networkPolicy.additionalRegistryPorts */}}
-     {{- include "smartcheck.networkpolicy.outbound" . | nindent 4 }}
+    {{- include "smartcheck.networkpolicy.outbound" . | nindent 4 }}
 {{- end }}{{/* if .Values.networkPolicy.enabled */}}

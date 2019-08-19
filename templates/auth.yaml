@@ -147,6 +147,9 @@ spec:
             - --saml-assertion-consumer-url={{ .Values.auth.saml.location }}
             - --saml-max-roles={{ default 10 .Values.auth.saml.maxRoles }}
             {{- end }}{{/* if .Values.auth.saml.enabled */}}
+            {{- if .Values.telemetry.enabled }}
+            - --telemetry-endpoint=http://metrics-internal:8081
+            {{- end }}
           env:
             {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "auth") | nindent 12 }}
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
@@ -264,7 +267,7 @@ spec:
   egress:
     {{- include "smartcheck.to-dns-networkpolicy" . | nindent 4 }}
     {{- include "smartcheck.to-db-networkpolicy" . | nindent 4 }}
-    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "auth")) | nindent 4 }}
+    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "auth" "metrics")) | nindent 4 }}
     # allow egress on ports 443 / 80 for access to SAML metadata
     - to: # any
       ports:

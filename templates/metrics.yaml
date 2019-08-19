@@ -27,7 +27,45 @@ spec:
   clusterIP: None
   sessionAffinity: None
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: metrics-internal
+  labels:
+    service: metrics
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{ $k }}: {{ quote $v }}
+{{- end }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8081
+      protocol: TCP
+      targetPort: 8081
+      name: metrics
+  selector:
+    service: metrics
+    release: {{ .Release.Name }}
+---
 {{ include "smartcheck.service.database.secret" (dict "Chart" .Chart "Values" .Values "Release" .Release "service" "metrics") }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template "smartcheck.fullname" . }}-metrics
+  labels:
+    app: {{ template "smartcheck.name" . }}
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    {{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{ $k }}: {{ quote $v }}
+    {{- end }}
+type: Opaque
+data:
+  apiKey: {{ default "" .Values.telemetry.apiKey | b64enc | quote }}
+  publicKey: {{ default "" .Values.telemetry.publicKey | b64enc | quote }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -107,7 +145,16 @@ spec:
             - --report-format-version=1.0
             - --target-url=$(TARGET_URL)
             - --metrics-directory=/data/metrics
+            - --application-version=$(APPLICATION_VERSION)
             - --flush
+            {{- if .Values.telemetry.enabled }}
+            - --telemetry-endpoint={{ .Values.telemetry.endpoint }}
+            - --telemetry-interval={{ .Values.telemetry.interval }}
+            - --telemetry-api-key={{ default "" .Values.telemetry.apiKey }}
+            {{- if .Values.telemetry.publicKey }}
+            - --telemetry-key-file=/telemetry/key.pem
+            {{- end }}{{/* .Values.telemetry.publicKey */}}
+            {{- end }}{{/* .Values.telemetry.enabled */}}
           env:
             - name: APPLICATION_VERSION
               value: {{ .Chart.Version | quote }}
@@ -124,11 +171,23 @@ spec:
             - name: data
               mountPath: /data
             {{- $volumeMounts := include "smartcheck.db-trust-volume-mount" . | nindent 12 }}
+            {{- if .Values.telemetry.publicKey }}
+            - name: telemetry-secret
+              mountPath: /telemetry
+            {{- end }}{{/* .Values.telemetry.publicKey */}}
           resources: {{ toYaml (default .Values.resources.defaults .Values.resources.metrics) | nindent 12 }}
       volumes:
         {{- $volumes := include "smartcheck.db-trust-volume" . | nindent 8 }}
         - name: data
           emptyDir: {}
+        {{- if .Values.telemetry.publicKey }}
+        - name: telemetry-secret
+          secret:
+            secretName: {{ template "smartcheck.fullname" . }}-metrics
+            items:
+            - key: publicKey
+              path: key.pem
+        {{- end }}{{/* .Values.telemetry.publicKey */}}
       restartPolicy: Always
       nodeSelector: {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.metrics) | nindent 8 }}
       tolerations: {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.metrics) | nindent 8 }}
@@ -159,7 +218,17 @@ spec:
     - Egress
   ingress:
     - from:
+        # Allow any pod in the application to send telemetry events
+        - podSelector:
+            matchLabels:
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+              {{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+              {{- end }}
       ports:
+        - protocol: TCP
+          port: 8081
   egress:
     - to:
         - podSelector:

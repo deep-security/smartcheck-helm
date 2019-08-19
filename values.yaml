@@ -607,6 +607,27 @@ tasks:
     ## Default value: @daily
     schedule: '@daily'
 
+telemetry:
+  ## enabled controls whether telemetry events will be sent.
+  ##
+  ## Default value: true
+  enabled: true
+
+  ## endpoint is the endpoint of the telemetry service.
+  ##
+  ## Default value: https://telemetry.deepsecurity.trendmicro.com
+  endpoint: https://telemetry.deepsecurity.trendmicro.com
+
+  ## interval controls the maximum interval between telemetry data reports
+  ##
+  ## Default value: 24h
+  interval: 24h
+
+  ## publicKey is the public key used when communicating with the telemetry service.
+  ##
+  ## Default value: (built-in)
+  publicKey:
+
 # securityContext specifies the security contexts that we'll apply to the pods.
 securityContext:
   ## enabled is a global flag controlling whether security contexts are included at all in the manifest
