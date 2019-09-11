@@ -207,6 +207,12 @@ data:
 
       charset utf-8;
 
+      error_page 401 /401.json;
+      location = /401.json {
+        root /etc/nginx/custom_errors;
+        internal;
+      }
+
       # Proxying the connections
       location / {
         proxy_pass         http://frontend_server;
@@ -220,6 +226,11 @@ data:
       }
 
       location /api {
+        # Short-circuit requests that don't have an authorization token.
+        if ($http_authorization !~ "^Bearer") {
+          return 401;
+        }
+
         limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
         limit_req_status {{ default 429 $apiRateLimiting.status }};
 
@@ -257,7 +268,28 @@ data:
         add_header         Vary "Authorization" always;
       }
 
-      location ~ /api/(users|roles|sessions|identity-providers) {
+      location ~ /api/sessions {
+        # don't check for the Authorization header here because they won't
+        # have a token until they create the session
+        limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
+        limit_req_status {{ default 429 $apiRateLimiting.status }};
+
+        proxy_pass         http://auth_server;
+        proxy_redirect     off;
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Host $server_name;
+
+        add_header         Vary "Authorization" always;
+      }
+
+      location ~ /api/(users|roles|identity-providers) {
+        # Short-circuit requests that don't have an authorization token.
+        if ($http_authorization !~ "^Bearer") {
+          return 401;
+        }
+
         limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
         limit_req_status {{ default 429 $apiRateLimiting.status }};
 
@@ -272,6 +304,11 @@ data:
       }
 
       location ~ /api/registries {
+        # Short-circuit requests that don't have an authorization token.
+        if ($http_authorization !~ "^Bearer") {
+          return 401;
+        }
+
         limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
         limit_req_status {{ default 429 $apiRateLimiting.status }};
 
@@ -286,6 +323,11 @@ data:
       }
 
       location ~ /api/license {
+        # Short-circuit requests that don't have an authorization token.
+        if ($http_authorization !~ "^Bearer") {
+          return 401;
+        }
+
         limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
         limit_req_status {{ default 429 $apiRateLimiting.status }};
 
