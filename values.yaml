@@ -495,8 +495,10 @@ images:
     digest: sha256:0bb6214ffa812d4bf687817bbf341e0b63d390a2a2dc2704eb4b8c4dcbd5172b
   vulnDBInitializer:
     repository: vuln-db-initializer
-
     digest: sha256:06f577be2f2b10879d1c035aa271b82c229f9635b3b10efbeb9e8aad011eae34
+  imageScan:
+    repository: image-scan
+
 replicas: {}
 
 persistence:

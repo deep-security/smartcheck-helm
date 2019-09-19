@@ -33,6 +33,14 @@ Create chart name and version as used by the chart label.
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{/* Image and pull policy */}}
+{{- define "image" -}}
+{{- $project := (default (default "deepsecurity" .defaults.project) .image.project) }}
+{{- $repository := printf "%s/%s" $project (required ".repository is required!" .image.repository) }}
+{{- $tag := (default .defaults.tag .image.tag) }}
+image: {{ include "image.source" (dict "repository" $repository "registry" .image.registry "tag" $tag "imageDefaults" .defaults "digest" .image.digest) }}
+imagePullPolicy: {{ default (default "Always" .defaults.pullPolicy) .image.pullPolicy }}
+{{- end -}}{{/* define image*/}}
 
 {{/*
 Create an image source.

@@ -138,7 +138,7 @@ spec:
             - --malware-scan-url=http://malware-scan-internal:8081
             - --content-scan-url=http://content-scan-internal:8081
             - --vulnerability-scan-url=http://vulnerability-scan-internal:8081
-            - --oscap-scan-url=http://openscap-scan-internal:8081
+            - --image-scan-url=http://image-scan-internal:8081
             - --content-source-scanner-webhook-url=http://registryviews-internal:8081/api/results
             {{- with .Values.scan.results }}
             - --scan-retention-period={{ default 0 .ttl }}
@@ -236,7 +236,7 @@ spec:
             {{- end }}{{/* range .Values.extraLabels */}}
       - podSelector:
           matchLabels:
-            service: openscap-scan
+            service: image-scan
             release: {{ .Release.Name }}
             heritage: {{ .Release.Service }}
             {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -256,7 +256,7 @@ spec:
   egress:
     {{- include "smartcheck.to-dns-networkpolicy" . | nindent 4 }}
     {{- include "smartcheck.to-db-networkpolicy" . | nindent 4 }}
-    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "auth" "registryviews" "malware-scan" "vulnerability-scan" "content-scan" "openscap-scan" "metrics")) | nindent 4 }}
+    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "auth" "registryviews" "malware-scan" "vulnerability-scan" "content-scan" "image-scan" "metrics")) | nindent 4 }}
     - to: # any
       ports:
       - protocol: TCP

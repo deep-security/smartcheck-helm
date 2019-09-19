@@ -276,7 +276,7 @@ spec:
 {{- end }}
         - podSelector:
             matchLabels:
-              service: openscap-scan
+              service: image-scan
               release: {{ .Release.Name }}
               heritage: {{ .Release.Service }}
 {{- range $k, $v := (default (dict) .Values.extraLabels) }}

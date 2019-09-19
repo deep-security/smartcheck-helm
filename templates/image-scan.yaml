@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: openscap-scan-internal
+  name: image-scan-internal
   labels:
-    service: openscap-scan-internal
+    service: image-scan-internal
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
     {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -15,18 +15,17 @@ spec:
       protocol: TCP
       name: internal
   selector:
-    service: openscap-scan
+    service: image-scan
     release: {{ .Release.Name }}
 ---
 {{ include "smartcheck.service.database.secret" (dict "Chart" .Chart "Values" .Values "Release" .Release "service" "openscapscan") }}
-
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: openscap-scan
+  name: image-scan
   labels:
-    service: openscap-scan
+    service: image-scan
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
     appVersion: {{ .Chart.AppVersion }}
@@ -39,15 +38,15 @@ spec:
   # we don't need to keep the old `ReplicaSet`s around.
   # https://kubernetes.io/docs/concepts/workloads/controllers/deployment
   revisionHistoryLimit: 0
-  replicas: {{ default 1 .Values.replicas.openscapScan }}
+  replicas: {{ default 1 .Values.replicas.imageScan }}
   selector:
     matchLabels:
-      service: openscap-scan
+      service: image-scan
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        service: openscap-scan
+        service: image-scan
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
         appVersion: {{ .Chart.AppVersion }}
@@ -57,19 +56,14 @@ spec:
     spec:
       automountServiceAccountToken: false
       {{- $securityContextEnabled := .Values.securityContext.enabled }}
-      {{- $securityContext := default .Values.securityContext.default .Values.securityContext.openscapScan }}
-      {{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}
-      {{- $openscapScanContainerSecurityContext := default .Values.securityContext.default.container $securityContext.scanContainer }}
-      {{- $openscapFeedConsumerContainerSecurityContext := default .Values.securityContext.default.container $securityContext.feedConsumerContainer}}
+      {{- $securityContext := default .Values.securityContext.default .Values.securityContext.imageScan }}
       {{- if $securityContextEnabled }}
-      securityContext: {{ toYaml $podSecurityContext | nindent 8 }}
+      securityContext: {{ toYaml (default .Values.securityContext.default.pod $securityContext.pod) | nindent 8 }}
       {{- end }}{{/* if $securityContextEnabled */}}
       initContainers:
         - {{ include "smartcheck.db-initcontainer" (dict "Values" .Values "Chart" .Chart "Release" .Release "service" "openscapscan") | nindent 10 | trim }}
 
-      {{- $imageDefaults := .Values.images.defaults }}
-      {{- with .Values.images.openscapScan }}
-      {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
+      {{- $secret := (default (default "" .Values.images.defaults.imagePullSecret) .Values.images.imageScan.imagePullSecret) }}
       {{- if $secret }}
       imagePullSecrets:
         - name: {{ $secret | quote }}
@@ -77,14 +71,28 @@ spec:
       containers:
         - name: openscap-scan
           {{- if $securityContextEnabled }}
-          securityContext: {{ toYaml $openscapScanContainerSecurityContext | nindent 12 }}
+          securityContext: {{ toYaml (default .Values.securityContext.default.container $securityContext.openscapScanContainer) | nindent 12 }}
           {{- end }}{{/* if $securityContextEnabled */}}
-          {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
-          {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
-          {{- $tag := (default $imageDefaults.tag .tag) }}
-          image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
-          imagePullPolicy: {{ default (default "Always" $imageDefaults.pullPolicy) .pullPolicy }}
-          {{- end }}{{/* with .Values.images.openscapScan */}}
+          {{ include "image" (dict "defaults" .Values.images.defaults "image" .Values.images.openscapScan) | nindent 10 }}
+          ports:
+            - containerPort: 3011
+              name: openscap-scan
+          args:
+            - --bind-port=3011
+            - --oval-file=/data/oval.xml
+            - --checklist-dir=/data
+            - --root=work/
+          volumeMounts:
+            - name: work
+              mountPath: /work
+            - name: oscap-feed-data
+              mountPath: /data
+              readOnly: true
+        - name: image-scan
+          {{- if $securityContextEnabled }}
+          securityContext: {{ toYaml (default .Values.securityContext.default.container $securityContext.imageScanContainer) | nindent 12 }}
+          {{- end }}{{/* if $securityContextEnabled */}}
+          {{ include "image" (dict "defaults" .Values.images.defaults "image" .Values.images.imageScan) | nindent 10 }}
           ports:
             - containerPort: 8081
               name: internal
@@ -105,34 +113,25 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 6
           args:
-            - --internal-base=http://openscap-scan-internal:8081
+            - --internal-base=http://image-scan-internal:8081
             - --authorization-url=http://auth-internal:8081
             - --database-connection-string=postgres:postgres://
             - --database-secret=$(DB_SECRET)
-            - --checklists-folder=data
+            - --scanner-url=http://localhost:3011/api/scans
           env:
             {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "openscapscan") | nindent 12 }}
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
           volumeMounts:
-            - name: data
-              mountPath: /data
-              readOnly: true
             - name: work
               mountPath: /work
             {{- include "smartcheck.db-trust-volume-mount" . | nindent 12 }}
-          resources: {{ toYaml (default .Values.resources.defaults .Values.resources.openscapScan) | nindent 12 }}
+          resources: {{ toYaml (default .Values.resources.defaults .Values.resources.imageScan) | nindent 12 }}
 
-        {{- with .Values.images.openscapFeedConsumer }}
         - name: openscap-feed-consumer
           {{- if $securityContextEnabled }}
-          securityContext: {{ toYaml $openscapFeedConsumerContainerSecurityContext | nindent 12 }}
+          securityContext: {{ toYaml (default .Values.securityContext.default.container $securityContext.feedConsumerContainer) | nindent 12 }}
           {{- end }}{{/* if $securityContextEnabled */}}
-          {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
-          {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
-          {{- $tag := (default $imageDefaults.tag .tag) }}
-          image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
-          imagePullPolicy: {{ default (default "Always" $imageDefaults.pullPolicy) .pullPolicy }}
-          {{- end }}{{/* with .Values.images.openscapFeedConsumer */}}
+          {{ include "image" (dict "defaults" .Values.images.defaults "image" .Values.images.openscapFeedConsumer) | nindent 10 }}
           ports:
             - containerPort: 8083
               name: health
@@ -173,14 +172,14 @@ spec:
                   name: {{ template "smartcheck.fullname" . }}-activation-code
                   key: code
           volumeMounts:
-            - name: data
+            - name: oscap-feed-data
               mountPath: /data
           resources: {{ toYaml (default .Values.resources.defaults .Values.resources.openscapFeedConsumer) | nindent 12 }}
-      nodeSelector: {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.openscapScan) | nindent 8 }}
-      tolerations: {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.openscapScan) | nindent 8 }}
+      nodeSelector: {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.imageScan) | nindent 8 }}
+      tolerations: {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.imageScan) | nindent 8 }}
       restartPolicy: Always
       volumes:
-        - name: data
+        - name: oscap-feed-data
           emptyDir:
             sizeLimit: {{ default "1Gi" .Values.scan.openscap.dataVolume.sizeLimit | quote }}
         - name: work
@@ -193,9 +192,9 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: openscap-scan
+  name: image-scan
   labels:
-    service: openscap-scan
+    service: image-scan
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
     {{- range $k, $v := (default (dict) .Values.extraLabels) }}
@@ -204,7 +203,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      service: openscap-scan
+      service: image-scan
       release: {{ .Release.Name }}
       heritage: {{ .Release.Service }}
       {{- range $k, $v := (default (dict) .Values.extraLabels) }}
