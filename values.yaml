@@ -384,6 +384,13 @@ registry:
   dataVolume:
     sizeLimit: 10Gi
 
+vulnerabilityScan:
+  workVolume:
+    ## The amount of space to request for the vulnerability scan working volume
+    ##
+    ## Default value: 2Gi
+    sizeLimit: 2Gi
+
 images:
   defaults:
     ## Default registry to pull images from. This can be overridden for
