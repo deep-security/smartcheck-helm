@@ -150,6 +150,12 @@ spec:
             {{- if .Values.telemetry.enabled }}
             - --telemetry-endpoint=http://metrics-internal:8081
             {{- end }}
+            {{- if .Values.auth.sessionDuration }}
+            - --token-lifetime={{ .Values.auth.sessionDuration }}
+            {{- end }}{{/* if .Values.auth.sessionDuration */}}
+            {{- if .Values.auth.sessionKeyLifetime }}
+            - --token-key-lifetime={{ .Values.auth.sessionKeyLifetime }}
+            {{- end }}{{/* if .Values.auth.sessionKeyLifetime */}}
           env:
             {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "auth") | nindent 12 }}
             {{- include "smartcheck.proxy.env" . | nindent 12 }}

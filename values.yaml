@@ -153,6 +153,22 @@ auth:
   ## Default value: deepsecurity-smartcheck
   audience: deepsecurity-smartcheck
 
+  ## Session tokens are issued for a specific duration.
+  ## This must be less than `auth.sessionKeyLifetime`.
+  ##
+  ## Default value: 1h
+  ## Minimum value: 15m
+  ## Maximum value: `auth.sessionKeyLifetime`
+  sessionDuration: 1h
+
+  ## Session tokens are signed by a key that is rotated every `auth.sessionKeyLifetime`.
+  ## This must be greater than `auth.sessionDuration`.
+  ##
+  ## Default value: 24h
+  ## Minimum value: 1h
+  ## Maximum value: 168h
+  sessionKeyLifetime: 24h
+
 certificate:
   secret:
     ## name is the name of the existing secret that stores the service's certificate and private key.
