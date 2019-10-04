@@ -170,14 +170,13 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
-            {{- $volumeMounts := include "smartcheck.db-trust-volume-mount" . | nindent 12 }}
+            {{ include "smartcheck.db-trust-volume-mount" . | nindent 12 }}
             {{- if .Values.telemetry.publicKey }}
             - name: telemetry-secret
               mountPath: /telemetry
             {{- end }}{{/* .Values.telemetry.publicKey */}}
           resources: {{ toYaml (default .Values.resources.defaults .Values.resources.metrics) | nindent 12 }}
       volumes:
-        {{- $volumes := include "smartcheck.db-trust-volume" . | nindent 8 }}
         - name: data
           emptyDir: {}
         {{- if .Values.telemetry.publicKey }}
@@ -188,6 +187,7 @@ spec:
             - key: publicKey
               path: key.pem
         {{- end }}{{/* .Values.telemetry.publicKey */}}
+        {{- include "smartcheck.db-trust-volume" . | nindent 8 }}
       restartPolicy: Always
       nodeSelector: {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.metrics) | nindent 8 }}
       tolerations: {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.metrics) | nindent 8 }}
