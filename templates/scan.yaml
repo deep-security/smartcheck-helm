@@ -143,6 +143,7 @@ spec:
             - --use-strict-transport-security=true
             - --use-strict-transport-security-includes-subdomains=false
             - --use-strict-transport-security-includes-preload=false
+            - --work-dir=/work
             {{- with .Values.scan.results }}
             - --scan-retention-period={{ default 0 .ttl }}
             {{- end }}
@@ -156,20 +157,14 @@ spec:
             {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "scan") | nindent 12 }}
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
           volumeMounts:
-            {{- $volumeMounts := include "smartcheck.db-trust-volume-mount" . | nindent 12 }}
-            {{- if (trim $volumeMounts) }}
-            {{- $volumeMounts }}
-            {{- else }}
-            []
-            {{- end }}{{/* if $volumeMounts */}}
+            {{- include "smartcheck.db-trust-volume-mount" . | nindent 12 }}
+            - name: work
+              mountPath: /work
           resources: {{ toYaml (default .Values.resources.defaults .Values.resources.scan) | nindent 12 }}
       volumes:
-        {{- $volumes := include "smartcheck.db-trust-volume" . | nindent 8 }}
-        {{- if (trim $volumes) }}
-        {{- $volumes }}
-        {{- else }}
-        []
-        {{- end }}{{/* if $volumes */}}
+        {{- include "smartcheck.db-trust-volume" . | nindent 8 }}
+        - name: work
+          emptyDir: {}
       nodeSelector: {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.scan) | nindent 8 }}
       tolerations: {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.scan) | nindent 8 }}
       restartPolicy: Always
