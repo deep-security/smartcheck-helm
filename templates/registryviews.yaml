@@ -138,6 +138,9 @@ spec:
             - --database-secret=$(DB_SECRET)
             - --scan-url=http://scan-internal:8081
             - --license-url=http://license-internal:8081
+            - --use-strict-transport-security=true
+            - --use-strict-transport-security-includes-subdomains=false
+            - --use-strict-transport-security-includes-preload=false
             {{- if .Values.telemetry.enabled }}
             - --telemetry-endpoint=http://metrics-internal:8081
             {{- end }}

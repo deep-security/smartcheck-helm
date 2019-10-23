@@ -142,6 +142,9 @@ spec:
             - --initial-user=$(INITIAL_USER)
             - --initial-password=$(INITIAL_PASSWORD)
             - --token-audience={{ default "deepsecurity-smartcheck" .Values.auth.tokenAudience }}
+            - --use-strict-transport-security=true
+            - --use-strict-transport-security-includes-subdomains=false
+            - --use-strict-transport-security-includes-preload=false
             {{- if .Values.auth.saml.enabled }}
             - --saml-entity-id={{ .Values.auth.saml.entityID }}
             - --saml-assertion-consumer-url={{ .Values.auth.saml.location }}

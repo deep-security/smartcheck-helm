@@ -140,6 +140,9 @@ spec:
             - --vulnerability-scan-url=http://vulnerability-scan-internal:8081
             - --image-scan-url=http://image-scan-internal:8081
             - --content-source-scanner-webhook-url=http://registryviews-internal:8081/api/results
+            - --use-strict-transport-security=true
+            - --use-strict-transport-security-includes-subdomains=false
+            - --use-strict-transport-security-includes-preload=false
             {{- with .Values.scan.results }}
             - --scan-retention-period={{ default 0 .ttl }}
             {{- end }}

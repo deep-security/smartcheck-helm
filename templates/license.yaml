@@ -130,6 +130,9 @@ spec:
           args:
             - --internal-base=http://license-internal:8081
             - --authorization-url=http://auth-internal:8081
+            - --use-strict-transport-security=true
+            - --use-strict-transport-security-includes-subdomains=false
+            - --use-strict-transport-security-includes-preload=false
             {{- if .Values.telemetry.enabled }}
             - --telemetry-endpoint=http://metrics-internal:8081
             {{- end }}

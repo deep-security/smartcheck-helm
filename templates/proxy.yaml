@@ -198,7 +198,6 @@ data:
 
     # Configuration for the server
     server {
-
       # Running port
       listen [::]:8443 ssl http2 default_server;
       listen 8443 ssl http2 default_server;
@@ -223,6 +222,7 @@ data:
         proxy_set_header   X-Forwarded-Host $server_name;
 
         add_header         Vary "Authorization" always;
+        add_header         Strict-Transport-Security "max-age=31622400";
       }
 
       location /api {
@@ -253,6 +253,7 @@ data:
         proxy_set_header   X-Forwarded-Host $server_name;
 
         add_header         Vary "Authorization" always;
+        add_header         Strict-Transport-Security "max-age=31622400";
       }
 
       location ~ /saml/?$ {
@@ -369,6 +370,7 @@ data:
         proxy_read_timeout 900;
 
         add_header         Vary "Authorization" always;
+        add_header         Strict-Transport-Security "max-age=31622400";
       }
 
       location /v2/ {
@@ -389,6 +391,7 @@ data:
         proxy_read_timeout 900;
 
         add_header         Vary "Authorization" always;
+        add_header         Strict-Transport-Security "max-age=31622400";
       }
     }
 {{- end }}
