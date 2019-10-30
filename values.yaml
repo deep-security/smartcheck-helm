@@ -10,6 +10,19 @@ activationCode:
 ## created by this chart.
 extraLabels: {}
 
+ipv6:
+  ## enabled controls whether the proxy listens on IPv6 addresses internally. This does
+  ## not affect whether the load balancer (if service.type is `LoadBalancer`) exposes an IPv6
+  ## interface.
+  ##
+  ## You should only modify this value if you encounter problems deploying with the defaults.
+  ## If the `proxy` pod fails to start and reports an error like this:
+  ##   [emerg] 1#1: socket() [::]:8080 failed (97: Address family not supported by protocol)
+  ## then setting ipv6.enabled=false may resolve the issue.
+  ##
+  ## Default value: true
+  enabled: true
+
 rateLimiting:
   api:
     ## The maximum API request rate (per source IP address) in requests per second.
