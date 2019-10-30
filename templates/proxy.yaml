@@ -524,7 +524,8 @@ data:
           add_header         Vary "Authorization" always;
         }
       }
-  {{ if .Values.registry.enabled }}
+
+      {{ if .Values.registry.enabled }}
 
       upstream registry_server {
         server registry:5000;
@@ -583,9 +584,8 @@ data:
           add_header         Strict-Transport-Security "max-age=31622400";
         }
       }
+      {{- end }}{{/* if .Values.registry.enabled */}}
     }
-{{- end }}
-
 
 {{ if .Values.networkPolicy.enabled }}
 ---
