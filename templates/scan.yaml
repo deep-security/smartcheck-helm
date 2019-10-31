@@ -131,6 +131,7 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 6
           args:
+            - --log-level=warning
             - --internal-base=http://scan-internal:8081
             - --authorization-url=http://auth-internal:8081
             - --database-connection-string=postgres:postgres://
