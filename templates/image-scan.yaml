@@ -83,6 +83,8 @@ spec:
             - --checklist-dir=/data
             - --root=work/
           volumeMounts:
+            - name: oscap-temp
+              mountPath: /tmp
             - name: work
               mountPath: /work
             - name: oscap-feed-data
@@ -179,6 +181,8 @@ spec:
       tolerations: {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.imageScan) | nindent 8 }}
       restartPolicy: Always
       volumes:
+        - name: oscap-temp
+          emptyDir: {}
         - name: oscap-feed-data
           emptyDir:
             sizeLimit: {{ default "1Gi" .Values.scan.openscap.dataVolume.sizeLimit | quote }}
