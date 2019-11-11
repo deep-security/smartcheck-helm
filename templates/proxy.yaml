@@ -380,6 +380,9 @@ data:
       upstream license_server {
         server license:8080;
       }
+      upstream billing_server {
+        server billing:8180;
+      }
 
       # Configuration for the server
       server {
@@ -520,6 +523,20 @@ data:
           limit_req_status {{ default 429 $apiRateLimiting.status }};
 
           proxy_pass         http://license_server;
+
+          add_header         Vary "Authorization" always;
+        }
+
+        location ~ /api/billing {
+          # Short-circuit requests that don't have an authorization token.
+          if ($http_authorization !~ "^Bearer") {
+            return 401;
+          }
+
+          limit_req zone=limit burst={{ default 10 $apiRateLimiting.burst }};
+          limit_req_status {{ default 429 $apiRateLimiting.status }};
+
+          proxy_pass         http://billing_server;
 
           add_header         Vary "Authorization" always;
         }
@@ -680,6 +697,18 @@ spec:
       ports:
         - protocol: TCP
           port: 8080
+    - to:
+        - podSelector:
+            matchLabels:
+              service: license
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+{{- end }}
+      ports:
+        - protocol: TCP
+          port: 8180
 {{ if .Values.registry.enabled }}
     - to:
         - podSelector:

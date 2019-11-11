@@ -527,8 +527,11 @@ images:
     digest: sha256:16d57c0bac4cbdfe13fd67170d3237a9a9647f9e248762d5100603dc8d04caa7
   scaFeedConsumer:
     repository: sca-feed-consumer
-
     digest: sha256:923e4ebe49e977ffee5123518c966243d90e0b223d1df13e1b6e41ad5c52e6ef
+  billing:
+    repository: billing
+    diegest:
+
 replicas: {}
 
 persistence:
@@ -573,6 +576,8 @@ serviceAccount:
   ##
   ## Default: blank
   registryAccess:
+    annotations:
+  license:
     annotations:
 
 resources:
@@ -738,7 +743,6 @@ securityContext:
   registry:
     pod:
       runAsUser: 1000
-
   scan:
     pod:
       runAsNonRoot: true
@@ -756,6 +760,22 @@ securityContext:
       runAsUser: 1
 
   registryviews:
+    pod:
+      runAsNonRoot: true
+      # fsGroup: for using projected service account tokens (kubernetes/kubernetes#82573)
+      fsGroup: 65534
+    container:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": this seems appropriate.
+      runAsUser: 1
+
+  license:
     pod:
       runAsNonRoot: true
       # fsGroup: for using projected service account tokens (kubernetes/kubernetes#82573)

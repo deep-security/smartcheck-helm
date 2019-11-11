@@ -142,6 +142,7 @@ spec:
             - --content-scan-url=http://content-scan-internal:8081
             - --vulnerability-scan-url=http://vulnerability-scan-internal:8081
             - --image-scan-url=http://image-scan-internal:8081
+            - --billing-url=http://billing-internal:8181
             - --content-source-scanner-webhook-url=http://registryviews-internal:8081/api/results
             - --use-strict-transport-security=true
             - --use-strict-transport-security-includes-subdomains=false
@@ -258,6 +259,7 @@ spec:
     {{- include "smartcheck.to-dns-networkpolicy" . | nindent 4 }}
     {{- include "smartcheck.to-db-networkpolicy" . | nindent 4 }}
     {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "auth" "registryviews" "malware-scan" "vulnerability-scan" "content-scan" "image-scan" "metrics")) | nindent 4 }}
+    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "port" 8181 "services" (list "license")) | nindent 4 }}
     - to: # any
       ports:
       - protocol: TCP

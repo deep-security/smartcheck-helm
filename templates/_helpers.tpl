@@ -126,7 +126,7 @@ Provide HTTP proxy environment variables
     {{- end -}}{{/* range .services */}}
   ports:
     - protocol: TCP
-      port: 8081
+      port: {{ default 8081 .port }}
 {{- end -}}{{/* define */}}
 
 
