@@ -86,6 +86,7 @@ spec:
             {{- if .Values.telemetry.enabled }}
             - --telemetry-endpoint=http://metrics-internal:8081
             {{- end }}
+            - --billing-url=http://billing-internal:8081
           env:
             {{- include "smartcheck.activation-code.env" . | nindent 12 }}
           volumeMounts:
@@ -114,6 +115,8 @@ spec:
             {{- end }}{{/* if hasKey .Values.feed "sca" */}}
             {{- end }}{{/* if hasKey .Values "feed" */}}
             - --feed-dir=/data
+            - --telemetry-endpoint=http://metrics-internal:8081
+            - --billing-url=http://billing-internal:8081
           env:
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
             {{- include "smartcheck.activation-code.env" . | nindent 12 }}
@@ -221,6 +224,8 @@ spec:
             - --authorization-token=$(ACTIVATION_CODE)
             - --initial-oval-file=/initial-oval.xml
             - --initial-checklists-directory=/initial-checklists
+            - --telemetry-endpoint=http://metrics-internal:8081
+            - --billing-url=http://billing-internal:8081
           env:
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
             {{- include "smartcheck.activation-code.env" . | nindent 12 }}

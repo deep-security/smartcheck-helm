@@ -226,6 +226,14 @@ spec:
               {{- range $k, $v := (default (dict) .Values.extraLabels) }}
               {{ $k }}: {{ quote $v }}
               {{- end }}{{/* range .Values.extraLabels */}}
+        - podSelector:
+            matchLabels:
+              service: license
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+              {{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+              {{- end }}{{/* range .Values.extraLabels */}}
       ports:
         - protocol: TCP
           port: 8081

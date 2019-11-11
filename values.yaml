@@ -535,8 +535,10 @@ images:
     digest: sha256:e73801d967981d336f5e3306a9c3627e5292738b5b62e153341d21f0d8d4361c
   scaFeedConsumer:
     repository: sca-feed-consumer
-
     digest: sha256:5d453bcdfd41e82fda62e9db8d6aafa0975f4294df6d85e23eaa0efb5a6506cb
+  billing:
+    repository: billing
+    digest:
 replicas: {}
 
 persistence:
@@ -572,15 +574,22 @@ persistence:
 serviceAccount:
   ## Amazon IAM role ARNs for projected service account.
   ##
-  ## If you want to grant the minimal pods to access Amazon Amazon Elastic Container Registry (ECR), set the roleArn accordingly:
-  ## registryAccess:
-  ##   annotations:
-  ##     eks.amazonaws.com/role-arn: arn:aws:iam::[account-id]:role/[AmazonEC2ContainerRegistryReadOnlyRoleName]
-  ##
   ## Reference: https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html
-  ##
-  ## Default: blank
   registryAccess:
+    ## If you want to grant the minimal pods to access Amazon Amazon Elastic Container Registry (ECR),
+    ## the IAM permissions listed in the managed policy `AmazonEC2ContainerRegistryReadOnly` are required.
+    ## Create an IAM role with the managed policy, and set the annotations:
+    ## annotations:
+    ##   eks.amazonaws.com/role-arn: arn:aws:iam::[account-id]:role/[AmazonEC2ContainerRegistryReadOnlyRoleName]
+    ##
+    annotations:
+  license:
+    ## If you subscribe to this product in AWS Marketplace, the `aws-marketplace:MeterUsage` IAM permission is required.
+    ## The IAM managed policy AWSMarketplaceMeteringFullAccess has this permission.
+    ## Create an IAM role with the managed policy, and set the annotations:
+    ## annotations:
+    ##   eks.amazonaws.com/role-arn: arn:aws:iam::[account-id]:role/[AWSMarketplaceMeteringFullAccessRoleName]
+    ##
     annotations:
 
 resources:
@@ -749,7 +758,6 @@ securityContext:
   registry:
     pod:
       runAsUser: 1000
-
   scan:
     pod:
       runAsNonRoot: true
@@ -767,6 +775,22 @@ securityContext:
       runAsUser: 1
 
   registryviews:
+    pod:
+      runAsNonRoot: true
+      # fsGroup: for using projected service account tokens (kubernetes/kubernetes#82573)
+      fsGroup: 65534
+    container:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": this seems appropriate.
+      runAsUser: 1
+
+  license:
     pod:
       runAsNonRoot: true
       # fsGroup: for using projected service account tokens (kubernetes/kubernetes#82573)
