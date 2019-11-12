@@ -90,6 +90,7 @@ spec:
             - name: oscap-feed-data
               mountPath: /data
               readOnly: true
+          resources: {{ toYaml (default .Values.resources.defaults .Values.resources.openscapScan) | nindent 12 }}
         - name: image-scan
           {{- if $securityContextEnabled }}
           securityContext: {{ toYaml (default .Values.securityContext.default.container $securityContext.imageScanContainer) | nindent 12 }}
