@@ -69,6 +69,64 @@ spec:
         - name: {{ $secret | quote }}
       {{- end }}{{/* if $secret */}}
       containers:
+        - name: sca-scan
+          {{- if $securityContextEnabled }}
+          securityContext: {{ toYaml (default .Values.securityContext.default.container $securityContext.scaScanContainer) | nindent 12 }}
+          {{- end }}{{/* if $securityContextEnabled */}}
+          {{ include "image" (dict "defaults" .Values.images.defaults "image" .Values.images.scaScan) | nindent 10 }}
+          ports:
+            - containerPort: 3001
+              name: sca-scan
+            - containerPort: 3002
+              name: sca-health
+          args:
+            - --bind-port=3001
+            - --feed-dir=/data
+            - --root=work/
+          env:
+            - name: ACTIVATION_CODE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "smartcheck.fullname" . }}-activation-code
+                  key: code
+          volumeMounts:
+            - name: work
+              mountPath: /work
+              readOnly: true
+            - name: sca-feed-data
+              mountPath: /data
+              readOnly: true
+          resources: {{ toYaml (default .Values.resources.defaults .Values.resources.scaScan) | nindent 12 }}
+
+        - name: sca-feed-consumer
+          {{- if $securityContextEnabled }}
+          securityContext: {{ toYaml (default .Values.securityContext.default.container $securityContext.scaFeedConsumerContainer) | nindent 12 }}
+          {{- end }}{{/* if $securityContextEnabled */}}
+          {{ include "image" (dict "defaults" .Values.images.defaults "image" .Values.images.scaFeedConsumer) | nindent 10 }}
+          args:
+            {{- if hasKey .Values "feed" }}
+            {{- if hasKey .Values.feed "sca" }}
+            {{- if hasKey .Values.feed.sca "url" }}
+            - --feed-url={{ .Values.feed.sca.url }}
+            {{- end }}{{/* if hasKey .values.feed.sca "url" */}}
+            {{- if hasKey .Values.feed.sca "interval" }}
+            - --every={{ .Values.feed.sca.interval }}
+            {{- end }}{{/* if hasKey .values.feed.sca "interval" */}}
+            {{- end }}{{/* if hasKey .Values.feed "sca" */}}
+            {{- end }}{{/* if hasKey .Values "feed" */}}
+            - --feed-dir=/data
+          env:
+            {{- include "smartcheck.proxy.env" . | nindent 12 }}
+            - name: ACTIVATION_CODE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "smartcheck.fullname" . }}-activation-code
+                  key: code
+          volumeMounts:
+            - name: sca-feed-data
+              mountPath: /data
+          resources: {{ toYaml (default .Values.resources.defaults .Values.resources.scaFeedConsumer) | nindent 12 }}
+
         - name: openscap-scan
           {{- if $securityContextEnabled }}
           securityContext: {{ toYaml (default .Values.securityContext.default.container $securityContext.openscapScanContainer) | nindent 12 }}
@@ -121,6 +179,7 @@ spec:
             - --database-connection-string=postgres:postgres://
             - --database-secret=$(DB_SECRET)
             - --scanner-url=http://localhost:3011/api/scans
+            - --scanner-url=http://localhost:3001/api/scans
           env:
             {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "openscapscan") | nindent 12 }}
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
@@ -185,6 +244,9 @@ spec:
         - name: oscap-temp
           emptyDir: {}
         - name: oscap-feed-data
+          emptyDir:
+            sizeLimit: {{ default "1Gi" .Values.scan.openscap.dataVolume.sizeLimit | quote }}
+        - name: sca-feed-data
           emptyDir:
             sizeLimit: {{ default "1Gi" .Values.scan.openscap.dataVolume.sizeLimit | quote }}
         - name: work

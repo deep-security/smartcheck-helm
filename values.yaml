@@ -511,8 +511,12 @@ images:
     digest: sha256:21fbda1c2d6328973a0b73987533fd7bef51f23d66a2c88013acf0a9c95ba621
   imageScan:
     repository: image-scan
-
     digest: sha256:db2b2d24da84e54980fa31d4973f3ed10df1818179990d006916410030f59c09
+  scaScan:
+    repository: sca-scan
+  scaFeedConsumer:
+    repository: sca-feed-consumer
+
 replicas: {}
 
 persistence:
@@ -724,4 +728,8 @@ cursor:
 feed:
   openscap:
     url: https://dstf.trendmicro.com/oval/manifest.json
+    interval: 24h
+
+  sca:
+    url: https://dstf.trendmicro.com/sca/feed.bin
     interval: 24h
