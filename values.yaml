@@ -439,7 +439,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.29
+    tag: 1.2.30
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -460,7 +460,7 @@ images:
     digest: sha256:b77859ae919cd183e7f7a539e5c12952fea0c7dee5eed2e71687652945625039
   malwareScan:
     repository: vscan
-    digest: sha256:c74f64b0a5c372efdf56f955d769145985576eb3d57a99ab241855385f910c00
+    digest: sha256:7ce1a30aca2843ce3b35f10a2444b4296a00a9396a328f04406e6b322887230a
   contentScan:
     repository: contentscan
     digest: sha256:e6003ade8d31fc266b6332d31c880f2de8f697f2de164c484914d7df9f30c68e
@@ -475,7 +475,7 @@ images:
     digest: sha256:57db8027cc52ff097ccf9087fcd5fc647b37e19673603d5c6953a9caf552ece8
   frontend:
     repository: frontend
-    digest: sha256:b2e067ebd6a43b6fd8807a4fe98ea2a7ea49c90caaa10e9ff19ac877b42a0364
+    digest: sha256:158f2e1e03a41cb73709ebe939b0cc482206cff0d792d26864646144abbabdba
   proxy:
     repository: proxy
     digest: sha256:e88601dcc4296de06715b6fe4989de07693b92d63cfe91e9a0c528fc389e82d9
@@ -496,7 +496,7 @@ images:
     digest: sha256:d62345720617ddcc2e8b1d015d83544da11977759022915be2fc1f8db205b65a
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    digest: sha256:71a301c67039754a76658ebf13e84bdcbb934b7c692a2dbce43e044b37930070
+    digest: sha256:3ac35e22f4c9d23729a08a4ac4d1e7458a3d8c3f20657521e4385e6ade4bdda7
   registry:
     repository: registry
     digest: sha256:679a4bb91a22ad449f80e2f640e11acef1350974b7b776e5259b561c74b4876f
@@ -508,7 +508,7 @@ images:
     digest: sha256:2950ac962419da78e72a9438579ca726d40d49117affc1a2c138459deacfdd30
   vulnDBInitializer:
     repository: vuln-db-initializer
-    digest: sha256:2efcacd0dae48fb188b6988696efe56fb7deb469f7173e69ef441bb104218f03
+    digest: sha256:6abe212784354541901a83dc0c062ac7a962da30467f942646ba1c9f9be1b685
   imageScan:
     repository: image-scan
 
