@@ -23,7 +23,7 @@ If you have already installed Deep Security Smart Check using Helm 2, you will n
 #### Helm 2
 
 <details>
-<summary>If you have to use Helm 2, you will need `helm` version `v2.14.1` or later. Expand this section for details.</summary>
+<summary>If you have to use Helm 2, you will need <code>helm</code> version <code>v2.14.1</code> or later. Expand this section for details.</summary>
 
 There's a handy [quickstart](https://docs.helm.sh/using_helm/#quickstart) that will help you get started, or if you like living dangerously:
 
