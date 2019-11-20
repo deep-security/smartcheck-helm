@@ -12,7 +12,20 @@ We recommend that you register for a 30-day trial license [code](https://go2.tre
 
 Deep Security Smart Check uses the `helm` package manager for Kubernetes.
 
-You will need `helm` version `v2.14.1` or later. There's a handy [quickstart](https://docs.helm.sh/using_helm/#quickstart) that will help you get started, or if you like living dangerously:
+#### Helm 3
+
+We recommend using Helm 3 to install Deep Security Smart Check if this is possible for you.
+
+There is a handy [guide](https://helm.sh/docs/intro/install/) that will help you get started. In most cases installing Helm 3 involves running a single command.
+
+If you have already installed Deep Security Smart Check using Helm 2, you will need to migrate your install. The Helm folks have a helpful [blog post](https://helm.sh/blog/migrate-from-helm-v2-to-helm-v3/) that details this process.
+
+#### Helm 2
+
+<details>
+<summary>If you have to use Helm 2, you will need `helm` version `v2.14.1` or later. Expand this section for details.</summary>
+
+There's a handy [quickstart](https://docs.helm.sh/using_helm/#quickstart) that will help you get started, or if you like living dangerously:
 
 ```sh
 curl -L https://git.io/get_helm.sh | bash
@@ -46,6 +59,8 @@ Use `helm version` to confirm that you have at least version `v2.14.1` of the cl
 
 _Note: the commands above will give `tiller` full cluster administrator privileges. Review [Securing your Helm Installation](https://docs.helm.sh/using_helm/#securing-your-helm-installation) for help on what to consider when setting up Helm in your cluster._
 
+</details>
+
 ### Installing Deep Security Smart Check
 
 The Helm chart for Deep Security Smart Check is hosted in a public repository on Github.
@@ -56,7 +71,7 @@ To install the latest version of Deep Security Smart Check into the default Kube
 helm install \
   --set auth.masterPassword={password} \
   --set activationCode={activation code} \
-  --name deepsecurity-smartcheck \
+  deepsecurity-smartcheck \
   https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
 ```
 
