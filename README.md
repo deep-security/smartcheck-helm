@@ -352,3 +352,19 @@ helm install \
   --name deepsecurity-smartcheck \
   https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
 ```
+
+### Timeouts attempting to connect to registry
+
+If you are attempting to add a registry that's running on a port other than the standard HTTPS port `443`, you will likely run into timeouts.
+
+The `networkPolicy.additionalRegistryPorts` configuration item in the Helm chart allows you to open outbound network access from Deep Security Smart Check to the registry.
+
+For example, if your registry is running on port 8443, you would update your `overrides.yaml` file to include the following and do a `helm upgrade` to apply the changed configuration:
+
+```yaml
+networkPolicy:
+  additionalRegistryPorts:
+    - 8443
+```
+
+If you continue to encounter timeouts, the network connectivity issue may be caused by a firewall or some other network issue.
