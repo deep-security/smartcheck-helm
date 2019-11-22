@@ -439,7 +439,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.30
+    tag: 1.2.31
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -466,16 +466,16 @@ images:
     digest: sha256:e6003ade8d31fc266b6332d31c880f2de8f697f2de164c484914d7df9f30c68e
   scan:
     repository: scan
-    digest: sha256:c39ce9802e699a936cfc904fc8b210bca3128d445876278ee3b39493f3faf3ba
+    digest: sha256:87d1545c3b724fa8db20ddc75f774ca08300b18fdc1e36bb3420292ee57213ee
   registryviews:
     repository: registryviews
-    digest: sha256:65402be8a5ec6b4b3c0bed3322653b592efb47b35857b24d9128501b107f2daf
+    digest: sha256:0e09a3d139537745dc59d634040084a1e122431fb499f70369ae184184851313
   docs:
     repository: api-docs
-    digest: sha256:57db8027cc52ff097ccf9087fcd5fc647b37e19673603d5c6953a9caf552ece8
+    digest: sha256:dc3d1bb4a28a6f34e944102034a604e1cbb4a0294151efcdd04507a337615c44
   frontend:
     repository: frontend
-    digest: sha256:158f2e1e03a41cb73709ebe939b0cc482206cff0d792d26864646144abbabdba
+    digest: sha256:af8e6696021e951a78707677efdb620a600d1ef00cb4b528bebea407957380e5
   proxy:
     repository: proxy
     digest: sha256:e88601dcc4296de06715b6fe4989de07693b92d63cfe91e9a0c528fc389e82d9
@@ -496,7 +496,7 @@ images:
     digest: sha256:d62345720617ddcc2e8b1d015d83544da11977759022915be2fc1f8db205b65a
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    digest: sha256:3ac35e22f4c9d23729a08a4ac4d1e7458a3d8c3f20657521e4385e6ade4bdda7
+    digest: sha256:bb219ee7bf7722a6e1d9c39dfb113b85bdb0dcb296538c1259ca176ac101a71b
   registry:
     repository: registry
     digest: sha256:679a4bb91a22ad449f80e2f640e11acef1350974b7b776e5259b561c74b4876f
@@ -508,7 +508,7 @@ images:
     digest: sha256:2950ac962419da78e72a9438579ca726d40d49117affc1a2c138459deacfdd30
   vulnDBInitializer:
     repository: vuln-db-initializer
-    digest: sha256:6abe212784354541901a83dc0c062ac7a962da30467f942646ba1c9f9be1b685
+    digest: sha256:21fbda1c2d6328973a0b73987533fd7bef51f23d66a2c88013acf0a9c95ba621
   imageScan:
     repository: image-scan
 
