@@ -230,6 +230,13 @@ certificate:
   ## Default value: 3650
   lifetime: 3650
 
+  ## dhparamSecret is the name of the existing secret that stores Diffie-Hellman (DH) key exchange parameters for DHE ciphers.
+  ##
+  ## See also: http://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_dhparam
+  ##
+  ## Default value: none
+  dhparamSecret:
+
 service:
   ## type is the Kubernetes Service type for the `proxy` service that acts as
   ## an entry point to the system.
