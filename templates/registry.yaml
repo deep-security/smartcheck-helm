@@ -285,9 +285,9 @@ spec:
           secret:
             secretName: {{ required "certificate.secret.name is required when enabling pre-registry scanning. See https://github.com/deep-security/smartcheck-helm/wiki/Replace-the-service-certificate for instructions on replacing the default certificate." .Values.certificate.secret.name }}
             items:
-              - key: {{ required "certificate.secret.certificate is required when certificate.secret.name is set" .Values.certificate.secret.certificate }}
+              - key: {{ default "tls.crt" .Values.certificate.secret.certificate }}
                 path: tls.crt
-              - key: {{ required "certificate.secret.privateKey is required when certificate.secret.name is set" .Values.certificate.secret.privateKey }}
+              - key: {{ default "tls.key" .Values.certificate.secret.privateKey }}
                 path: tls.key
 
 ---
