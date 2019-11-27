@@ -171,8 +171,8 @@ Example:
 
 => a Secret with keys `database-user`, `database-password`, and `database-secret`
 
-The database user and password will be derived from .Values.auth.masterPassword and the provided service name.
-The database secret will be derived from .Values.auth.masterPassword and the release name unless .Values.db.secret is provided, in which case that value will be used.
+The database user and password will be derived from .Values.auth.secretSeed and the provided service name.
+The database secret will be derived from .Values.auth.secretSeed and the release name unless .Values.db.secret is provided, in which case that value will be used.
 */}}
 {{- define "smartcheck.service.database.secret" -}}
 apiVersion: v1
@@ -188,12 +188,12 @@ metadata:
 {{- end }}
 type: Opaque
 data:
-  database-user: {{ derivePassword 1 "maximum" (toString (required "You must provide a value for auth.masterPassword. Use --set auth.masterPassword={password} or include a value in your overrides.yaml file. If you are upgrading, use --reuse-values to preserve the original value." .Values.auth.masterPassword)) (join "-" (list .service "db-user")) .Release.Name | toString | b64enc | quote }}
-  database-password: {{ derivePassword 1 "maximum" (toString .Values.auth.masterPassword) (join "-" (list .service "db-password" "2")) .Release.Name | toString | b64enc | quote }}
+  database-user: {{ derivePassword 1 "maximum" (toString (required "You must provide a value for auth.secretSeed. Use --set auth.secretSeed={password} or include a value in your overrides.yaml file." (default .Values.auth.masterPassword .Values.auth.secretSeed))) (join "-" (list .service "db-user")) .Release.Name | toString | b64enc | quote }}
+  database-password: {{ derivePassword 1 "maximum" (toString (default .Values.auth.masterPassword .Values.auth.secretSeed)) (join "-" (list .service "db-password" "2")) .Release.Name | toString | b64enc | quote }}
   {{ if .Values.db.secret -}}
   database-secret: {{ .Values.db.secret | toString | b64enc | quote }}
   {{ else -}}
-  database-secret: {{ derivePassword 1 "maximum" (toString .Values.auth.masterPassword) "db-secret" .Release.Name | toString | b64enc | quote }}
+  database-secret: {{ derivePassword 1 "maximum" (toString (default .Values.auth.masterPassword .Values.auth.secretSeed)) "db-secret" .Release.Name | toString | b64enc | quote }}
   {{- end }}
 {{- end -}}{{/*define*/}}
 
