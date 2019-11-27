@@ -248,7 +248,7 @@ spec:
             sizeLimit: {{ default "1Gi" .Values.scan.openscap.dataVolume.sizeLimit | quote }}
         - name: sca-feed-data
           emptyDir:
-            sizeLimit: {{ default "1Gi" .Values.scan.openscap.dataVolume.sizeLimit | quote }}
+            sizeLimit: {{ default "1Gi" .Values.scan.sca.dataVolume.sizeLimit | quote }}
         - name: work
           emptyDir:
             sizeLimit: {{ default "5Gi" .Values.scan.openscap.workVolume.sizeLimit | quote }}

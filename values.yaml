@@ -360,6 +360,16 @@ scan:
   malwareCache:
     enabled: true
 
+  sca:
+    ## The SCA scanner uses an ephemeral volume to store threat feed
+    ## information. This volume is created when the pod is scheduled on a node
+    ## and is populated by the sca-feed-consumer container.
+    dataVolume:
+      ## The amount of space to request for the data volume.
+      ##
+      ## Default value: 1Gi
+      sizeLimit: 1Gi
+
   openscap:
     ## The OpenSCAP scanner uses an ephemeral volume to store threat feed
     ## information. This volume is created when the pod is scheduled on a node
