@@ -146,6 +146,7 @@ spec:
             - --target-url=$(TARGET_URL)
             - --metrics-directory=/data/metrics
             - --application-version=$(APPLICATION_VERSION)
+            - --license-url=http://license-internal:8081
             - --flush
             {{- if .Values.telemetry.enabled }}
             - --telemetry-endpoint={{ .Values.telemetry.endpoint }}
@@ -230,6 +231,18 @@ spec:
         - protocol: TCP
           port: 8081
   egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              service: license
+              release: {{ .Release.Name }}
+              heritage: {{ .Release.Service }}
+              {{- range $k, $v := (default (dict) .Values.extraLabels) }}
+              {{ $k }}: {{ quote $v }}
+              {{- end }}
+      ports:
+        - protocol: TCP
+          port: 8081
     - to:
         - podSelector:
             matchLabels:
