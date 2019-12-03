@@ -55,11 +55,13 @@ spec:
         {{- end }}{{/* range .Values.extraLabels */}}
     spec:
       automountServiceAccountToken: false
-      {{- $securityContextEnabled := .Values.securityContext.enabled }}
-      {{- $securityContext := default .Values.securityContext.default .Values.securityContext.imageScan }}
-      {{- if $securityContextEnabled }}
-      securityContext: {{ toYaml (default .Values.securityContext.default.pod $securityContext.pod) | nindent 8 }}
-      {{- end }}{{/* if $securityContextEnabled */}}
+      serviceAccountName: {{ default "default" .Values.serviceAccountName.imageScan }}
+{{- $securityContextEnabled := .Values.securityContext.enabled }}
+{{- $securityContext := default .Values.securityContext.default .Values.securityContext.imageScan }}
+{{- if $securityContextEnabled }}
+      securityContext:
+{{ toYaml (default .Values.securityContext.default.pod $securityContext.pod) | nindent 8 }}
+{{- end }}{{/* if $securityContextEnabled */}}
       initContainers:
         - {{ include "smartcheck.db-initcontainer" (dict "Values" .Values "Chart" .Chart "Release" .Release "service" "openscapscan") | nindent 10 | trim }}
 

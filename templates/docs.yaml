@@ -54,6 +54,7 @@ spec:
 {{- end }}
     spec:
       automountServiceAccountToken: false
+      serviceAccountName: {{ default "default" .Values.serviceAccountName.docs }}
 {{- $securityContextEnabled := .Values.securityContext.enabled }}
 {{- $securityContext := default .Values.securityContext.default .Values.securityContext.docs }}
 {{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}

@@ -69,6 +69,7 @@ spec:
 {{- end }}
     spec:
       automountServiceAccountToken: false
+      serviceAccountName: {{ default "default" .Values.serviceAccountName.proxy }}
 {{- $securityContextEnabled := .Values.securityContext.enabled }}
 {{- $securityContext := default .Values.securityContext.default .Values.securityContext.proxy }}
 {{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}
