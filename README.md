@@ -14,7 +14,7 @@ Deep Security Smart Check uses the `helm` package manager for Kubernetes.
 
 #### Helm 3
 
-We recommend using Helm 3 to install Deep Security Smart Check if this is possible for you.
+We recommend using Helm 3 (version 3.0.1 or later) to install Deep Security Smart Check if this is possible for you.
 
 There is a handy [guide](https://helm.sh/docs/intro/install/) that will help you get started. In most cases installing Helm 3 involves running a single command.
 
