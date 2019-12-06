@@ -449,7 +449,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.32
+    tag: 1.2.33
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -467,7 +467,7 @@ images:
     digest: sha256:24c9aa2d02ceb65387f2ad511dd6c0b996a31f0bbaaa08df4ddfde591f97186e
   auth:
     repository: auth
-    digest: sha256:b77859ae919cd183e7f7a539e5c12952fea0c7dee5eed2e71687652945625039
+    digest: sha256:4e5cc591a7d72d50a1d571329bf3fe0534b0caa0234a0891d5c6d8f2f4907e97
   malwareScan:
     repository: vscan
     digest: sha256:7ce1a30aca2843ce3b35f10a2444b4296a00a9396a328f04406e6b322887230a
@@ -476,16 +476,16 @@ images:
     digest: sha256:e6003ade8d31fc266b6332d31c880f2de8f697f2de164c484914d7df9f30c68e
   scan:
     repository: scan
-    digest: sha256:fa43fa0c14fedb750f16b88bc46161c8387cf1244ce6ad1bf04da5eab2823a55
+    digest: sha256:412ab46b1732bf0a89f2894c356b36e30ff827d3c0d928e78c05d700a957f9d2
   registryviews:
     repository: registryviews
-    digest: sha256:0e09a3d139537745dc59d634040084a1e122431fb499f70369ae184184851313
+    digest: sha256:c9b17d81387799d128d12559d7146aa2e0f077c91cf30859e7162a45caef50a8
   docs:
     repository: api-docs
-    digest: sha256:6369a53bbd76a1e190fb45d3a545568ee0e64eef1aecf4c20d0a048806e2bae6
+    digest: sha256:e78b5363bedacb2b708224472e47adc3d3cb656a688c6e04d5ed964f5d1c9d08
   frontend:
     repository: frontend
-    digest: sha256:b3fc49855c72e2881a99ad6c687845fe10e525a463114a7d87865452b12b2998
+    digest: sha256:f3fc06063b984cf311321457daf00b5841e1dedcfb1a174943496b06e05dac36
   proxy:
     repository: proxy
     digest: sha256:a7c9ec2c155364a9d799b91f56834858c999f0ca849be044076bbff9953d3b16
@@ -500,13 +500,13 @@ images:
     digest: sha256:30a2a4076a17363fb269c11323ed147eb3663b989c235f4ec060475b96b7c57e
   metrics:
     repository: k8s-metrics-reporter
-    digest: sha256:20becca82bf225ac9a3c597fe1cffc829f2f5659559d23264eb97449aa630347
+    digest: sha256:d5be456915de1d4b4f6eb4a6639b750c314fb2ef36e09409ee58d853111a9e2e
   openscapScan:
     repository: openscap-scan
     digest: sha256:d62345720617ddcc2e8b1d015d83544da11977759022915be2fc1f8db205b65a
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    digest: sha256:1bc89e3d841b1f9be2f892ae516f9f62b57d4a6182a0236d90e8ae5f0ffa6703
+    digest: sha256:5a30fe3084cca14387a8f98923d627cdd2a9edf5613d689124b70b67ec8463e0
   registry:
     repository: registry
     digest: sha256:679a4bb91a22ad449f80e2f640e11acef1350974b7b776e5259b561c74b4876f
@@ -518,7 +518,7 @@ images:
     digest: sha256:2950ac962419da78e72a9438579ca726d40d49117affc1a2c138459deacfdd30
   vulnDBInitializer:
     repository: vuln-db-initializer
-    digest: sha256:b3910c053f78a1ac13016fa28f759142423d33ac223e844f3896b85e718c90be
+    digest: sha256:4ebf85308122ed9a250715688e0c7822162118802e3ddffe4b002d59e52e9868
   imageScan:
     repository: image-scan
     digest: sha256:db2b2d24da84e54980fa31d4973f3ed10df1818179990d006916410030f59c09
