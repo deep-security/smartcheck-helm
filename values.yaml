@@ -561,6 +561,20 @@ persistence:
     ## Default: blank
     storageClassName:
 
+serviceAccount:
+  ## Amazon IAM role ARNs for projected service account.
+  ##
+  ## If you want to grant the minimal pods to access Amazon Amazon Elastic Container Registry (ECR), set the roleArn accordingly:
+  ## registryAccess:
+  ##   annotations:
+  ##     eks.amazonaws.com/role-arn: arn:aws:iam::[account-id]:role/[AmazonEC2ContainerRegistryReadOnlyRoleName]
+  ##
+  ## Reference: https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html
+  ##
+  ## Default: blank
+  registryAccess:
+    annotations:
+
 resources:
   defaults: {}
     # If you want to specify resources, uncomment the following
@@ -724,7 +738,38 @@ securityContext:
   registry:
     pod:
       runAsUser: 1000
-      fsGroup: 1000
+
+  scan:
+    pod:
+      runAsNonRoot: true
+      # fsGroup: for using projected service account tokens (kubernetes/kubernetes#82573)
+      fsGroup: 65534
+    container:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": this seems appropriate.
+      runAsUser: 1
+
+  registryviews:
+    pod:
+      runAsNonRoot: true
+      # fsGroup: for using projected service account tokens (kubernetes/kubernetes#82573)
+      fsGroup: 65534
+    container:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": this seems appropriate.
+      runAsUser: 1
 
 cursor:
   ## secret is an application cursor secret used to encrypt data within the

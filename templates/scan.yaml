@@ -79,13 +79,15 @@ spec:
         {{- end }}{{/* range .Values.extraLabels */}}
     spec:
       automountServiceAccountToken: false
-      {{- $securityContextEnabled := .Values.securityContext.enabled }}
-      {{- $securityContext := default .Values.securityContext.default .Values.securityContext.scan }}
-      {{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}
-      {{- $containerSecurityContext := default .Values.securityContext.default.container $securityContext.container }}
-      {{- if $securityContextEnabled }}
-      securityContext: {{ toYaml $podSecurityContext | nindent 8 }}
-      {{- end }}{{/* if $securityContextEnabled */}}
+      serviceAccountName: {{ include "smartcheck.service.account.name" (dict "Chart" .Chart "Values" .Values "Release" .Release "role" "registryAccess") }}
+{{- $securityContextEnabled := .Values.securityContext.enabled }}
+{{- $securityContext := default .Values.securityContext.default .Values.securityContext.scan }}
+{{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}
+{{- $containerSecurityContext := default .Values.securityContext.default.container $securityContext.container }}
+{{- if $securityContextEnabled }}
+      securityContext:
+{{ toYaml $podSecurityContext | nindent 8 }}
+{{- end }}{{/* if $securityContextEnabled */}}
       initContainers:
         - {{ include "smartcheck.db-initcontainer" (dict "Values" .Values "Chart" .Chart "Release" .Release "service" "scan") | nindent 10 | trim }}
 

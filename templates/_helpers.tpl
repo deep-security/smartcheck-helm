@@ -378,3 +378,32 @@ volumeMounts:
 env:
   {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" .service) | nindent 2 }}
 {{- end -}}{{/* define */}}
+
+{{/*
+Service account name
+*/}}
+{{- define "smartcheck.service.account.name" -}}
+{{- if (index (index .Values.serviceAccount .role) "annotations") -}}
+{{ template "smartcheck.fullname" . }}-{{ lower .role }}
+{{- else -}}
+default
+{{- end -}}{{/* if */}}
+{{- end -}}{{/* define */}}
+
+{{/*
+Create a service account for a service
+
+Example:
+  include "smartcheck.service.account" (dict "Chart" .Chart "Values" .Values "Release" .Release "role" "registryRead" "annotations" $annotationsMap)
+*/}}
+
+{{- define "smartcheck.service.account" -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "smartcheck.service.account.name" (dict "Chart" .Chart "Values" .Values "Release" .Release "role" .role) }}
+  annotations:
+{{- range $key, $value := .annotations }}
+    {{ $key }}: {{ $value | quote }}
+{{- end }}
+{{- end -}}{{/* define */}}
