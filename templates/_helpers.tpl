@@ -222,6 +222,8 @@ Provide database environment variables for a service.
 {{- end -}}{{/* if hasKey .Values.db.tls.ca.valueFrom */}}
 {{- end }}{{/* if hasKey .Values.db.tls "ca" */}}
 {{- end }}{{/* if hasKey .Values.db "tls" */}}
+- name: _DB_CREDENTIALS_SECRET_CHECKSUM
+  value: {{ include "smartcheck.service.database.secret" (dict "Chart" .Chart "Values" .Values "Release" .Release "service" .service) | sha256sum }}
 - name: PGUSER
   valueFrom:
     secretKeyRef:
