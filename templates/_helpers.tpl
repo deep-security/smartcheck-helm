@@ -243,6 +243,15 @@ Provide database environment variables for a service.
       key: database-secret
 {{- end }}{{/*define*/}}
 
+{{- define "smartcheck.activation-code.env" -}}
+- name: _ACTIVATION_CODE_SECRET_CHECKSUM
+  value: {{ include (print $.Template.BasePath "/activation-code.yaml") . | sha256sum }}
+- name: ACTIVATION_CODE
+  valueFrom:
+    secretKeyRef:
+      name: {{ template "smartcheck.fullname" . }}-activation-code
+      key: code
+{{- end -}}{{/*define */}}
 
 {{- define "smartcheck.db-trust-volume" -}}
 {{- if hasKey (default (dict) .Values.db) "tls" -}}

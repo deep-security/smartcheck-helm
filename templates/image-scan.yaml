@@ -84,11 +84,7 @@ spec:
             - --feed-dir=/data
             - --root=work/
           env:
-            - name: ACTIVATION_CODE
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-activation-code
-                  key: code
+            {{- include "smartcheck.activation-code.env" . | nindent 12 }}
           volumeMounts:
             - name: work
               mountPath: /work
@@ -117,11 +113,7 @@ spec:
             - --feed-dir=/data
           env:
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
-            - name: ACTIVATION_CODE
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-activation-code
-                  key: code
+            {{- include "smartcheck.activation-code.env" . | nindent 12 }}
           volumeMounts:
             - name: sca-feed-data
               mountPath: /data
@@ -228,11 +220,7 @@ spec:
             - --initial-checklists-directory=/initial-checklists
           env:
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
-            - name: ACTIVATION_CODE
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-activation-code
-                  key: code
+            {{- include "smartcheck.activation-code.env" . | nindent 12 }}
           volumeMounts:
             - name: oscap-feed-data
               mountPath: /data

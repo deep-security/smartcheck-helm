@@ -161,12 +161,8 @@ spec:
               value: {{ .Chart.Version | quote }}
             - name: TARGET_URL
               value: {{ .Values.tasks.metricsReporter.url }}
-            - name: ACTIVATION_CODE
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "smartcheck.fullname" . }}-activation-code
-                  key: code
             {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "metrics") | nindent 12 }}
+            {{- include "smartcheck.activation-code.env" . | nindent 12 }}
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
           volumeMounts:
             - name: data
