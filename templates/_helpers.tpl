@@ -411,3 +411,21 @@ metadata:
     {{ $key }}: {{ $value | quote }}
 {{- end }}
 {{- end -}}{{/* define */}}
+
+{{- define "smartcheck.auth.initial-user.secret" -}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name:  {{ template "smartcheck.fullname" . }}-auth
+  labels:
+    app: {{ template "smartcheck.name" . }}
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{ $k }}: {{ quote $v }}
+{{- end }}
+type: Opaque
+data:
+  userName: {{ default "administrator" .Values.auth.userName | toString | b64enc | quote }}
+  password: {{ default (derivePassword 1 "maximum" (toString (default .Values.auth.masterPassword .Values.auth.secretSeed)) (default "administrator" .Values.auth.userName) .Release.Name) .Values.auth.password | toString | b64enc | quote }}
+{{- end -}}{{/* define */}}

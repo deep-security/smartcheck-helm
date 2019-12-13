@@ -20,7 +20,8 @@ spec:
 
 ---
 {{ include "smartcheck.service.database.secret" (dict "Chart" .Chart "Values" .Values "Release" .Release "service" "auth") }}
-
+---
+{{ include "smartcheck.auth.initial-user.secret" . }}
 ---
 apiVersion: v1
 kind: Service
@@ -162,6 +163,8 @@ spec:
           env:
             {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "auth") | nindent 12 }}
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
+            - name: _INITIAL_USER_SECRET_CHECKSUM
+              value: {{ include "smartcheck.auth.initial-user.secret" . | sha256sum }}
             - name: INITIAL_USER
               valueFrom:
                 secretKeyRef:
