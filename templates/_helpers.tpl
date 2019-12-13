@@ -81,6 +81,8 @@ Provide network policy for additional outbound ports
 Provide HTTP proxy environment variables
 */}}
 {{- define "smartcheck.proxy.env" -}}
+- name: _PROXY_CONFIG_CHECKSUM
+  value: {{ include (print $.Template.BasePath "/outbound-proxy.yaml") . | sha256sum }}
 - name: HTTP_PROXY
   valueFrom:
     configMapKeyRef:
