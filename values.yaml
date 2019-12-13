@@ -268,6 +268,14 @@ service:
   ## Default value: {}
   annotations: {}
 
+  ## loadBalancerSourceRanges is a list of of IP CIDR ranges which Kubernetes will
+  ## use to configure firewall exceptions for access to the service.
+  ##
+  ## See also: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/
+  ##
+  ## Default value: []
+  loadBalancerSourceRanges: []
+
 db:
   ## Application database host
   ##
