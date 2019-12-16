@@ -779,17 +779,6 @@ securityContext:
       # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": this seems appropriate.
       runAsUser: 1
 
-cursor:
-  ## secret is an application cursor secret used to encrypt data within the
-  ## cursor. The value is put through PBKDF2 key expansion before being used
-  ## as an encryption key.
-  ##
-  ## IMPORTANT: Do not change this value after the initial install as any
-  ## encrypted data will not be able to be decrypted.
-  ##
-  ## Default value: a generated password derived from the secretSeed and system details
-  secret:
-
 feed:
   openscap:
     url: https://dstf.trendmicro.com/oval/manifest.json
