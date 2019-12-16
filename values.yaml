@@ -569,10 +569,14 @@ persistence:
     ## Default: blank
     storageClassName:
 
-serviceAccount:
-  ## Amazon IAM role ARNs for projected service account.
+serviceAccounts:
+  ## Registry access service account.
   ##
-  ## If you want to grant the minimal pods to access Amazon Amazon Elastic Container Registry (ECR), set the roleArn accordingly:
+  ## In AWS EKS, you can give pods IAM permissions through service accounts.
+  ## If you want to give Deep Security Smart Check pods access to images in
+  ## Amazon Elastic Container Registry (ECR), you can set the role ARN through
+  ## the `eks.amazonaws.com/role-arn` annotation, for example:
+  ##
   ## registryAccess:
   ##   annotations:
   ##     eks.amazonaws.com/role-arn: arn:aws:iam::[account-id]:role/[AmazonEC2ContainerRegistryReadOnlyRoleName]
@@ -581,7 +585,7 @@ serviceAccount:
   ##
   ## Default: blank
   registryAccess:
-    annotations:
+    annotations: {}
 
 resources:
   defaults: {}

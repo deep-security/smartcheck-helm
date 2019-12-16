@@ -396,7 +396,7 @@ env:
 Service account name
 */}}
 {{- define "smartcheck.service.account.name" -}}
-{{- if (index (index .Values.serviceAccount .role) "annotations") -}}
+{{- if (index (index (default .Values.serviceAccount .Values.serviceAccounts) .role) "annotations") -}}
 {{ template "smartcheck.fullname" . }}-{{ lower .role }}
 {{- else -}}
 default
