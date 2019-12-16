@@ -1,0 +1,1808 @@
+# Values schema for the Deep Security Smart Check Helm chart.
+#
+# This schema describes the structure of the configuration values
+# for Deep Security Smart Check.
+#
+# Helm 3 uses this file to do some basic validation of the provided
+# configuration values when running `helm install`, `helm upgrade`,
+# `helm template`, or `helm lint`.
+#
+# **WARNING** It is still possible to provide invalid configuration
+# to Deep Security Smart Check -- there is only so much that this
+# schema can do. Full validation of the configuration values is done
+# by the consumer of each value.
+
+# This schema itself has a schema, defined by the JSON Schema draft.
+$schema: "https://json-schema.org/draft-07/schema#"
+
+title: Deep Security Smart Check configuration
+type: object
+properties:
+  activationCode:
+    title: Activation code
+    description: |-
+      Product activation code.
+
+      We recommend that you register for a 30-day trial license
+      [code](https://go2.trendmicro.com/geoip/trial-168). Deep Security Smart
+      Check will operate without an activation code; however, malware pattern
+      updates will not be available and you will see a warning message in the
+      administration console.
+
+      [Contact us](https://resources.trendmicro.com/Hybrid-Cloud-Security-Contact-Us.html)
+      for full product licensing and pricing details.
+    type:
+      - string
+      - "null"
+  extraLabels:
+    title: Extra labels
+    description: |-
+      A dictionary of additional labels that will be added to all Kubernetes
+      resources created by this chart.
+    type: object
+    additionalProperties:
+      title: Label
+      description: |-
+        Each property is a label that will be added to all Kubernetes resources
+        created by this chart.
+      type: string
+  ipv6:
+    title: IPv6
+    type: object
+    properties:
+      enabled:
+        title: Enabled
+        description: |-
+          Controls whether the proxy listens on IPv6 addresses internally. This
+          does not affect whether the load balancer (if `service.type` is
+          `LoadBalancer`) exposes an IPv6 interface.
+
+          You should only modify this value if you encounter problems deploying
+          with the defaults. If the `proxy` pod fails to start and reports an
+          error like this:
+
+          ```text
+          [emerg] 1#1: socket() [::]:8080 failed (97: Address family not supported by protocol)
+          ```
+
+          then setting `ipv6.enabled=false` may resolve the issue.
+        type: boolean
+    additionalProperties: false
+  rateLimiting:
+    title: Rate limiting
+    type: object
+    properties:
+      api:
+        title: API
+        type: object
+        properties:
+          rate:
+            title: Base rate
+            description: |-
+              The maximum API request rate (per source IP address) in requests per second.
+            type: integer
+            minimum: 1
+            multipleOf: 1
+          burst:
+            title: Burst rate
+            description: |-
+              The allowable burst rate. If this is greater than 0, then requests that
+              exceed the base rate will be queued.
+
+              This does not change the rate of requests that are sent to the back-end
+              services. Queued requests will be sent to the back-end services at the
+              rate defined in `rateLimiting.api.rate`.
+            type: integer
+            minimum: 1
+            multipleOf: 1
+          status:
+            title: Status code
+            description: |-
+              The HTTP response status code to send when a request is rejected due to
+              the rate limit being exceeded.
+            type: integer
+            minimum: 400
+            exclusiveMaximum: 600
+            multipleOf: 1
+          size:
+            title: Zone size
+            description: |-
+              The size, in megabytes, of the rate-limiting memory zone. State monitoring
+              for about 16 000 IP addresses takes 1 megabyte.
+            type: integer
+            minimum: 1
+            multipleOf: 1
+        additionalProperties: false
+    additionalProperties: false
+  proxy:
+    title: Outbound proxy
+    type: object
+    properties:
+      httpProxy:
+        title: HTTP proxy
+        description: |-
+          If set, the proxy for HTTP traffic from Deep Security Smart Check.
+
+          The value may be either a complete URL or a `host[:port]`, in which
+          case the `http` scheme is assumed.
+        type:
+          - string
+          - "null"
+      httpsProxy:
+        title: HTTPS proxy
+        description: |-
+          If set, the proxy for HTTPS traffic from Deep Security Smart Check.
+          If `httpsProxy` is not set, `httpProxy` is also checked and will be
+          used if set.
+
+          The value may be either a complete URL or a `host[:port]`, in which
+          case the `http` scheme is assumed.
+        type:
+          - string
+          - "null"
+      noProxy:
+        title: No-proxy list
+        description: |-
+          If set, a list of hosts or `host:port` combinations which should not
+          be accessed through the proxy.
+        type: array
+        items:
+          title: Host
+          description: |-
+            A host or `host:port` combination which should not be accessed through
+            the proxy.
+          type: string
+      username:
+        title: Username
+        description: |-
+          The user name to provide to an authenticating outbound proxy when making requests.
+        type:
+          - string
+          - "null"
+      password:
+        title: Password
+        description: |-
+          The password to provide to an authenticating outbound proxy when making requests.
+        type:
+          - string
+          - "null"
+    additionalProperties: false
+  auth:
+    title: Authentication and authorization
+    type: object
+    properties:
+      secretSeed:
+        title: Secret seed
+        description: |-
+          Seed for the password generation process for all auto-generated internal
+          passwords, ensuring that each installation of Deep Security Smart Check
+          has different passwords.
+
+          **IMPORTANT**: Do not change this value after the initial install as any
+          encrypted data in the system will not be able to be decrypted.
+        type: string
+      userName:
+        title: Default administrator user name
+        description: |-
+          The name of the default administrator user that the system creates on startup.
+          If a user with this name already exists, no action will be taken.
+        type: string
+      password:
+        title: Default administrator initial password
+        description: |-
+          The password assigned to the default administrator that the system creates on startup.
+          If a user with the name `auth.userName` already exists, no action will be taken.
+
+          If this value is left blank, the system will generate a password derived from the
+          `auth.secretSeed` value and the system details.
+        type:
+          - string
+          - "null"
+      roleName:
+        title: Default administrator role name
+        description: |-
+          The name of the default administrator role that the system creates on startup.
+          If a role with this name already exists, no action will be taken.
+        type: string
+      auditorRoleName:
+        title: Default auditor role name
+        description: |-
+          The name of the default auditor role that the system creates on startup.
+          If a role with this name already exists, no action will be taken.
+        type: string
+      userRoleName:
+        title: Default user role name
+        description: |-
+          The name of the default user role that the system creates on startup.
+          If a role with this name already exists, no action will be taken.
+        type: string
+      audience:
+        title: Session token audience
+        description: |-
+          The `aud` (audience) value that will be used for session tokens.
+        type: string
+      sessionDuration:
+        title: Session duration
+        description: |-
+          The length of time that session tokens will be valid for after they are
+          issued, expressed as a duration string.
+
+          A duration string is a sequence of decimal numbers, each with optional fraction
+          and a unit suffix, such as "24h". Valid time units are "ns", "us", "ms", "s",
+          "m", "h".
+
+          Minimum value: 15m
+
+          Maximum value: `auth.sessionKeyLifetime`
+        type: string
+      sessionKeyLifetime:
+        title: Session key lifetime
+        description: |-
+          Session tokens are signed by a key that is rotated every `auth.sessionKeyLifetime`,
+          expressed as a duration string.
+
+          A duration string is a sequence of decimal numbers, each with optional fraction
+          and a unit suffix, such as "24h". Valid time units are "ns", "us", "ms", "s",
+          "m", "h"..
+
+          The session key lifetime must be greater than `auth.sessionDuration`.
+
+          Minimum value: 1h
+
+          Maximum value: 168h
+        type: string
+      saml:
+        title: SAML
+        type: object
+        oneOf:
+          - properties:
+              enabled:
+                title: Enabled
+                description: |-
+                  Controls whether SAML integration is enabled.
+                const: true
+              location:
+                title: Assertion consumer service location
+                description: |-
+                  The location of the SAML assertion consumer service. This should be set to
+                  the DNS name that your users will use to access Deep Security Smart Check,
+                  for example `smartcheck.example.com`. If your users will access
+                  Deep Security Smart Check on a non-standard port, you can include the port
+                  number as well, for example `smartcheck.example.com:8443`.
+
+                  The value will be expanded to set the URL scheme and path if not provided,
+                  so if `location` is set to `smartcheck.example.com`, then the final value
+                  will be `https://smartcheck.example.com/saml`).
+
+                  If `location` is not set, then SAML authentication will not be enabled
+                  regardless of the setting of `enabled`.
+                type:
+                  - string
+              entityID:
+                title: Entity ID
+                description: |-
+                  The SAML entity ID for Deep Security Smart Check as a service provider.
+
+                  If `entityID` is not set, the default is copied from the `location` value after
+                  expansion (for example, if `location` is set to `smartcheck.example.com`,
+                  then `entityID` will be `https://smartcheck.example.com/saml`).
+                type:
+                  - string
+                  - "null"
+              maxRoles:
+                title: Maximum role count
+                description: |-
+                  The maximum number of roles that Deep Security Smart Check will permit in a
+                  SAML assertion.
+                type: integer
+                minimum: 1
+                multipleOf: 1
+            additionalProperties: false
+          - properties:
+              enabled:
+                title: Enabled
+                description: |-
+                  Controls whether SAML integration is enabled.
+                const: false
+              location:
+                title: Assertion consumer service location
+                description: |-
+                  The location of the SAML assertion consumer service. This should be set to
+                  the DNS name that your users will use to access Deep Security Smart Check,
+                  for example `smartcheck.example.com`. If your users will access
+                  Deep Security Smart Check on a non-standard port, you can include the port
+                  number as well, for example `smartcheck.example.com:8443`.
+
+                  The value will be expanded to set the URL scheme and path if not provided,
+                  so if `location` is set to `smartcheck.example.com`, then the final value
+                  will be `https://smartcheck.example.com/saml`).
+
+                  If `location` is not set, then SAML authentication will not be enabled
+                  regardless of the setting of `enabled`.
+
+                  Not used if SAML is not enabled.
+                type:
+                  - string
+                  - "null"
+              entityID:
+                title: Entity ID
+                description: |-
+                  The SAML entity ID for Deep Security Smart Check as a service provider.
+
+                  If `entityID` is not set, the default is copied from the `location` value after
+                  expansion (for example, if `location` is set to `smartcheck.example.com`,
+                  then `entityID` will be `https://smartcheck.example.com/saml`).
+
+                  Not used if SAML is not enabled.
+                type:
+                  - string
+                  - "null"
+              maxRoles:
+                title: Maximum role count
+                description: |-
+                  The maximum number of roles that Deep Security Smart Check will permit in a
+                  SAML assertion.
+
+                  Not used if SAML is not enabled.
+                type: integer
+                minimum: 1
+                multipleOf: 1
+            additionalProperties: false
+    additionalProperties: false
+  certificate:
+    title: Service certificate
+    type: object
+    properties:
+      secret:
+        title: Secret
+        description: |-
+          The existing secret that stores the service's certificate and private key.
+
+          If this is not provided, the system will generate a self-signed certificate and private
+          key for the service.
+
+          The secret must exist in the same namespace as the service.
+        type: object
+        properties:
+          name:
+            title: Name
+            description: |-
+              The name of the secret.
+            type:
+              - string
+              - "null"
+          certificate:
+            title: Certificate item name
+            description: |-
+              The name of the item within the secret that holds the certificate data.
+
+              The value of the secret must be the PEM-encoded certificate or certificate chain
+              for the service.
+            type:
+              - string
+              - "null"
+          privateKey:
+            title: Private key item name
+            description: |-
+              The name of the item within the secret that holds the private key data.
+
+              The value of the secret must be the PEM-encoded private key that matches the
+              certificate.
+
+              The private key must not be protected by a passphrase.
+            type:
+              - string
+              - "null"
+        additionalProperties: false
+      commonName:
+        title: Name (CN)
+        description: |-
+          The "common name" (`CN`) value to use in the generated self-signed certificate.
+        type:
+          - string
+          - "null"
+      ipAlternativeNames:
+        title: IP alternative names
+        description: |-
+          A list of IP addresses to include in the certificate as alternative names (`SAN`s) by which
+          the service may be known.
+        type: array
+        items:
+          title: IP address
+          description: |-
+            An IP address where the service may be reached.
+          type: string
+      dnsAlternativeNames:
+        title: DNS alternative names
+        description: |-
+          A list of hostnames to include in the certificate as alternative names (`SAN`s) by which the
+          service may be known.
+        type: array
+        items:
+          title: Hostname
+          description: |-
+            A hostname where the service may be reached.
+          type: string
+      lifetime:
+        title: Lifetime (days)
+        description: |-
+          The lifetime (in days) of the generated self-signed certificate.
+        type: integer
+        minimum: 1
+        multipleOf: 1
+    additionalProperties: false
+  service:
+    title: Service
+    type: object
+    properties:
+      type:
+        title: type
+        description: |-
+          The Kubernetes `Service` type for the `proxy` service that acts as an
+          entry point to the system.
+
+          - `LoadBalancer` will expose the service externally using the cluster
+            provider's load balancer.
+          - `ClusterIP` will expose the service on an internal cluster IP address.
+          - `NodePort` will expose the service on each Node's IP address.
+
+          You can find more information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services---service-types).
+        type: string
+        enum:
+          - LoadBalancer
+          - ClusterIP
+          - NodePort
+      httpsPort:
+        title: HTTPS port
+        description: |-
+          The port where the service will listen for HTTPS requests.
+        type: number
+        minimum: 1
+        multipleOf: 1
+      httpPort:
+        title: HTTP port
+        description: |-
+          The port where the service will listen for HTTP requests. The service will
+          automatically redirect all HTTP requests to HTTPS.
+        type: number
+        minimum: 1
+        multipleOf: 1
+      # TODO discuss whether `registryPort` should be moved to the `registry` section.
+      registryPort:
+        title: Registry port
+        description: |-
+          The port where Deep Security Smart Check will listen for container image registry requests.
+
+          This port number is only used when `registry.enabled` is `true`.
+        type: number
+        minimum: 1
+        multipleOf: 1
+      annotations:
+        title: Annotations
+        description: |-
+          Kubernetes annotations for the `proxy` service. Some cloud providers support configuring
+          load balancer settings via annotations.
+
+          You can find more detailed information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/cluster-administration/cloud-providers/#load-balancers).
+        additionalProperties:
+          type: string
+      loadBalancerSourceRanges:
+        title: Load balancer source ranges
+        description: |-
+          A list of IP CIDR ranges which Kubernetes will use to configure firewall exceptions for
+          access to the service.
+
+          You can find more detailed information in the [Kubernetes documentation](https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/).
+        type: array
+        items:
+          title: IP CIDR range
+          description: |-
+            An IP CIDR range that should be allowed to access the service.
+          type: string
+    additionalProperties: false
+  db:
+    title: Database
+    type: object
+    properties:
+      host:
+        title: Host
+        description: |-
+          The application database host name.
+
+          If unset, the chart will deploy a Postgres database instance in the cluster.
+
+          If you provide a value, you must also provide credentials in `user` and `password`.
+          These credentials must allow the application to connect and execute the following
+          commands:
+
+          ```sql
+          CREATE ROLE "user" with PASSWORD 'password' LOGIN
+          GRANT "user" to CURRENT_USER
+          CREATE DATABASE "database" WITH OWNER "user"
+          REVOKE CONNECT ON DATABASE "database" FROM PUBLIC
+          ```
+        type:
+          - string
+          - "null"
+      port:
+        title: Port
+        description: |-
+          The application database port number.
+        type: number
+        minimum: 1
+        multipleOf: 1
+      tls:
+        title: TLS
+        type: object
+        properties:
+          mode:
+            title: Mode
+            description: |-
+              TLS mode.
+
+              - `disable`: do not protect connections to the database
+              - `require`: require TLS protection for connections to the database, but skip
+                certificate validation
+              - `verify-ca`: require TLS protection for connections to the database, verify
+                that the certificate presented by the server was issued by a trusted certificate
+                authority, but skip server name validation
+              - `verify-full`: require TLS protection for connections to the database,
+                confirm that the server certificate was issued by a trusted certificate
+                authority and that the server name matches the name in the certificate
+            type: string
+            enum:
+              - disable
+              - require
+              - verify-ca
+              - verify-full
+          ca:
+            title: Certificate authorities
+            description: |-
+              Provide the name of a Kubernetes `Secret` or `ConfigMap` that contains the set
+              of certificate authorities to trust when connecting to the database.
+
+              Use this if `tls.mode` is `verify-ca` or `verify-full` and you have a private
+              certificate authority.
+
+              It is only valid to provide one value for `valueFrom`, either `configMapKeyRef` or
+              `secretKeyRef`.
+            type: object
+            properties:
+              valueFrom:
+                title: Value from
+                type: object
+                anyOf:
+                  - properties:
+                      configMapKeyRef:
+                        title: ConfigMap reference
+                        description: |-
+                          A reference to a Kubernetes `ConfigMap` item that contains the set
+                          of certificate authorities to trust when connecting to the database.
+                        type: object
+                        oneOf:
+                          - properties:
+                              name:
+                                title: Name
+                                description: |-
+                                  The name of the Kubernetes `ConfigMap` that contains the set of
+                                  certificate authorities to trust when connecting to the database.
+
+                                  The `ConfigMap` must be in the same namespace as Deep Security Smart Check.
+                                type: string
+                              key:
+                                title: Key
+                                description: |-
+                                  The name of the item in the Kubernetes `ConfigMap` that holds the
+                                  certificate authority data.
+
+                                  The value must be in PEM format.
+                                type: string
+                            additionalProperties: false
+                          - properties:
+                              name:
+                                title: Name
+                                description: |-
+                                  The name of the Kubernetes `ConfigMap` that contains the set of
+                                  certificate authorities to trust when connecting to the database.
+
+                                  The `ConfigMap` must be in the same namespace as Deep Security Smart Check.
+                                type: "null"
+                              key:
+                                title: Key
+                                description: |-
+                                  The name of the item in the Kubernetes `ConfigMap` that holds the
+                                  certificate authority data.
+
+                                  The value must be in PEM format.
+                                type:
+                                  - string
+                                  - "null"
+                            additionalProperties: false
+                      secretKeyRef:
+                        title: Secret reference
+                        description: |-
+                          A reference to a Kubernetes `Secret` item that contains the set
+                          of certificate authorities to trust when connecting to the database.
+                        type: object
+                        anyOf:
+                          - properties:
+                              name:
+                                title: Name
+                                description: |-
+                                  The name of the Kubernetes `Secret` that contains the set of
+                                  certificate authorities to trust when connecting to the database.
+
+                                  The `Secret` must be in the same namespace as Deep Security Smart Check.
+                                type: "null"
+                              key:
+                                title: Key
+                                description: |-
+                                  The name of the item in the Kubernetes `Secret` that holds the
+                                  certificate authority data.
+
+                                  The value must be in PEM format.
+                                type:
+                                  - string
+                                  - "null"
+                            additionalProperties: false
+                    additionalProperties: false
+                  - properties:
+                      secretKeyRef:
+                        title: Secret reference
+                        description: |-
+                          A reference to a Kubernetes `Secret` item that contains the set
+                          of certificate authorities to trust when connecting to the database.
+                        type: object
+                        oneOf:
+                          - properties:
+                              name:
+                                title: Name
+                                description: |-
+                                  The name of the Kubernetes `Secret` that contains the set of
+                                  certificate authorities to trust when connecting to the database.
+
+                                  The `Secret` must be in the same namespace as Deep Security Smart Check.
+                                type: string
+                              key:
+                                title: Key
+                                description: |-
+                                  The name of the item in the Kubernetes `Secret` that holds the
+                                  certificate authority data.
+
+                                  The value must be in PEM format.
+                                type: string
+                            additionalProperties: false
+                          - properties:
+                              name:
+                                title: Name
+                                description: |-
+                                  The name of the Kubernetes `Secret` that contains the set of
+                                  certificate authorities to trust when connecting to the database.
+
+                                  The `Secret` must be in the same namespace as Deep Security Smart Check.
+                                type: "null"
+                              key:
+                                title: Key
+                                description: |-
+                                  The name of the item in the Kubernetes `Secret` that holds the
+                                  certificate authority data.
+
+                                  The value must be in PEM format.
+                                type:
+                                  - string
+                                  - "null"
+                            additionalProperties: false
+                      configMapKeyRef:
+                        title: ConfigMap reference
+                        description: |-
+                          A reference to a Kubernetes `ConfigMap` item that contains the set
+                          of certificate authorities to trust when connecting to the database.
+                        type: object
+                        anyOf:
+                          - properties:
+                              name:
+                                title: Name
+                                description: |-
+                                  The name of the Kubernetes `ConfigMap` that contains the set of
+                                  certificate authorities to trust when connecting to the database.
+
+                                  The `ConfigMap` must be in the same namespace as Deep Security Smart Check.
+                                type: "null"
+                              key:
+                                title: Key
+                                description: |-
+                                  The name of the item in the Kubernetes `ConfigMap` that holds the
+                                  certificate authority data.
+
+                                  The value must be in PEM format.
+                                type:
+                                  - string
+                                  - "null"
+                            additionalProperties: false
+                    additionalProperties: false
+            additionalProperties: false
+        additionalProperties: false
+      user:
+        title: User ID
+        description: |-
+          The application database user ID.
+
+          If Deep Security Smart Check is deploying an internal database, it will use
+          this value as the administrative user for the database. If this value is not set,
+          the chart will generate a value derived from the `auth.secretSeed` and system details.
+
+          If you are using an external database, provide the user ID for a user with full
+          administrative privileges on the database.
+        type:
+          - string
+          - "null"
+      password:
+        title: Password
+        description: |-
+          The application database user password.
+
+          If Deep Security Smart Check is deploying an internal database, it will use
+          this value as the administrative user password for the database. If this value is not set,
+          the chart will generate a value derived from the `auth.secretSeed` and system details.
+
+          If you are using an external database, provide the password for the user specified
+          in `db.user`.
+        type:
+          - string
+          - "null"
+      secret:
+        title: Secret
+        description: |-
+          An application secret used to encrypt data within the database. The value is put through
+          PBKDF2 key expansion before being used as an encryption key.
+
+          If unset, the system will generate a password derived from the `auth.secretSeed` and
+          system details.
+
+          **IMPORTANT**: Do not change this value after the initial install as any encrypted data
+          will not be able to be decrypted.
+        type:
+          - string
+          - "null"
+    additionalProperties: false
+  scan:
+    title: Scan
+    type: object
+    properties:
+      results:
+        title: Results
+        type: object
+        properties:
+          ttl:
+            title: Time-to-live
+            description: |-
+              The time-to-live for scan results expressed as a duration string.
+
+              A duration string is a sequence of decimal numbers, each with optional fraction
+              and a unit suffix, such as "24h". Valid time units are "ns", "us", "ms", "s",
+              "m", "h".
+
+              Scan results will be purged at some point after the time-to-live expires.
+              Leaving the value unset means that Deep Security Smart Check will not delete
+              scan results.
+            type:
+              - string
+              - "null"
+        additionalProperties: false
+      malwareCache:
+        title: Malware scan cache
+        type: object
+        properties:
+          enabled:
+            title: Enabled
+            description: |-
+              If `true`, Deep Security Smart Check will cache malware scan results for container
+              image layers. This can significantly improve scan duration for registries that have
+              many images with common layers.
+            type: boolean
+        additionalProperties: false
+      sca:
+        title: Software composition analysis scanner
+        type: object
+        properties:
+          dataVolume:
+            title: Data volume
+            description: |-
+              The software composition analysis scanner uses an ephemeral volume to store
+              threat feed data.
+            type: object
+            properties:
+              sizeLimit:
+                title: Size limit
+                description: |-
+                  The amount of space to request for the data volume.
+                type: string
+            additionalProperties: false
+        additionalProperties: false
+      openscap:
+        title: OpenSCAP vulnerability and compliance scanner
+        type: object
+        properties:
+          dataVolume:
+            title: Data volume
+            description: |-
+              The OpenSCAP vulnerability and compliance scanner uses an ephemeral volume
+              to store threat feed data.
+            type: object
+            properties:
+              sizeLimit:
+                title: Size limit
+                description: |-
+                  The amount of space to request for the data volume.
+                type: string
+            additionalProperties: false
+          workVolume:
+            title: Work volume
+            description: |-
+              The OpenSCAP vulnerability and compliance scanner uses an ephemeral volume to
+              store working data for scans that are in progress. This data includes the compressed
+              and uncompressed image layer contents.
+            type: object
+            properties:
+              sizeLimit:
+                title: Size limit
+                description: |-
+                  The amount of space to request for the work volume.
+                type: string
+            additionalProperties: false
+        additionalProperties: false
+      contentScan:
+        title: Content scanner
+        description: |-
+          The OpenSCAP vulnerability and compliance scanner uses an ephemeral volume to
+          store working data for scans that are in progress. This data includes the uncompressed
+          image layer contents.
+        type: object
+        properties:
+          workVolume:
+            title: Work volume
+            type: object
+            properties:
+              sizeLimit:
+                title: Size limit
+                description: |-
+                  The amount of space to request for the work volume.
+                type: string
+            additionalProperties: false
+        additionalProperties: false
+    additionalProperties: false
+  registry:
+    title: Container image registry
+    type: object
+    anyOf:
+      - properties:
+          enabled:
+            title: Enabled
+            description: |-
+              Controls whether the built-in container image registry is enabled.
+            const: true
+          auth:
+            title: Authentication
+            type: object
+            properties:
+              username:
+                title: User ID
+                description: |-
+                  User ID for clients to authenticate to the registry.
+
+                  Must be provided if the registry is enabled.
+                type: string
+              password:
+                title: Password
+                description: |-
+                  Password for clients to authenticate to the registry.
+
+                  Must be provided if the registry is enabled.
+                type: string
+            additionalProperties: false
+          dataVolume:
+            title: Data volume
+            description: |-
+              The registry uses an ephemeral volume to store container image data.
+            type: object
+            properties:
+              sizeLimit:
+                title: Size limit
+                description: |-
+                  The amount of space to request for the data volume.
+                type: string
+            additionalProperties: false
+          additionalProperties: false
+        additionalProperties: false
+      - properties:
+          enabled:
+            title: Enabled
+            description: |-
+              Controls whether the built-in container image registry is enabled.
+            const: false
+          auth:
+            title: Authentication
+            type: object
+            properties:
+              username:
+                title: User ID
+                description: |-
+                  User ID for clients to authenticate to the registry.
+
+                  Must be provided if the registry is enabled.
+                type:
+                  - string
+                  - "null"
+              password:
+                title: Password
+                description: |-
+                  Password for clients to authenticate to the registry.
+
+                  Must be provided if the registry is enabled.
+                type:
+                  - string
+                  - "null"
+            additionalProperties: false
+          dataVolume:
+            title: Data volume
+            description: |-
+              The registry uses an ephemeral volume to store container image data.
+            type: object
+            properties:
+              sizeLimit:
+                title: Size limit
+                description: |-
+                  The amount of space to request for the data volume.
+                type:
+                  - string
+                  - "null"
+            additionalProperties: false
+          additionalProperties: false
+        additionalProperties: false
+  vulnerabilityScan:
+    title: Vulnerability scanner
+    type: object
+    properties:
+      workVolume:
+        title: Work volume
+        description: |-
+          The vulnerability scanner uses an ephemeral volume to store working data. This data
+          includes vulnerability feed information.
+        type: object
+        properties:
+          sizeLimit:
+            title: Size limit
+            description: |-
+              The amount of space to request for the work volume.
+            type: string
+        additionalProperties: false
+    additionalProperties: false
+  images:
+    title: Images
+    defaults:
+      title: Defaults
+      type: object
+      properties:
+        registry:
+          title: Registry
+          description: |-
+            The registry to pull images from.
+
+            This can be overridden at a per-image level.
+
+            If unset, images will be pulled from your default registry (which may be Docker Hub).
+          type:
+            - string
+            - "null"
+        project:
+          title: Project
+          description: |-
+            The project or organization to pull images from.
+
+            This can be overridden at a per-image level.
+          type:
+            - string
+            - "null"
+        tag:
+          title: Image tag
+          description: |-
+            The tag for images to pull.
+
+            This can be overridden at a per-image level.
+          type:
+            - string
+            - "null"
+        pullPolicy:
+          title: Pull policy
+          description: |-
+            The Kubernetes `PullPolicy` to use when deciding whether to pull the image from the registry.
+
+            You can find more detailed information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/containers/images/#updating-images).
+
+            This can be overridden at a per-image level.
+          type: string
+          enum:
+            - IfNotPresent
+            - Always
+            - Never
+        imagePullSecret:
+          title: Pull secret
+          description: |-
+            The name of the Kubernetes `Secret` to use when authenticating to the registry to pull images.
+
+            You can find more detailed information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/containers/images/#using-a-private-registry).
+
+            This can be overridden at a per-image level.
+          type:
+            - string
+            - "null"
+      additionalProperties: false
+    additionalProperties:
+      title: Image
+      description: |-
+        A container image.
+      type: object
+      properties:
+        registry:
+          title: Registry
+          description: |-
+            The registry to pull the image from.
+
+            If unset, images will be pulled from the registry defined in `images.defaults.registry` (which may be Docker Hub).
+          type:
+            - string
+            - "null"
+        project:
+          title: Project
+          description: |-
+            The project or organization to pull the image from.
+
+            If unset, the image will be pulled from the project or organization defined in `images.defaults.project`.
+          type:
+            - string
+            - "null"
+        repository:
+          title: Repository
+          description: |-
+            The repository to pull the image from.
+          type: string
+        tag:
+          title: Tag
+          description: |-
+            The image tag to pull.
+
+            If `digest` is set, `tag` will be ignored.
+          type:
+            - string
+            - "null"
+        digest:
+          title: Digest
+          description: |-
+            The image digest to pull.
+
+            If `digest` is set, `tag` will be ignored.
+          type: string
+        pullPolicy:
+          title: Pull policy
+          description: |-
+            The Kubernetes `PullPolicy` to use when deciding whether to pull the image from the registry.
+
+            You can find more detailed information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/containers/images/#updating-images).
+          type: string
+          enum:
+            - IfNotPresent
+            - Always
+            - Never
+        imagePullSecret:
+          title: Pull secret
+          description: |-
+            The name of the Kubernetes `Secret` to use when authenticating to the registry to pull the image.
+
+            You can find more detailed information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/containers/images/#using-a-private-registry).
+          type:
+            - string
+            - "null"
+      additionalProperties: false
+  replicas:
+    title: Replicas
+    description: |-
+      Replica counts for each pod type.
+    type: object
+    additionalProperties:
+      title: Pod replica count
+      description: |-
+        The number of replicas to create for the named pod.
+      type: integer
+      minimum: 1
+      multipleOf: 1
+  persistence:
+    title: Persistence
+    type: object
+    oneOf:
+      - properties:
+          enabled:
+            title: Enabled
+            description: |-
+              Controls whether to use persistent volumes.
+            const: true
+          storageClassName:
+            title: Storage class name
+            description: |-
+              The name of the storage class that should be used for persistent volumes.
+
+              This can be overridden on a per-volume basis.
+
+              If no value is specified, then `storageClassName` will be left out of the persistent
+              volume claim and Kubernetes will use the default storage class. If your cluster has
+              no default storage class defined, the persistent volume claim will remain in `Pending`
+              state until a persistent volume is created that matches the claim criteria.
+            type:
+              - string
+              - "null"
+          db:
+            title: Database
+            description: |-
+              If you are using the built-in Postgres database (only recommended for demonstrations, not
+              for production use), a persistent volume will prevent all of your data from being lost when
+              the database container is restarted.
+            type: object
+            properties:
+              size:
+                title: Size
+                description: |-
+                  The amount of space to request for the database storage volume.
+                type: string
+              storageClassName:
+                title: Storage class name
+                description: |-
+                  The name of the storage class that should be used for the persistent volume.
+
+                  If no value is specified, then the value of `persistence.storageClassName` will be used.
+                type:
+                  - string
+                  - "null"
+            additionalProperties: false
+        additionalProperties: false
+      - properties:
+          enabled:
+            title: Enabled
+            description: |-
+              Controls whether to use persistent volumes.
+            const: false
+          storageClassName:
+            title: Storage class name
+            description: |-
+              The name of the storage class that should be used for persistent volumes.
+
+              This can be overridden on a per-volume basis.
+
+              If no value is specified, then `storageClassName` will be left out of the persistent
+              volume claim and Kubernetes will use the default storage class. If your cluster has
+              no default storage class defined, the persistent volume claim will remain in `Pending`
+              state until a persistent volume is created that matches the claim criteria.
+            type:
+              - string
+              - "null"
+          db:
+            title: Database
+            description: |-
+              If you are using the built-in Postgres database (only recommended for demonstrations, not
+              for production use), a persistent volume will prevent all of your data from being lost when
+              the database container is restarted.
+            type:
+              - object
+              - "null"
+            properties:
+              size:
+                title: Size
+                description: |-
+                  The amount of space to request for the database storage volume.
+                type:
+                  - string
+                  - "null"
+              storageClassName:
+                title: Storage class name
+                description: |-
+                  The name of the storage class that should be used for the persistent volume.
+
+                  If no value is specified, then the value of `persistence.storageClassName` will be used.
+                type:
+                  - string
+                  - "null"
+            additionalProperties: false
+        additionalProperties: false
+  serviceAccounts:
+    title: Service accounts
+    type: object
+    properties:
+      registryAccess:
+        title: Registry access
+        description: |-
+          In AWS EKS, you can give pods IAM permissions through service accounts.
+
+          If you want to give Deep Security Smart Check pods access to images in
+          Amazon Elastic Container Registry (ECR), you can set the role ARN through
+          the `eks.amazonaws.com/role-arn` annotation, for example:
+
+          ```yaml
+          registryAccess:
+            annotations:
+              eks.amazonaws.com/role-arn: arn:aws:iam::[account-id]:role/[AmazonEC2ContainerRegistryReadOnlyRoleName]
+          ```
+
+          You can find more information in the [AWS EKS documentation](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
+
+          If no annotations are provided, Deep Security Smart Check will not create a service account
+          for the pods.
+        type: object
+        examples:
+          - eks.amazonaws.com/role-arn: arn:aws:iam::[account-id]:role/[AmazonEC2ContainerRegistryReadOnlyRoleName]
+        properties:
+          annotations:
+            title: Annotations
+            type: object
+            additionalProperties:
+              title: Annotation
+              description: |-
+                The annotation value.
+              type: string
+        additionalProperties: false
+    additionalProperties: false
+  resources:
+    title: Resource requests / limits
+    type: object
+    properties:
+      defaults:
+        title: Default pod resource requests / limits
+        description: |-
+          Default resource requests and limits for pods.
+
+          These can be overridden by per-pod entries.
+
+          You can find more information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container).
+        type: object
+        properties:
+          requests:
+            title: Resource requests
+            description: |-
+              Default resource requests for pods.
+            type: object
+            properties:
+              cpu:
+                title: CPU
+                description: |-
+                  Default CPU resource request for pods.
+                type: string
+              memory:
+                title: Memory
+                description: |-
+                  Default memory resource request for pods.
+                type: string
+            additionalProperties: false
+          limits:
+            title: Resource limits
+            description: |-
+              Default resource limits for pods.
+            type: object
+            properties:
+              cpu:
+                title: CPU
+                description: |-
+                  Default CPU resource limit for pods.
+                type: string
+              memory:
+                title: Memory
+                description: |-
+                  Default memory resource limit for pods.
+                type: string
+            additionalProperties: false
+        additionalProperties: false
+    additionalProperties:
+      title: Pod resource requests / limits
+      description: |-
+        Resource requests and limits for an individual pod.
+
+        These override the values specified in `resource.defaults`.
+
+        You can find more information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container).
+      type: object
+      properties:
+        requests:
+          title: Resource requests
+          description: |-
+            Resource requests for the pod.
+          type: object
+          properties:
+            cpu:
+              title: CPU
+              description: |-
+                CPU resource request for the pod.
+              type: string
+            memory:
+              title: Memory
+              description: |-
+                Memory resource request for the pod.
+              type: string
+          additionalProperties: false
+        limits:
+          title: Resource limits
+          description: |-
+            Resource limits for the pod.
+          type: object
+          properties:
+            cpu:
+              title: CPU
+              description: |-
+                CPU resource limit for the pod.
+              type: string
+            memory:
+              title: Memory
+              description: |-
+                Memory resource limit for the pod.
+              type: string
+          additionalProperties: false
+      additionalProperties: false
+  nodeSelector:
+    title: Node selectors
+    type: object
+    properties:
+      defaults:
+        title: Default node selector
+        description: |-
+          You can constrain a pod to only be able to run on particular node, or to prefer to run on particular nodes.
+
+          This value is the default node selector that will be applied to all pods in Deep Security Smart Check.
+
+          For availability reasons, it is not recommended to run all pods on one node.
+
+          The default node selector can be overridden by a pod-specific node selector entry.
+
+          You can find more information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/).
+        type: object
+        additionalProperties:
+          title: Label
+          description: |-
+            A label and value to use in the node selector.
+          type: string
+    additionalProperties:
+      title: Pod node selector
+      description: |-
+        This value is the node selector that will be applied to the pod.
+
+        For availability reasons, it is not recommended to run all pods on one node.
+
+        This value overrides the default node selector specified in `nodeSelector.defaults`.
+      type: object
+      additionalProperties:
+        title: Label
+        description: |-
+          A label and value to use in the node selector.
+        type: string
+  tolerations:
+    title: Pod tolerations
+    type: object
+    properties:
+      defaults:
+        title: Default pod tolerations
+        description: |-
+          The default taint tolerations to apply to pods.
+
+          These can be overridden by providing a specific entry for the pod.
+
+          You can find more information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).
+        type: array
+        items:
+          title: Taint toleration
+          description: |-
+            The taint key, operator, and action to take when the taint exists on a node.
+          type: object
+          properties:
+            key:
+              title: Key
+              description: |-
+                The taint key for the toleration.
+              type:
+                - string
+                - "null"
+            operator:
+              title: Operator
+              description: |-
+                The comparison operator for the taint toleration.
+              type:
+                - string
+                - "null"
+              enum:
+                - Exists
+                - Equal
+            value:
+              title: Value
+              description: |-
+                If `operator` is `Equal`, the taint value to tolerate.
+              type: string
+            action:
+              title: Action
+              description: |-
+                The taint action to tolerate.
+              type:
+                - string
+                - "null"
+              enum:
+                - NoSchedule
+                - PreferNoSchedule
+                - NoExecute
+            tolerationSeconds:
+              title: Toleration seconds
+              description: |-
+                When the `action` is `NoExecute`, Kubernetes will wait up to `tolerationSeconds` before
+                forcibly evicting the pod.
+
+                You can find more information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).
+              type: integer
+              multipleOf: 1
+              minimum: 0
+          additionalProperties: false
+    additionalProperties:
+      title: Taint toleration
+      description: |-
+        The taint tolerations for the named pod.
+
+        This overrides the defaults specified in `tolerations.defaults`.
+
+        You can find more information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).
+      type: array
+      items:
+        title: Taint toleration
+        description: |-
+          The taint key, operator, and action to take when the taint exists on a node.
+        type: object
+        properties:
+          key:
+            title: Key
+            description: |-
+              The taint key for the toleration.
+            type:
+              - string
+              - "null"
+          operator:
+            title: Operator
+            description: |-
+              The comparison operator for the taint toleration.
+            type:
+              - string
+              - "null"
+            enum:
+              - Exists
+              - Equal
+          value:
+            title: Value
+            description: |-
+              If `operator` is `Equal`, the taint value to tolerate.
+            type: string
+          action:
+            title: Action
+            description: |-
+              The taint action to tolerate.
+            type:
+              - string
+              - "null"
+            enum:
+              - NoSchedule
+              - PreferNoSchedule
+              - NoExecute
+          tolerationSeconds:
+            title: Toleration seconds
+            description: |-
+              When the `action` is `NoExecute`, Kubernetes will wait up to `tolerationSeconds` before
+              forcibly evicting the pod.
+
+              You can find more information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).
+            type: integer
+            multipleOf: 1
+            minimum: 0
+        additionalProperties: false
+  affinity:
+    title: Pod affinity
+    type: object
+    properties:
+      defaults:
+        title: Default pod affinity
+        description: |-
+          You can constrain a pod to prefer to run with (or *not* with) other pods on a node.
+
+          This value is the default pod affinity that will be applied to all pods in Deep Security Smart Check.
+
+          For availability reasons, it is not recommended to run all pods on one node.
+
+          The default pod affinity can be overridden by a pod-specific affinity entry.
+
+          You can find more information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/).
+        type: object
+        # Intentionally leaving affinity properties undefined as it's way too complicated to reproduce here.
+        properties: {}
+        additionalProperties: {}
+    additionalProperties:
+      title: Pod affinity
+      description: |-
+        You can constrain a pod to prefer to run with (or *not* with) other pods on a node.
+
+        This value is the pod affinity that will be applied to the named pod.
+
+        For availability reasons, it is not recommended to run all pods on one node.
+
+        This value overrides the default pod affinity defined in `affinity.defaults`.
+
+        You can find more information in the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/).
+      type: object
+      # Intentionally leaving affinity properties undefined as it's way too complicated to reproduce here.
+      properties: {}
+      additionalProperties: {}
+  networkPolicy:
+    title: Network policy
+    type: object
+    properties:
+      enabled:
+        title: Enabled
+        description: |-
+          Controls whether network policies will be created for the pods.
+
+          Network policies are a valuable security control. Do not disable them without identifying
+          other controls that will provide equivalent protection.
+        type: boolean
+      additionalWebhookTargetPorts:
+        title: Additional web hook target ports
+        description: |-
+          A list of destination port numbers that are allowed for web hook targets.
+        type: array
+        items:
+          title: Target port
+          description: |-
+            A port that will be allowed in the outbound network policy for calling web hooks.
+          type: integer
+          minimum: 0
+          multipleOf: 1
+      additionalRegistryPorts:
+        title: Additional registry ports
+        description: |-
+          A list of destination port numbrs that are allowed for registry access.
+        type: array
+        items:
+          title: Registry port
+          description: |-
+            A port that will be allowed in the outbound network policy for accessing registries.
+          type: integer
+          minimum: 0
+          multipleOf: 1
+      additionalOutboundPorts:
+        title: Additional outbound ports
+        description: |-
+          A list of destination ports that are allowed for outbound access.
+
+          Typically this is used to specify the port number for an outbound proxy.
+        type: array
+        items:
+          type: integer
+          minimum: 0
+          multipleOf: 1
+    additionalProperties: false
+  tasks:
+    title: Tasks
+    type: object
+    properties:
+      scan:
+        title: Periodic scans
+        type: object
+        properties:
+          enabled:
+            title: Enabled
+            description: |-
+              Controls whether periodic scans will be triggered.
+            type: boolean
+          schedule:
+            title: Schedule
+            description: |-
+              Sets the schedule for the periodic scan. The value is a string in
+              [cron](https://en.wikipedia.org/wiki/Cron) format.
+            type: string
+        additionalProperties: false
+      metricsCollector:
+        title: Metrics collection
+        type: object
+        properties:
+          enabled:
+            title: Enabled
+            description: |-
+              Controls whether metrics will be collected from pods.
+            type: boolean
+        additionalProperties: false
+      metricsReporter:
+        title: Metrics reporting
+        type: object
+        properties:
+          enabled:
+            title: Enabled
+            description: |-
+              Controls whether metrics will be reported to Trend Micro.
+            type: boolean
+          url:
+            title: URL
+            description: |-
+              The destination for metrics reporting.
+            type: string
+        additionalProperties: false
+      registryCleaner:
+        title: Registry cleanup
+        type: object
+        properties:
+          enabled:
+            title: Enabled
+            description: |-
+              Controls whether the built-in container image registry will be cleaned up periodically.
+            type: boolean
+          schedule:
+            title: Schedule
+            description: |-
+              Sets the schedule for the periodic registry cleanup. The value is a string in
+              [cron](https://en.wikipedia.org/wiki/Cron) format.
+            type: string
+        additionalProperties: false
+    additionalProperties: false
+  telemetry:
+    title: Telemetry
+    type: object
+    properties:
+      enabled:
+        title: Enabled
+        description: |-
+          Controls whether telemetry data is sent to Trend Micro.
+        type: boolean
+      endpoint:
+        title: Endpoint
+        description: |-
+          The destination for telemetry reporting.
+        type: string
+      interval:
+        title: Interval
+        description: |-
+          The maximum interval between telemetry data reports.
+        type: string
+      apiKey:
+        title: API key
+        description: |-
+          The API key used when communicating with the telemetry service.
+        type:
+          - string
+          - "null"
+      publicKey:
+        title: Public key
+        description: |-
+          The key used when communicating with the telemetry service.
+        contentMediaType: application/x-pem-file
+        type:
+          - string
+          - "null"
+    additionalProperties: false
+  # securityContext is here mostly to make developers think twice if they break these standards.
+  securityContext:
+    title: Security context
+    type: object
+    properties:
+      enabled:
+        title: Enabled
+        description: |-
+          Controls whether the security context will be defined for pods and containers.
+        type: boolean
+    additionalProperties:
+      title: Pod / container security context
+      type: object
+      properties:
+        pod:
+          title: Pod security context
+          description: |-
+            The pod security context that will be assigned to the named pod.
+          type: object
+          properties:
+            runAsUser:
+              title: Pod user ID
+              description: |-
+                The user ID that containers in the pod will run as.
+              type: number
+              # using minimum: 1 so that if people try to create a security context with userID 0
+              # they will get a validation error and hopefully think again.
+              minimum: 1
+              multipleOf: 1
+            runAsNonRoot:
+              title: Run as non-root
+              description: |-
+                Controls whether the pod will be required to run as a non-`root` user.
+              # using const: true so that if people try to create a security context with runAsNonRoot: false
+              # they will get a validation error and hopefully think again.
+              const: true
+            fsGroup:
+              title: File system group ID
+              description: |-
+                The group ID assigned to volumes mounted into the pod.
+              type: number
+              # using minimum: 1 so that if people try to create a security context with fsGroup 0
+              # they will get a validation error and hopefully think again.
+              minimum: 1
+              multipleOf: 1
+          additionalProperties: false
+      additionalProperties:
+        title: Container security context
+        description: |-
+          The container security context that will be assigned to the named container in the pod.
+        type: object
+        properties:
+          runAsNonRoot:
+            title: Run as non-root user
+            # using const: true so that if people try to create a security context with runAsNonRoot: false
+            # they will get a validation error and hopefully think again.
+            const: true
+          privileged:
+            title: Run as a privileged container
+            # using const: false so that if people try to create a security context with privileged: true
+            # they will get a validation error and hopefully think again.
+            const: false
+          allowPrivilegeEscalation:
+            title: Allow privilege escalation
+            # using const: false so that if people try to create a security context with allowPrivilegeEscalation: true
+            # they will get a validation error and hopefully think again.
+            const: false
+          runAsUser:
+            title: Run as user ID
+            type: number
+            # using minimum: 1 so that if people try to create a security context with userID 0
+            # they will get a validation error and hopefully think again.
+            minimum: 1
+            multipleOf: 1
+          readOnlyRootFilesystem:
+            title: Read-only root filesystem
+            # using const: true so that if people try to create a security context with writable root filesystem
+            # they will get a validation error and hopefully think again.
+            const: true
+          capabilities:
+            title: Capabilities
+            type: object
+            properties:
+              drop:
+                title: Drop
+                description: |-
+                  The list of capabilities to drop when running this container.
+                # using const: [ "ALL" ] so that if people try to create a security context that does
+                # not drop all capabilities they will get a validation error and hopefully think again.
+                const:
+                  - ALL
+            # disallowing additional properties so that if people try to create a capabilities definition
+            # that adds capabilities they get a validation error and hopefully think again.
+            additionalProperties: false
+        # disallowing additional properties so that if people try to create a different security context
+        # they get a validation error and hopefully think again.
+        additionalProperties: false
+  feed:
+    title: Vulnerability feed
+    type: object
+    properties:
+      openscap:
+        title: OpenSCAP vulnerability feed
+        type: object
+        properties:
+          url:
+            title: Feed URL
+            type: string
+          interval:
+            title: Feed retrieval interval
+            type: string
+        additionalProperties: false
+      sca:
+        title: Software composition analysis vulnerability feed
+        type: object
+        properties:
+          url:
+            title: Feed URL
+            type: string
+          interval:
+            title: Feed retrieval interval
+            type: string
+        additionalProperties: false
+    additionalProperties: false
+additionalProperties: false
