@@ -1,24 +1,42 @@
-# Default values for smartcheck.
-# This is a YAML-formatted file.
+# Default values for Deep Security Smart Check.
+#
+# Don't edit this file, create an `overrides.yaml` instead and use it on the `helm` command
+# line like this:
+#
+#     helm --values overrides.yaml ...
+#
+# Using an `overrides.yaml` file will reduce the risk that your site-specific changes will
+# be lost when you update to a new version of this chart.
 
 ## activationCode is the product activation code.
+##
+## We recommend that you register for a 30-day trial license
+## [code](https://go2.trendmicro.com/geoip/trial-168). Deep Security Smart
+## Check will operate without an activation code; however, malware pattern
+## updates will not be available and you will see a warning message in the
+## administration console.
+##
+## [Contact us](https://resources.trendmicro.com/Hybrid-Cloud-Security-Contact-Us.html)
+## for full product licensing and pricing details.
 ##
 ## Default value: (none)
 activationCode:
 
-## extraLabels is a dictionary of additional labels that will be added to all resources
-## created by this chart.
+## extraLabels is a dictionary of additional labels that will be added to all
+## Kubernetes resources created by this chart.
 extraLabels: {}
 
 ipv6:
   ## enabled controls whether the proxy listens on IPv6 addresses internally. This does
-  ## not affect whether the load balancer (if service.type is `LoadBalancer`) exposes an IPv6
+  ## not affect whether the load balancer (if `service.type` is `LoadBalancer`) exposes an IPv6
   ## interface.
   ##
   ## You should only modify this value if you encounter problems deploying with the defaults.
   ## If the `proxy` pod fails to start and reports an error like this:
+  ##
   ##   [emerg] 1#1: socket() [::]:8080 failed (97: Address family not supported by protocol)
-  ## then setting ipv6.enabled=false may resolve the issue.
+  ##
+  ## then setting `ipv6.enabled=false` may resolve the issue.
   ##
   ## Default value: true
   enabled: true
@@ -195,7 +213,6 @@ certificate:
 
     ## certificate is the name of the key inside the secret that stores the service's certificate.
     ## The value of the secret must be the PEM-encoded certificate or certificate chain for the service.
-    ## This value is required if `certificate.secret.name` is set.
     ##
     ## Default value: none
     certificate:
@@ -203,7 +220,6 @@ certificate:
     ## privateKey is the name of the key inside the secret that stores the service's private key that
     ## matches the certificate. The value of the secret must be the PEM-encoded private key for the service.
     ## The private key must not be protected by a passphrase.
-    ## This value is required if `certificate.secret.name` is set.
     ##
     ## Default value: none
     privateKey:
@@ -251,12 +267,10 @@ service:
   ## httpPort is the port where the service will listen for HTTP requests.
   ## The service will automatically redirect all HTTP requests to HTTPS.
   ##
-  ## TODO confirm that this is true (it appears not to be)
-  ##
   ## Default value: 80
   httpPort: 80
 
-  ## registryPort is the port where the service will listen for docker registry requests.
+  ## registryPort is the port where the service will listen for registry requests.
   ## It is only valid when dockerRegistry is enabled.
   ##
   ## Default value: 5000
@@ -316,16 +330,19 @@ db:
     ## ca: a PEM-encoded value with the certificate authority to trust when
     ## connecting to the database. Use this if `tls.mode` is `verify-ca` or
     ## `verify-full` and you have a private certificate authority.
+    ##
+    ## It is only valid to provide one `valueFrom`, either `configMapKeyRef` or
+    ## `secretKeyRef`.
     ca:
       valueFrom:
-        ## secretKeyRef: if set, the name and key of the secret where the CA
-        ## PEM file is stored.
-        secretKeyRef:
-          name:
-          key:
         ## secretKeyRef: if set, the name and key of the config map where the CA
         ## PEM file is stored.
         configMapKeyRef:
+          name:
+          key:
+        ## secretKeyRef: if set, the name and key of the secret where the CA
+        ## PEM file is stored.
+        secretKeyRef:
           name:
           key:
 
@@ -351,16 +368,17 @@ db:
 
 scan:
   results:
-    ## ttl is the time-to-live for scan results expressed as a duration string (or 0).
+    ## ttl is the time-to-live for scan results expressed as a duration string.
     ## A duration string is a sequence of decimal numbers, each with optional fraction
     ## and a unit suffix, such as "24h". Valid time units are "ns", "us", "ms", "s",
     ## "m", "h".
     ##
     ## Scan results will be purged at some point after the time-to-live expires.
-    ## A value of 0 means that scan results will be kept forever.
+    ## Leaving the value unset means that Deep Security Smart Check will not delete
+    ## scan results.
     ##
-    ## Default value: 0 (keep forever)
-    ttl: 0
+    ## Default value: unset (keep forever)
+    ttl:
 
   ## Enable malware scan cache.
   ##
@@ -370,8 +388,7 @@ scan:
 
   sca:
     ## The SCA scanner uses an ephemeral volume to store threat feed
-    ## information. This volume is created when the pod is scheduled on a node
-    ## and is populated by the sca-feed-consumer container.
+    ## information.
     dataVolume:
       ## The amount of space to request for the data volume.
       ##
@@ -380,8 +397,7 @@ scan:
 
   openscap:
     ## The OpenSCAP scanner uses an ephemeral volume to store threat feed
-    ## information. This volume is created when the pod is scheduled on a node
-    ## and is populated by the openscap-feed-consumer container.
+    ## information.
     dataVolume:
       ## The amount of space to request for the data volume.
       ##
@@ -390,7 +406,7 @@ scan:
 
     ## The OpenSCAP scanner uses an ephemeral volume to store working data
     ## for scans that are in progress. This data includes the compressed
-    ## and uncompressed image layer contents as well as scan results.
+    ## and uncompressed image layer contents.
     workVolume:
       ## The amount of space to request for the work volume.
       ##
@@ -427,7 +443,7 @@ registry:
 
   ## The amount of space to request for the registry data volume
   ##
-  ## Default value: 5Gi
+  ## Default value: 10Gi
   dataVolume:
     sizeLimit: 10Gi
 
@@ -535,8 +551,8 @@ images:
     digest: sha256:16d57c0bac4cbdfe13fd67170d3237a9a9647f9e248762d5100603dc8d04caa7
   scaFeedConsumer:
     repository: sca-feed-consumer
-
     digest: sha256:923e4ebe49e977ffee5123518c966243d90e0b223d1df13e1b6e41ad5c52e6ef
+
 replicas: {}
 
 persistence:
