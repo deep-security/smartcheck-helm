@@ -46,12 +46,9 @@ metadata:
 {{- end }}
 type: Opaque
 data:
-  {{- if (and .Values.registry.auth.username .Values.registry.auth.password) }}
-  username: {{ .Values.registry.auth.username | toString | b64enc }}
-  password: {{ .Values.registry.auth.password | toString | b64enc }}
-  {{- end }}
+  username: {{ (required "" .Values.registry.auth.username) | toString | b64enc }}
+  password: {{ (required "" .Values.registry.auth.password) | toString | b64enc }}
   haSharedSecret: {{ randAlphaNum 16 | b64enc | quote }}
-
 
 ---
 apiVersion: apps/v1
@@ -137,14 +134,12 @@ spec:
         resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.registry) | indent 12 }}
         env:
-{{- if (and .Values.registry.auth.username .Values.registry.auth.password) }}
           - name: REGISTRY_AUTH
             value: "htpasswd"
           - name: REGISTRY_AUTH_HTPASSWD_REALM
             value: "Registry Realm"
           - name: REGISTRY_AUTH_HTPASSWD_PATH
             value: "/auth/htpasswd"
-{{- end }}
           - name: REGISTRY_HTTP_TLS_CERTIFICATE
             value: /etc/ssl/docker/tls.crt
           - name: REGISTRY_HTTP_TLS_KEY
@@ -159,11 +154,9 @@ spec:
           - name: REGISTRY_STORAGE_DELETE_ENABLED
             value: "true"
         volumeMounts:
-{{- if (and .Values.registry.auth.username .Values.registry.auth.password) }}
           - name: htpasswd
             mountPath: /auth
             readOnly: true
-{{- end }}
           - mountPath: /etc/ssl/docker
             name: tls-secret
             readOnly: true
@@ -210,7 +203,6 @@ spec:
 {{ toYaml (default .Values.resources.defaults .Values.resources.registryCleaner) | indent 16 }}
         args:
           - purge-local
-{{- if (and .Values.registry.auth.username .Values.registry.auth.password) }}
           - --username=$(HTPASSWD_SECRET_USERNAME)
           - --password=$(HTPASSWD_SECRET_PASSWORD)
         env:
@@ -224,7 +216,6 @@ spec:
               secretKeyRef:
                 name: registry-auth
                 key: password
-{{- end }}
         volumeMounts:
           - name: data
             mountPath: /var/lib/registry/
@@ -234,7 +225,6 @@ spec:
             readOnly: true
 {{- end }}
 
-{{- if (and .Values.registry.auth.username .Values.registry.auth.password) }}
       initContainers:
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.registry }}
@@ -263,18 +253,15 @@ spec:
         volumeMounts:
         - name: htpasswd
           mountPath: "/auth"
-{{- end }}
 
       nodeSelector:
 {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.registry) | indent 8 }}
       tolerations:
 {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.registry) | indent 8 }}
       volumes:
-{{- if (and .Values.registry.auth.username .Values.registry.auth.password) }}
         - name: htpasswd
           emptyDir:
             sizeLimit: 1Mi
-{{- end }}
         - name: data
           emptyDir:
             sizeLimit: {{ default "10Gi" .Values.registry.dataVolume.sizeLimit | quote }}

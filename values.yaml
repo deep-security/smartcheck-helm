@@ -417,13 +417,13 @@ registry:
   auth:
     ## User name for authentication to the registry
     ##
-    ## Default value: empty string
-    username: ''
+    ## Default value: (must be provided if the registry is enabled)
+    username:
 
     ## Password for authentication to the registry
     ##
-    ## Default value: empty string
-    password: ''
+    ## Default value: (must be provided if the registry is enabled)
+    password:
 
   ## The amount of space to request for the registry data volume
   ##
