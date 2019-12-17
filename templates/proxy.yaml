@@ -381,7 +381,7 @@ data:
         server license:8080;
       }
       upstream billing_server {
-        server billing:8180;
+        server billing:8080;
       }
 
       # Configuration for the server

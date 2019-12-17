@@ -52,7 +52,8 @@ metadata:
 {{- end }}
 spec:
   ports:
-    - port: 8180
+    - port: 8080
+      targetPort: 8180
       protocol: TCP
       name: external
   selector:
@@ -73,7 +74,8 @@ metadata:
 {{- end }}
 spec:
   ports:
-    - port: 8181
+    - port: 8081
+      targetPort: 8181
       protocol: TCP
       name: internal
   selector:

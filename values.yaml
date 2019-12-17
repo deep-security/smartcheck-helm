@@ -530,7 +530,7 @@ images:
     digest: sha256:923e4ebe49e977ffee5123518c966243d90e0b223d1df13e1b6e41ad5c52e6ef
   billing:
     repository: billing
-    diegest:
+    digest:
 
 replicas: {}
 
@@ -567,17 +567,22 @@ persistence:
 serviceAccount:
   ## Amazon IAM role ARNs for projected service account.
   ##
-  ## If you want to grant the minimal pods to access Amazon Amazon Elastic Container Registry (ECR), set the roleArn accordingly:
-  ## registryAccess:
-  ##   annotations:
-  ##     eks.amazonaws.com/role-arn: arn:aws:iam::[account-id]:role/[AmazonEC2ContainerRegistryReadOnlyRoleName]
-  ##
   ## Reference: https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html
-  ##
-  ## Default: blank
   registryAccess:
+    ## If you want to grant the minimal pods to access Amazon Amazon Elastic Container Registry (ECR),
+    ## the IAM permissions listed in the managed policy `AmazonEC2ContainerRegistryReadOnly` are required.
+    ## Create an IAM role with the managed policy, and set the annotations:
+    ## annotations:
+    ##   eks.amazonaws.com/role-arn: arn:aws:iam::[account-id]:role/[AmazonEC2ContainerRegistryReadOnlyRoleName]
+    ##
     annotations:
   license:
+    ## If you subscribe this product from AWS Marketplace, `aws-marketplace:MeterUsage` IAM permission is required.
+    ## The IAM managed policy AWSMarketplaceMeteringFullAccess has this permission.
+    ## Create an IAM role with the managed policy, and set the annotations:
+    ## annotations:
+    ##   eks.amazonaws.com/role-arn: arn:aws:iam::[account-id]:role/[AWSMarketplaceMeteringFullAccessRoleName]
+    ##
     annotations:
 
 resources:
