@@ -263,6 +263,7 @@ spec:
         volumeMounts:
         - name: htpasswd
           mountPath: "/auth"
+        resources: {{ toYaml (default .Values.resources.defaults .Values.resources.htPasswd) | nindent 12 }}
 {{- end }}
 
       nodeSelector:

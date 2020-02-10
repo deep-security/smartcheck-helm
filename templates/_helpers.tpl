@@ -362,6 +362,7 @@ env:
       secretKeyRef:
         key: database-password
         name: {{ template "smartcheck.fullname" . }}-{{ .service }}-db
+resources: {{ toYaml (default .Values.resources.defaults .Values.resources.dbInit) | nindent 2 }}
 {{- end -}}{{/* define */}}
 
 
@@ -390,6 +391,7 @@ volumeMounts:
 {{- end }}{{/* if $volumeMounts */}}
 env:
   {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" .service) | nindent 2 }}
+resources: {{ toYaml (default .Values.resources.defaults .Values.resources.vulnDBInit) | nindent 2 }}
 {{- end -}}{{/* define */}}
 
 {{/*
