@@ -125,7 +125,7 @@ spec:
                 - -c
                 - exec pg_isready -U "$POSTGRES_USER"
             initialDelaySeconds: 10
-            timeoutSeconds: 5
+            timeoutSeconds: 15
             failureThreshold: 3
           readinessProbe:
             exec:
@@ -134,7 +134,7 @@ spec:
                 - -c
                 - exec pg_isready -U "$POSTGRES_USER"
             initialDelaySeconds: 10
-            timeoutSeconds: 5
+            timeoutSeconds: 15
             failureThreshold: 60
           env:
             ## POSTGRES_DB
