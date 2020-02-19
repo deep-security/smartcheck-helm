@@ -435,8 +435,8 @@ vulnerabilityScan:
   workVolume:
     ## The amount of space to request for the vulnerability scan working volume
     ##
-    ## Default value: 2Gi
-    sizeLimit: 2Gi
+    ## Default value: 3Gi
+    sizeLimit: 3Gi
 
 images:
   defaults:
