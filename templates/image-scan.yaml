@@ -83,6 +83,9 @@ spec:
             - --bind-port=3001
             - --feed-dir=/data
             - --root=work/
+            {{- if .Values.telemetry.enabled }}
+            - --telemetry-endpoint=http://metrics-internal:8081
+            {{- end }}
           env:
             {{- include "smartcheck.activation-code.env" . | nindent 12 }}
           volumeMounts:
@@ -291,7 +294,7 @@ spec:
   egress:
     {{- include "smartcheck.to-dns-networkpolicy" . | nindent 4 }}
     {{- include "smartcheck.to-db-networkpolicy" . | nindent 4 }}
-    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "scan")) | nindent 4 }}
+    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "scan" "metrics")) | nindent 4 }}
     # allow egress for feed consumer
     - to: # any
       ports:
