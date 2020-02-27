@@ -24,6 +24,14 @@ if ! command_exists $HELM; then
   exit 1
 fi
 
+# Get Helm version since 'helm list' on Helm 3 does not display all namespaces unless specified. However, this flag does not exist in Helm 2
+case X`helm version --template="{{.Version}}"` in
+  Xv3.*)
+    HELM_COMMAND="$HELM list --all-namespaces";;
+  *)
+    HELM_COMMAND="$HELM list";;
+esac
+
 # prepare the output folder
 RESULTS_DIR="${RESULTS_DIR:-/tmp/smartcheck}"
 MASTER_DIR="${RESULTS_DIR}/master"
@@ -37,7 +45,7 @@ COMMANDS=( "version:$KUBECTL version"
            "components:$KUBECTL get componentstatuses"
            "events:$KUBECTL get events --all-namespaces"
            "storageclass:$KUBECTL describe storageclass"
-           "helm:$HELM list"
+           "helm:$HELM_COMMAND"
            "helm-status:$HELM status $RELEASE"
            "nodes:$KUBECTL describe nodes"
            "podlist:$KUBECTL get pods --all-namespaces"
