@@ -138,6 +138,7 @@ spec:
             {{- end }}
           env:
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
+            {{- include "smartcheck.activation-code.env" . | nindent 12 }}
           resources:
 {{ toYaml (default .Values.resources.defaults .Values.resources.license) | indent 12 }}
           volumeMounts:
