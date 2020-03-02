@@ -598,8 +598,8 @@ resources:
       cpu: 100m
       memory: 256Mi
     limits:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 1000m
+      memory: 2Gi
   vulnerabilityScan:
     requests:
       cpu: 200m
