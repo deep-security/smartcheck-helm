@@ -457,7 +457,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.40
+    tag: 1.2.41
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -490,10 +490,10 @@ images:
     digest: sha256:c1e9ea1c5f73dad1bd0ee4da0f1519fe5338b27e7e578dfa4baecfd0143a7565
   docs:
     repository: api-docs
-    digest: sha256:894600cefe1e4ec1ee611997af38c242994d424741d5ff3e26339acb5b09c981
+    digest: sha256:d59820f6284dbe2475a4b8eff23c201fc9bf819dd81d1179093cc594c561e4ce
   frontend:
     repository: frontend
-    digest: sha256:66833877c608499437810a10de0f2a58befee017007112a5deada0a19f32ad5e
+    digest: sha256:5b93bebb02c085ee9805b64e5e2f6cbb1d0028ad780cff8f2fed141e625402ea
   proxy:
     repository: proxy
     digest: sha256:1d4d42fd47231053c55efa7b048c842e36bb4cee1b2251b851a827c18bf88038
@@ -514,7 +514,7 @@ images:
     digest: sha256:8689d8ec31f1b4fafdc4592d34e9ea3ceaa5fddf61352d9d8f2f19cb1294c3b8
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    digest: sha256:8252be1b3fa2e471e7e2b36a7487dd426da822f877618039d7f2b775cace56f2
+    digest: sha256:f8ed5577516ac5c800c2e3b53193f5f987404bbe95cb9fbf54bb627699afe957
   registry:
     repository: registry
     digest: sha256:9b7c736a2714bb30d0ed2e7aef5600dbfba3a26d8835d75f10b83807baec61f3
@@ -526,13 +526,13 @@ images:
     digest: sha256:97e1f38507fac7a4fde5ce6fe0d9ccb1c51deadd98ed0ef2aabdea1ef3678ec1
   vulnDBInitializer:
     repository: vuln-db-initializer
-    digest: sha256:7e75249a6ca37620085972f97da0c8756a9682722a2b633da6a44f1ae455ae4d
+    digest: sha256:eb8d9334faa08750d622e22d9a630b82e618bae2c28d7f1caf4eb722c8aa9e27
   imageScan:
     repository: image-scan
     digest: sha256:c56235de5753dd42faeab9ee4e4829b2b8565483bd8ba992723224d8f9735b4e
   scaScan:
     repository: sca-scan
-    digest: sha256:37985e9ab0fbbfc82e79b393245525befe77874e3847faf7e61b022df461dd4b
+    digest: sha256:e73801d967981d336f5e3306a9c3627e5292738b5b62e153341d21f0d8d4361c
   scaFeedConsumer:
     repository: sca-feed-consumer
 
