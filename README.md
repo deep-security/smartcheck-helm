@@ -139,7 +139,7 @@ If you want to install a specific version of Deep Security Smart Check, you can 
 ```sh
 helm install \
   --values overrides.yaml \
-  --name deepsecurity-smartcheck \
+  deepsecurity-smartcheck \
   https://github.com/deep-security/smartcheck-helm/archive/1.2.41.tar.gz
 ```
 
@@ -151,7 +151,7 @@ To install Deep Security Smart Check into an existing Kubernetes namespace that'
 helm install \
   --namespace {namespace} \
   --values overrides.yaml \
-  --name deepsecurity-smartcheck \
+  deepsecurity-smartcheck \
   https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
 ```
 
@@ -164,7 +164,7 @@ As described above, you can override the defaults in this file by creating an `o
 ```sh
 helm install \
   --values overrides.yaml \
-  --name deepsecurity-smartcheck \
+  deepsecurity-smartcheck \
   https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
 ```
 
@@ -210,7 +210,7 @@ You likely have not defined a storage class. Since Amazon EKS does not create a 
 helm install \
   --set persistence.storageClassName={storage class name} \
   --values overrides.yaml \
-  --name deepsecurity-smartcheck \
+  deepsecurity-smartcheck \
   https://github.com/deep-security/smartcheck-helm/archive/master.tar.gz
 ```
 
