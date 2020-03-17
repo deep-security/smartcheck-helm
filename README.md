@@ -97,6 +97,8 @@ _Experienced `helm` users will note that we are using `deepsecurity-smartcheck` 
 
 **Note:** This installs Deep Security Smart Check with an in-cluster database, which requires a persistent volume. Your cluster must support creating persistent volumes to work with the in-cluster database. See [Use an external database](https://github.com/deep-security/smartcheck-helm/wiki/Use-an-external-database) to learn how to use an external database with Deep Security Smart Check.
 
+**Note:** If deploying Deep Security Smart Check with the in-cluster database to an EKS cluster running Amazon's Bottlerocket OS, it is necessary to install the EKS EBS CSI driver. If this is not installed the database pod is unable to mount to the persistent volume. See [EKS EBS CSI Driver](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html) for more information and installation instructions.
+
 ### Connecting to Deep Security Smart Check
 
 The install process will display instructions for obtaining the initial username and password and for connecting to Deep Security Smart Check.
