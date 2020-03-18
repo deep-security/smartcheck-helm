@@ -229,3 +229,17 @@ networkPolicy:
 ```
 
 If you continue to encounter timeouts, the network connectivity issue may be caused by a firewall or some other network issue.
+
+### Built-in database pod failing to start on Bottlerocket
+
+If you are installing Deep Security Smart Check with the built-in database on an Amazon Elastic Kubernetes Service (Amazon EKS) cluster running Bottlerocket, you may see errors with the `db` pod if the EKS EBS CSI driver is not installed:
+
+```text
+Warning  FailedMount             6m51s (x12 over 31m)  kubelet, ip-192-168-82-134.us-west-2.compute.internal  Unable to mount volumes for pod "db-74995d7886-rfl4g_default(6c9a66fd-5d7b-11ea-9306-0e4eadbaa154)": timeout expired waiting for volumes to attach or mount for pod "default"/"db-74995d7886-rfl4g". list of unmounted volumes=[data]. list of unattached volumes=[varrun tmp data]
+
+Warning  FailedMount             2m38s (x23 over 33m)  kubelet, ip-192-168-82-134.us-west-2.compute.internal  MountVolume.MountDevice failed for volume "pvc-6c53aaaa-5d7b-11ea-ae3f-02de703f8790" : executable file not found in $PATH
+```
+
+For production, you should [use an external database](https://github.com/deep-security/smartcheck-helm/wiki/Use-an-external-database) instead of the internal database.
+
+If you are doing a trial install and want to use the built-in database, you can install the required driver. See [EKS EBS CSI Driver](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html) for more information and installation instructions.
