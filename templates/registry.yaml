@@ -193,12 +193,12 @@ spec:
             mountPath: /var/lib/registry/
           - name: registry-config
             mountPath: /etc/docker/registry
+        {{- if $securityContextEnabled }}
+        securityContext: {{ toYaml $containerSecurityContext | nindent 10 }}
+        {{- end }}{{/* if $securityContextEnabled*/}}
+        resources: {{ toYaml (default .Values.resources.defaults .Values.resources.registryGarbageCollector) | nindent 10 }}
 
       - name: cleaner
-{{- if $securityContextEnabled }}
-        securityContext:
-{{ toYaml $containerSecurityContext | indent 16 }}
-{{- end }}
         {{- with .Values.images.registryCleaner }}
         {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
         {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
@@ -206,8 +206,10 @@ spec:
         image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
         imagePullPolicy: {{ default (default "Always" $imageDefaults.pullPolicy) .pullPolicy }}
         {{- end }}
-        resources:
-{{ toYaml (default .Values.resources.defaults .Values.resources.registryCleaner) | indent 16 }}
+        {{- if $securityContextEnabled }}
+        securityContext: {{ toYaml $containerSecurityContext | nindent 10 }}
+        {{- end }}{{/* if $securityContextEnabled */}}
+        resources: {{ toYaml (default .Values.resources.defaults .Values.resources.registryCleaner) | nindent 10 }}
         args:
           - purge-local
 {{- if (and .Values.registry.auth.username .Values.registry.auth.password) }}
@@ -263,7 +265,10 @@ spec:
         volumeMounts:
         - name: htpasswd
           mountPath: "/auth"
-        resources: {{ toYaml (default .Values.resources.defaults .Values.resources.htPasswd) | nindent 12 }}
+        resources: {{ toYaml (default .Values.resources.defaults .Values.resources.htPasswd) | nindent 10 }}
+        {{- if $securityContextEnabled }}
+        securityContext: {{ toYaml $containerSecurityContext | nindent 10 }}
+        {{- end }}{{/* if $securityContextEnabled */}}
 {{- end }}
 
       nodeSelector:
