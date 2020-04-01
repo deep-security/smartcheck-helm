@@ -265,6 +265,8 @@ spec:
         volumeMounts:
         - name: htpasswd
           mountPath: "/auth"
+        - name: empty-tmp
+          mountPath: "/tmp"
         resources: {{ toYaml (default .Values.resources.defaults .Values.resources.htPasswd) | nindent 10 }}
         {{- if $securityContextEnabled }}
         securityContext: {{ toYaml $containerSecurityContext | nindent 10 }}
@@ -276,6 +278,8 @@ spec:
       tolerations:
 {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.registry) | indent 8 }}
       volumes:
+        - name: empty-tmp
+          emptyDir: {}
 {{- if (and .Values.registry.auth.username .Values.registry.auth.password) }}
         - name: htpasswd
           emptyDir:
