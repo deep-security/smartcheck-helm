@@ -457,7 +457,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.43
+    tag: 1.2.44
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -490,7 +490,7 @@ images:
     digest: sha256:e0fc51119abee7206260239cb5052f94c8f8282e00fa74f729dcee9eecbabd2d
   docs:
     repository: api-docs
-    digest: sha256:c0a1ac974137e00f18b97e966db6f6bc50b4f25b487370818118ae9832a1f0f1
+    digest: sha256:e75698c6bb91c97e76d5158162e40c93762189da1ad8a673eb6aae42fad5788b
   frontend:
     repository: frontend
     digest: sha256:fe68e523dd26f2020f21d277211bbddd9b90a77cf38ed2fba880ef042facce9d
@@ -499,7 +499,7 @@ images:
     digest: sha256:1d4d42fd47231053c55efa7b048c842e36bb4cee1b2251b851a827c18bf88038
   license:
     repository: license
-    digest: sha256:019a3d06ca475d4a8becccf3ed80c0897d3ad3a5a09c96e14c0b1641a1ae8d4a
+    digest: sha256:28da1ba4f6d04699a6f438dd075f01dbe15df3e4ee3c76894f6231f8a7671b4a
   vulnerabilityScan:
     repository: vulnerability-scan
     digest: sha256:69352a903648b98d0533b05bfeb9fb9ca34faac7faf8c25e7cd3539be92ca57e
@@ -514,7 +514,7 @@ images:
     digest: sha256:2cc84720e08a7546f832a39c9dc3c62b2878fb766896b3e0e598ad716e4b3003
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    digest: sha256:bec2a73ea4b07bc7a94cb5cb8ce64313228c7f3635768c369eaf7e59f77495f7
+    digest: sha256:1acdb7887eb7478c2d1e433723b68e99e706594cb123241ab7c89f6340bcd3c1
   registry:
     repository: registry
     digest: sha256:6916f44b3aee478154f36ce401548363a644e907fd1791b69cf975ca2d67bef9
@@ -526,7 +526,7 @@ images:
     digest: sha256:97e1f38507fac7a4fde5ce6fe0d9ccb1c51deadd98ed0ef2aabdea1ef3678ec1
   vulnDBInitializer:
     repository: vuln-db-initializer
-    digest: sha256:b236f1ae36d095f24733671d033c5c69c66d1f55aacf347d841f0b909b9358f5
+    digest: sha256:54abc26364cacd7e4f064e20516aa879d7da151c90594c45c610a322f0476f05
   imageScan:
     repository: image-scan
     digest: sha256:c56235de5753dd42faeab9ee4e4829b2b8565483bd8ba992723224d8f9735b4e
