@@ -1,10 +1,10 @@
 # Application descriptor for GCP Marketplace Offering
 # This manifest describes the application and is used in the UI.
-
+​
 # IMPORTANT: 
 # partner_id and product_id must match the values declared in the schema partnerId and solutionId respectively,
 # which must also match the listing ID in Marketplace.
-
+​
 apiVersion: app.k8s.io/v1beta1
 kind: Application
 metadata:
@@ -13,10 +13,10 @@ metadata:
   labels:
     app.kubernetes.io/name: "{{ .Release.Name }}"
   annotations:
-    marketplace.cloud.google.com/deploy-info: '{"partner_id": "partner", "product_id": "SmartCheck", "partner_name": "Partner"}'
+    marketplace.cloud.google.com/deploy-info: '{"partner_id": "trendmicro", "product_id": "smartcheck", "partner_name": "smartcheck"}'
 spec:
   descriptor:
-    type: SmartCheck
+    type: smartcheck
     version: '1.2.44'
   selector:
     matchLabels:
