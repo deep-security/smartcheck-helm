@@ -687,6 +687,18 @@ tasks:
     ## Default value: @daily
     schedule: '@daily'
 
+cloudOne:
+  ## apiKey is the api key used to authenticate with Cloud One Container Security.
+  ##
+  ## Default value: (none)
+  apiKey:
+
+  ## endpoint is the endpoint of the Cloud One Container Security scan results ingestion service.
+  ## Allows for full endpoint to be provided or the Cloud One region (ex: us-1).
+  ##
+  ## Default value: https://container.us-1.cloudone.trendmicro.com
+  endpoint: https://container.us-1.cloudone.trendmicro.com
+
 telemetry:
   ## enabled controls whether telemetry events will be sent.
   ##

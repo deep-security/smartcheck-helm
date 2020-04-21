@@ -150,6 +150,8 @@ spec:
             {{- with .Values.scan.results }}
             - --scan-retention-period={{ default 0 .ttl }}
             {{- end }}
+            - --cloud-one-endpoint={{ default "" .Values.cloudOne.endpoint }}
+            - --cloud-one-api-key={{ default "" .Values.cloudOne.apiKey }}
             {{if not .Values.scan.malwareCache.enabled}}
             - --malware-scan-cache-ttl=0s
             {{end}}
