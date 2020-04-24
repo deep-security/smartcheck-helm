@@ -418,12 +418,12 @@ registry:
     ## User name for authentication to the registry
     ##
     ## Default value: empty string
-    username: ''
+    username: ""
 
     ## Password for authentication to the registry
     ##
     ## Default value: empty string
-    password: ''
+    password: ""
 
   ## The amount of space to request for the registry data volume
   ##
@@ -585,14 +585,14 @@ serviceAccount:
 
 resources:
   defaults: {}
-    # If you want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #  cpu: 100m
-    #  memory: 128Mi
-    # requests:
-    #  cpu: 100m
-    #  memory: 128Mi
+  # If you want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
   db:
     requests:
       cpu: 100m
@@ -650,7 +650,7 @@ tasks:
     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
     ##
     ## Default value: @daily (once a day, at midnight UTC)
-    schedule: '@daily'
+    schedule: "@daily"
 
   # The metrics collector will periodically retrieve metrics from pods that have the
   # `metrics: include` label.
@@ -685,7 +685,7 @@ tasks:
     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
     ##
     ## Default value: @daily
-    schedule: '@daily'
+    schedule: "@daily"
 
 telemetry:
   ## enabled controls whether telemetry events will be sent.
@@ -724,7 +724,7 @@ securityContext:
       allowPrivilegeEscalation: false
       capabilities:
         drop:
-        - ALL
+          - ALL
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
@@ -739,7 +739,7 @@ securityContext:
       allowPrivilegeEscalation: false
       capabilities:
         drop:
-        - ALL
+          - ALL
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
@@ -759,7 +759,7 @@ securityContext:
       allowPrivilegeEscalation: false
       capabilities:
         drop:
-        - ALL
+          - ALL
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
@@ -775,7 +775,7 @@ securityContext:
       allowPrivilegeEscalation: false
       capabilities:
         drop:
-        - ALL
+          - ALL
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
