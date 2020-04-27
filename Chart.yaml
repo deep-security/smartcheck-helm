@@ -1,3 +1,4 @@
+apiVersion: v1
 name: smartcheck
 description: Deep Security Smart Check
 version: "1.2.44"
