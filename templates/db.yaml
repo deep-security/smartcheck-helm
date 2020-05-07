@@ -25,7 +25,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: smartcheck-app-db
+  name: {{ template "smartcheck.fullname" . }}-app-db
   labels:
     service: db
     release: {{ .Release.Name }}
@@ -36,7 +36,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-{{- $storageClassName := .Values.persistence.storageClassName }}
+{{- $storageClassName := default (default "" .Values.persistence.storageClassName) .Values.persistence.db.storageClassName }}
 {{- if $storageClassName }}
   storageClassName: {{ $storageClassName }}
 {{- end }}
@@ -212,7 +212,7 @@ spec:
         - name: data
 {{ if .Values.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: smartcheck-app-db
+            claimName: {{ template "smartcheck.fullname" . }}-app-db
 {{ else }}
           emptyDir:
             sizeLimit: {{ default "8Gi" .Values.persistence.db.size }}
