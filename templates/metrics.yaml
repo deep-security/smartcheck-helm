@@ -102,7 +102,7 @@ spec:
         {{ $k }}: {{ quote $v }}
         {{- end }}
     spec:
-      serviceAccountName: {{ .Values.smartcheck.serviceAccount }}
+      serviceAccountName: {{ template "smartcheck.fullname" . }}-metrics-collector
       automountServiceAccountToken: true
       {{- $securityContextEnabled := .Values.securityContext.enabled }}
       {{- $securityContext := default .Values.securityContext.default .Values.securityContext.metricsCollector }}
@@ -265,7 +265,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ .Values.smartcheck.serviceAccount }}
+  name: {{ template "smartcheck.fullname" . }}-metrics-collector
   labels:
     task: metrics-collector
     release: {{ .Release.Name }}
@@ -277,7 +277,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ .Values.smartcheck.serviceAccount }}
+  name: {{ template "smartcheck.fullname" . }}-metrics-collector-role
   labels:
     task: metrics-collector
     release: {{ .Release.Name }}
@@ -296,7 +296,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ .Values.smartcheck.serviceAccount }}-binding
+  name: {{ template "smartcheck.fullname" . }}-metrics-collector-role-binding
   labels:
     task: metrics-collector
     release: {{ .Release.Name }}
@@ -306,11 +306,11 @@ metadata:
     {{- end }}
 subjects:
   - kind: ServiceAccount
-    name: {{ .Values.smartcheck.serviceAccount }}
+    name: {{ template "smartcheck.fullname" . }}-metrics-collector
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
-  name: {{ .Values.smartcheck.serviceAccount }}
+  name: {{ template "smartcheck.fullname" . }}-metrics-collector-role
   apiGroup: rbac.authorization.k8s.io
 
 {{ end }}{{/* if (and .Values.tasks.metricsCollector.enabled .Values.tasks.metricsReporter.enabled) */}}
