@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrator
+spec:
+  template:
+    spec:
+      {{- $imageDefaults := .Values.images.defaults }}
+      {{- with .Values.images.vulnDBInitializer }}
+      {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
+      {{- if not (eq "" $secret) }}
+      imagePullSecrets:
+        - name: {{ $secret | quote }}
+      {{- end }}
+      restartPolicy: Never
+      containers:
+      - name: db-migrator
+        command: ["/migrate.sh"]
+        {{- $project := (default (default "deepsecurity" $imageDefaults.project) .project) }}
+        {{- $repository := printf "%s/%s" $project (required ".repository is required!" .repository) }}
+        {{- $tag := (default $imageDefaults.tag .tag) }}
+        image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
+        imagePullPolicy: {{ default (default "Always" $imageDefaults.pullPolicy) .pullPolicy }}
+        {{- end }}
+        stdin: true
+        tty: true
+        env:
+          {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "vulnerabilityscan") | nindent 10 }}
+  backoffLimit: 4
