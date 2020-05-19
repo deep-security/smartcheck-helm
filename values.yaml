@@ -746,6 +746,21 @@ securityContext:
       # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": this seems appropriate.
       runAsUser: 70
 
+  dbmigrator:
+    pod:
+      runAsNonRoot: true
+      fsGroup: 70
+    container:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      # seLinuxOptions: "If unspecified, the container runtime will allocate a random SELinux context for each container": this seems appropriate.
+      runAsUser: 70
+
   registry:
     pod:
       runAsUser: 1000
@@ -801,3 +816,5 @@ feed:
   sca:
     url: https://dstf.trendmicro.com/sca/feed.bin
     interval: 24h
+dbmigrator:
+  size: 1Gi

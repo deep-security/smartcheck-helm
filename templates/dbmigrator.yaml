@@ -2,9 +2,36 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: db-migrator
+  annotations:
+    "helm.sh/hook": post-upgrade
+  labels:
+    service: vulnerability-scan
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    appVersion: {{ .Chart.AppVersion }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+    {{ $k }}: {{ quote $v }}
+{{- end }}
 spec:
+  backoffLimit: 4
   template:
+    metadata:
+      labels:
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+        appVersion: {{ .Chart.AppVersion }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+        {{ $k }}: {{ quote $v }}
+{{- end }}
     spec:
+{{- $securityContextEnabled := .Values.securityContext.enabled }}
+{{- $securityContext := default .Values.securityContext.default .Values.securityContext.dbmigrator }}
+{{- $podSecurityContext := default .Values.securityContext.default.pod $securityContext.pod }}
+{{- $containerSecurityContext := default .Values.securityContext.default.container $securityContext.container }}
+{{- if $securityContextEnabled }}
+      securityContext:
+{{ toYaml $podSecurityContext | indent 8 }}
+{{- end }}
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.vulnDBInitializer }}
       {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
@@ -22,8 +49,26 @@ spec:
         image: {{ include "image.source" (dict "repository" $repository "registry" .registry "tag" $tag "imageDefaults" $imageDefaults "digest" .digest) }}
         imagePullPolicy: {{ default (default "Always" $imageDefaults.pullPolicy) .pullPolicy }}
         {{- end }}
-        stdin: true
-        tty: true
+        volumeMounts:
+          - name: data
+            mountPath: /var/lib/postgresql
+          - name: tmp
+            mountPath: /tmp
+          - name: varrun
+            mountPath: /var/run/postgresql
         env:
           {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "vulnerabilityscan") | nindent 10 }}
-  backoffLimit: 4
+{{- if $securityContextEnabled }}
+        securityContext:
+{{ toYaml $containerSecurityContext | indent 10 }}
+{{- end }}
+      volumes:
+        - name: data
+          emptyDir:
+            sizeLimit: {{ default "1Gi" .Values.dbmigrator.size | quote }}
+        - name: tmp
+          emptyDir:
+            sizeLimit: "100Mi"
+        - name: varrun
+          emptyDir:
+            sizeLimit: "1Mi"
