@@ -102,7 +102,7 @@ spec:
         {{ $k }}: {{ quote $v }}
         {{- end }}
     spec:
-      serviceAccountName: {{ template "smartcheck.fullname" . }}-metrics-collector
+      serviceAccountName: {{ .Values.smartcheck.serviceAccount }}
       automountServiceAccountToken: true
       {{- $securityContextEnabled := .Values.securityContext.enabled }}
       {{- $securityContext := default .Values.securityContext.default .Values.securityContext.metricsCollector }}
@@ -113,7 +113,6 @@ spec:
       {{- end }}
       initContainers:
         - {{ include "smartcheck.db-initcontainer" (dict "Values" .Values "Chart" .Chart "Release" .Release "service" "metrics") | nindent 10 | trim }}
-
       {{- $imageDefaults := .Values.images.defaults }}
       {{- with .Values.images.metrics }}
       {{- $secret := (default (default "" $imageDefaults.imagePullSecret) .imagePullSecret) }}
@@ -265,7 +264,7 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ template "smartcheck.fullname" . }}-metrics-collector
+  name: {{ .Values.smartcheck.serviceAccount }}
   labels:
     task: metrics-collector
     release: {{ .Release.Name }}
@@ -277,7 +276,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ template "smartcheck.fullname" . }}-metrics-collector-role
+  name: {{ .Values.smartcheck.serviceAccount }}
   labels:
     task: metrics-collector
     release: {{ .Release.Name }}
@@ -296,7 +295,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ template "smartcheck.fullname" . }}-metrics-collector-role-binding
+  name: {{ .Values.smartcheck.serviceAccount }}-binding
   labels:
     task: metrics-collector
     release: {{ .Release.Name }}
@@ -306,11 +305,10 @@ metadata:
     {{- end }}
 subjects:
   - kind: ServiceAccount
-    name: {{ template "smartcheck.fullname" . }}-metrics-collector
+    name: {{ .Values.smartcheck.serviceAccount }}
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
-  name: {{ template "smartcheck.fullname" . }}-metrics-collector-role
+  name: {{ .Values.smartcheck.serviceAccount }}
   apiGroup: rbac.authorization.k8s.io
-
 {{ end }}{{/* if (and .Values.tasks.metricsCollector.enabled .Values.tasks.metricsReporter.enabled) */}}
