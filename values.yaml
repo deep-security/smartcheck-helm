@@ -552,7 +552,7 @@ persistence:
   ## Reference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class
   ##
   ## Default: blank
-  storageClassName:
+  storageClassName: smartcheck-db
 
   db:
     ## size is the amount of persistent volume storage to request for the main application databases.
