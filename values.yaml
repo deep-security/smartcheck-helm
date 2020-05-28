@@ -606,7 +606,7 @@ resources:
       memory: 256Mi
     limits:
       cpu: 800m
-      memory: 2Gi
+      memory: 3Gi
 
 nodeSelector:
   defaults: {}
