@@ -397,6 +397,11 @@ scan:
       ## Default value: 5Gi
       sizeLimit: 5Gi
 
+    ## The amount of time Smart Check will wait OpenSCAP scanner until timeout.
+    ##
+    ## Default value: 15m
+    scanTimeout: 15m
+
   contentScan:
     ## The content scanner uses an ephemeral volume to store working data
     ## for scans that are in progress. This data includes the uncompressed

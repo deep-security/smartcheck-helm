@@ -159,6 +159,8 @@ spec:
           env:
             {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" "scan") | nindent 12 }}
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
+            - name: OSCAP_SCAN_TIMEOUT
+              value: {{ .Values.scan.openscap.scanTimeout }}
           volumeMounts:
             {{- include "smartcheck.db-trust-volume-mount" . | nindent 12 }}
             - name: work
