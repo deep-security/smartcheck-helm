@@ -3,7 +3,7 @@
 # a helper script to fetch Kubernetes settings and Deep Security Smart Check logs.
 #
 
-RELEASE=deepsecurity-smartcheck
+RELEASE=${RELEASE:-deepsecurity-smartcheck}
 KUBECTL=kubectl
 HELM=helm
 
@@ -24,6 +24,17 @@ if ! command_exists $HELM; then
   exit 1
 fi
 
+CURRENT_NS=$(kubectl config view --minify --output 'jsonpath={..namespace}')
+CURRENT_NS=${CURRENT_NS:-default}
+NAMESPACE=${NAMESPACE:-$CURRENT_NS}
+NAMESPACE_PARAM="--namespace=$NAMESPACE"
+
+PODS=$($KUBECTL get pods "$NAMESPACE_PARAM" -o=jsonpath='{range .items[*]}{.metadata.name}{";"}{end}' -l release=$RELEASE)
+if [ -z "${PODS}" ]; then
+  echo "No smartcheck pods are found in release '$RELEASE' in namespace '$NAMESPACE'.  You can use RELEASE and NAMESPACE environment variable to change its default settings."
+  exit 1
+fi
+
 # Get Helm version since 'helm list' on Helm 3 does not display all namespaces unless specified. However, this flag does not exist in Helm 2
 case X`helm version --template="{{.Version}}"` in
   Xv3.*)
@@ -33,10 +44,11 @@ case X`helm version --template="{{.Version}}"` in
 esac
 
 # prepare the output folder
-RESULTS_DIR="${RESULTS_DIR:-/tmp/smartcheck}"
+TIME=$(date +%s)
+RESULTS_DIR="${RESULTS_DIR:-/tmp/smartcheck-${TIME}}"
 MASTER_DIR="${RESULTS_DIR}/master"
 mkdir -p "$MASTER_DIR/apps"
-echo "Results folder: $RESULTS_DIR"
+echo "Results folder will be: $RESULTS_DIR"
 
 #####
 # setting logs
@@ -67,10 +79,6 @@ done
 #####
 # application logs
 #####
-NAMESPACE=${NAMESPACE:-default}
-NAMESPACE_PARAM="--namespace=$NAMESPACE"
-
-PODS=$($KUBECTL get pods "$NAMESPACE_PARAM" -o=jsonpath='{range .items[*]}{.metadata.name}{";"}{end}' -l release=$RELEASE)
 for pod in $(echo "$PODS" | tr ";" "\n"); do
     CONTAINERS=$($KUBECTL get pods "$NAMESPACE_PARAM" "$pod" -o jsonpath='{.spec.initContainers[*].name}')
     for container in $CONTAINERS; do
@@ -95,3 +103,5 @@ for pod in $(echo "$PODS" | tr ";" "\n"); do
         fi
     done
 done
+
+echo "Results folder: $RESULTS_DIR"
