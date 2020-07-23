@@ -302,6 +302,17 @@ db:
   ## Default value: 5432
   port: 5432
 
+  ## PostgreSQL Database connection pool configuration
+  ## maxIdleConnections - the limit of the number of idle connections in the pool. Default Value: 25
+  maxIdleConnections:
+  ## maxIdleConnections - the limit of the number of open connections in the pool.  Default Value: 25
+  maxOpenConnections:
+  ## connMaxLifetime - the maximum amount of time a connection may be reused. It is expressed as a duration string.
+  ##                   A duration string is a sequence of decimal numbers, each with optional fraction
+  ##                   and a unit suffix, such as "24h". Valid time units are "ns", "us", "ms", "s", "m", "h".
+  ##                   Default Value: "10m"
+  connMaxLifetime:
+
   tls:
     ## mode:
     ## * disable - No SSL
@@ -328,7 +339,7 @@ db:
         configMapKeyRef:
           name:
           key:
-
+    
   ## Application database user
   ##
   ## Default value: a generated value derived from the `auth.secretSeed` and system details
