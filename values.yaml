@@ -328,6 +328,8 @@ db:
         configMapKeyRef:
           name:
           key:
+  azure:
+    host:
 
   ## Application database user
   ##

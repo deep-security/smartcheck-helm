@@ -190,7 +190,14 @@ metadata:
 {{- end }}
 type: Opaque
 data:
-  database-user: {{ derivePassword 1 "maximum" (toString (required "You must provide a value for auth.secretSeed. Use --set auth.secretSeed={password} or include a value in your overrides.yaml file." (default .Values.auth.masterPassword .Values.auth.secretSeed))) (join "-" (list .service "db-user")) .Release.Name | toString | b64enc | quote }}
+  {{- $user := derivePassword 1 "maximum" (toString (required "You must provide a value for auth.secretSeed. Use --set auth.secretSeed={password} or include a value in your overrides.yaml file." (default .Values.auth.masterPassword .Values.auth.secretSeed))) (join "-" (list .service "db-user")) .Release.Name | toString }}
+  {{ if .Values.db.azure.host -}}
+  {{- $host := .Values.db.azure.host }}
+  database-user-full: {{ printf "%s@%s" $user $host | b64enc | quote }}
+  {{ else -}}
+  database-user-full: {{ printf "%s" $user | b64enc | quote }}
+  {{- end }}
+  database-user: {{ $user | b64enc | quote }}
   database-password: {{ derivePassword 1 "maximum" (toString (default .Values.auth.masterPassword .Values.auth.secretSeed)) (join "-" (list .service "db-password" "2")) .Release.Name | toString | b64enc | quote }}
   {{ if .Values.db.secret -}}
   database-secret: {{ .Values.db.secret | toString | b64enc | quote }}
@@ -228,7 +235,7 @@ Provide database environment variables for a service.
   valueFrom:
     secretKeyRef:
       name: {{ template "smartcheck.fullname" . }}-{{ .service }}-db
-      key: database-user
+      key: database-user-full
 - name: PGPASSWORD
   valueFrom:
     secretKeyRef:
