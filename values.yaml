@@ -407,6 +407,14 @@ scan:
       ## Default value: 1Gi
       sizeLimit: 1Gi
 
+malwareScan:
+  ## Enable detail logging on malware-scan pod.
+  ##
+  ## Default value: false
+  verbose:
+    icrc: false
+    trendx: false
+
 registry:
   ## Enable the built-in registry for pre-registry scanning.
   ##
