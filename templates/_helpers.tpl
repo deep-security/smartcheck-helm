@@ -192,8 +192,8 @@ type: Opaque
 data:
   {{- $user := derivePassword 1 "maximum" (toString (required "You must provide a value for auth.secretSeed. Use --set auth.secretSeed={password} or include a value in your overrides.yaml file." (default .Values.auth.masterPassword .Values.auth.secretSeed))) (join "-" (list .service "db-user")) .Release.Name | toString }}
   {{- $userIncludeHost := false -}} {{/* check if user is in format user@host which is usually required by Azure DB for PostgreSQL */}}
-  {{- if .Values.db.user -}}
-  {{-  if contains "@" .Values.db.user -}}
+  {{- if and (not (empty .Values.db.user)) (not (empty .Values.db.host)) -}}
+  {{-  if and (contains "@" .Values.db.user) (hasSuffix ".azure.com" .Values.db.host) -}}
   {{-    $userIncludeHost = true -}}
   {{-  end }}
   {{- end }}
