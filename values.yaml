@@ -465,7 +465,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.48
+    tag: 1.2.49
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -480,28 +480,28 @@ images:
     # imagePullSecret:
   db:
     repository: db
-    digest: sha256:cbaed95415961760067132ae42315542720a02d4d6137d11196f548c6749ed38
+    digest: sha256:381445b393fd781b31cc467e376c398d9b87c20e12c6250b0bf277876affeb05
   auth:
     repository: auth
-    digest: sha256:b7ecad5961951c58d47019a8262aecd18c951d2487888433844446eb3188d879
+    digest: sha256:a7b3b2780cf109246003e856fdb8c8ab91f65af8ac428160e15c7507efa39a86
   malwareScan:
     repository: vscan
-    digest: sha256:0e74f6fa00a3ebda5ccb840085076dccf9bf94e8cfe84635fc8282272169793d
+    digest: sha256:fa5a0f3ec045da7bfc875bd33c9444be105cfe1213e39db85d275dc308583766
   contentScan:
     repository: contentscan
     digest: sha256:94c0938d03929f36e8f2279daf6c1a7e311f53ecb5c84293681a325eaedb7816
   scan:
     repository: scan
-    digest: sha256:1cefb842e1e569e4a5b97b315e8f445ade358fecdba71b0098a79077478a0ef4
+    digest: sha256:842aac3ada259ec8aa819a026086c51189d4ec29e1994a68ab6be6b263807c67
   registryviews:
     repository: registryviews
-    digest: sha256:1e1b16d9d9a55e33528750af5d5bfd48f9da2ab24258412c4222b55592ca0234
+    digest: sha256:a7c15baf12faa64cc85f458c6fd3e09e3284569a0c117234d3a831f08a8f9793
   docs:
     repository: api-docs
-    digest: sha256:315259831a437da3106a8fd1468e3fc272890837dd377dad6eb81de0bc51370c
+    digest: sha256:14827a6a127d68ef7bf5d5cc643e38ffcbe827035e08c3bfd0ebdd8ad428414b
   frontend:
     repository: frontend
-    digest: sha256:7e07c5ae1e530634f732a9df684b477ad1c35017b9a02c80e24c1e80239cbbb0
+    digest: sha256:e8651afe8d887bef194e0250df1af4e88a6eb9a0d5030b05faec8b8ea121f781
   proxy:
     repository: proxy
     digest: sha256:e16b33d83951a833e4165ff6d43cfcebc26eb88a7faca1af06ea1132f7ae1953
@@ -510,7 +510,7 @@ images:
     digest: sha256:a2ff17649c73086a393a83ea76088a44d6860d06900cac090fc5eef528b9ed76
   vulnerabilityScan:
     repository: vulnerability-scan
-    digest: sha256:6fa28091bbe876a37e45ac8922696f788c5e9d1f145b694e5332d82560eaa944
+    digest: sha256:0adb9ca29b23644a29459d810a101618812ba5b626c16173d13c49363ae565db
   tasks:
     repository: tasks
     digest: sha256:a507f0b72be51fb746c8280724db57fd532957586a5107f00de5881e362170ca
@@ -519,13 +519,13 @@ images:
     digest: sha256:c5c30ec4a73d44aa8cd5e1f60f96baaa57a3d88c142779a30d4c18c4df8cdb47
   openscapScan:
     repository: openscap-scan
-    digest: sha256:8bbb0c71fc8efb9acf97817acec24fd4ec866cf37f42f67f486f3713ea6de40c
+    digest: sha256:a3bb685f6695e0a094995aa4f262980a799efd42e544cb658d74e3d9d3c8c778
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    digest: sha256:5ff9f4f1a3a026dc99b0966667a1a007d84913c8b9daa0afe07908517f7b8b97
+    digest: sha256:8ec290bac82fa17330aa59f97f7423e85255d3b76e44618b051aeb16d9681ff4
   registry:
     repository: registry
-    digest: sha256:6916f44b3aee478154f36ce401548363a644e907fd1791b69cf975ca2d67bef9
+    digest: sha256:eff8f510098b5b8ebc422dcf9ca051c35fcea62817df9bdc575af65cdbc96117
   registryCleaner:
     repository: registry-cleaner
     digest: sha256:b56aafaf360753a60d12b0a7fd756d11fd3dfb4fa67e81f48ba37d9c6264d1b8
@@ -534,17 +534,17 @@ images:
     digest: sha256:97e1f38507fac7a4fde5ce6fe0d9ccb1c51deadd98ed0ef2aabdea1ef3678ec1
   vulnDBInitializer:
     repository: vuln-db-initializer
-    digest: sha256:f600f7c660a82bdc368b8af2558d9d52e85eb0e79999e680ccfcc9036483c755
+    digest: sha256:3e6976e7877d24c0225f0c5c140fc1380fbac9411906c908cc8c8a2ea167b26a
   imageScan:
     repository: image-scan
-    digest: sha256:3da0578348aaa067aa0edf15f6ec4fe83e6075d08c00f4e46e65f4360d97fad0
+    digest: sha256:9595ec14246567a1146d786a1c94f119c8f3f16281ff111fc20c050eadf545be
   scaScan:
     repository: sca-scan
-    digest: sha256:af31f60895c65a85a4fabbd11ee0d9a26bd8287ba3ec902f07702c32b6595a8d
+    digest: sha256:558be692f0740504a4afa1a971910a8e8f6939c43f29d21b0a171c4fc24a7b31
   scaFeedConsumer:
     repository: sca-feed-consumer
 
-    digest: sha256:317cad14e7562df34d71183eabb7dde5a704ccedf3fc86f79c02a7c64704d396
+    digest: sha256:f0af3d75f0c65d1b84aae509616e2d0835d57aac4752e1a73b607fc93627de31
 replicas: {}
 
 persistence:
