@@ -425,6 +425,14 @@ malwareScan:
     icrc: false
     trendx: false
 
+  ## The malware-Scan scanner uses an ephemeral volume to store working data
+  ## for scans that are in progress. This data includes the compressed and uncompressed files.
+  workVolume:
+    ## The amount of space to request for the work volume.
+    ##
+    ## Default value: 300Mi
+    sizeLimit: 300Mi
+
 registry:
   ## Enable the built-in registry for pre-registry scanning.
   ##
