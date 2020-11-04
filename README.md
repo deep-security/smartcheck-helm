@@ -243,3 +243,24 @@ Warning  FailedMount             2m38s (x23 over 33m)  kubelet, ip-192-168-82-13
 For production, you should [use an external database](https://github.com/deep-security/smartcheck-helm/wiki/Use-an-external-database) instead of the internal database.
 
 If you are doing a trial install and want to use the built-in database, you can install the required driver. See [EKS EBS CSI Driver](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html) for more information and installation instructions.
+
+
+### Malware scan pods have status 'Evicted'
+
+If the status of your malware scan pods is 'Evicted' and you are seeing this error:
+
+```text
+Usage of EmptyDir volume "tmp" exceeds the limit "300Mi"
+```
+
+You can configure the work volume by updating the following on your overrides.yaml:
+
+```yaml
+  workVolume:
+    sizeLimit: 400Mi
+```
+
+You can also use this command to prune the Evicted pods if they persist:
+```text
+kubectl get pods | grep Evicted | awk '{print $1}' | xargs kubectl delete pod
+```
