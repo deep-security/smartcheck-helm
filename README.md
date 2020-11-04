@@ -247,7 +247,7 @@ If you are doing a trial install and want to use the built-in database, you can 
 
 ### Smart Check scan pods have status 'Evicted'
 
-If the status of your Smart Check scan pods is 'Evicted' and you are seeing this error:
+The status of Smart Check scan pod is 'Evicted' when it requests more resources than its limit. For example, you may see following error for malware-scan pod:
 
 ```text
 Usage of EmptyDir volume "tmp" exceeds the limit "300Mi"
