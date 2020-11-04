@@ -245,20 +245,24 @@ For production, you should [use an external database](https://github.com/deep-se
 If you are doing a trial install and want to use the built-in database, you can install the required driver. See [EKS EBS CSI Driver](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html) for more information and installation instructions.
 
 
-### Malware scan pods have status 'Evicted'
+### Smart Check scan pods have status 'Evicted'
 
-If the status of your malware scan pods is 'Evicted' and you are seeing this error:
+If the status of your Smart Check scan pods is 'Evicted' and you are seeing this error:
 
 ```text
 Usage of EmptyDir volume "tmp" exceeds the limit "300Mi"
 ```
 
-You can configure the work volume by updating the following on your overrides.yaml:
+This error is regarding the malware scan pod's usage exceeding its work volume of 300Mi.
+You can configure the work volume of the affected pod(s) by updating the following on your overrides.yaml:
 
 ```yaml
+malwareScan:
   workVolume:
     sizeLimit: 400Mi
 ```
+
+Other pods can also be configured similarly. View 'workVolume' in the values.yaml to view other pod configurations.
 
 You can also use this command to prune the Evicted pods if they persist:
 ```text
