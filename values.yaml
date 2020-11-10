@@ -407,6 +407,11 @@ scan:
       ## Default value: 5Gi
       sizeLimit: 5Gi
 
+  imageScan:
+    # Set the timeout for the image scanner.
+    # Default value: 10m
+    timeout:
+
   contentScan:
     ## The content scanner uses an ephemeral volume to store working data
     ## for scans that are in progress. This data includes the uncompressed
@@ -416,6 +421,22 @@ scan:
       ##
       ## Default value: 1Gi
       sizeLimit: 1Gi
+
+    # Set the timeout for the content scanner.
+    # Default value: 5m
+    timeout:
+
+  # This references vulnerability scan inside the scan pod
+  vulnerabilityScan:
+    # Set the timeout for the vulnerability scanner.
+    # Default value: 5m
+    timeout: 
+
+  # This references malware scan inside the scan pod
+  malwareScan:
+      # Set the timeout for the malware scanner.
+      # Default value: 1m
+      timeout:
 
 malwareScan:
   ## Enable detail logging on malware-scan pod.
@@ -610,7 +631,8 @@ serviceAccount:
     annotations:
 
 resources:
-  defaults: {}
+  defaults:
+    {}
     # If you want to specify resources, uncomment the following
     # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
     # limits:
@@ -676,7 +698,7 @@ tasks:
     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
     ##
     ## Default value: @daily (once a day, at midnight UTC)
-    schedule: '@daily'
+    schedule: "@daily"
 
   # The metrics collector will periodically retrieve metrics from pods that have the
   # `metrics: include` label.
@@ -711,7 +733,7 @@ tasks:
     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
     ##
     ## Default value: @daily
-    schedule: '@daily'
+    schedule: "@daily"
 
 cloudOne:
   ## apiKey is the api key used to authenticate with Cloud One Container Security.
@@ -762,7 +784,7 @@ securityContext:
       allowPrivilegeEscalation: false
       capabilities:
         drop:
-        - ALL
+          - ALL
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
@@ -777,7 +799,7 @@ securityContext:
       allowPrivilegeEscalation: false
       capabilities:
         drop:
-        - ALL
+          - ALL
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
@@ -797,7 +819,7 @@ securityContext:
       allowPrivilegeEscalation: false
       capabilities:
         drop:
-        - ALL
+          - ALL
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
@@ -813,7 +835,7 @@ securityContext:
       allowPrivilegeEscalation: false
       capabilities:
         drop:
-        - ALL
+          - ALL
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
