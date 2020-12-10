@@ -430,13 +430,13 @@ scan:
   vulnerabilityScan:
     # Set the timeout for the vulnerability scanner.
     # Default value: 5m
-    timeout: 
+    timeout:
 
   # This references malware scan inside the scan pod
   malwareScan:
       # Set the timeout for the malware scanner.
       # Default value: 1m
-      timeout:
+    timeout:
 
 malwareScan:
   ## Enable detail logging on malware-scan pod.
@@ -504,7 +504,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.52
+    tag: 1.2.53
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -522,7 +522,7 @@ images:
     digest: sha256:381445b393fd781b31cc467e376c398d9b87c20e12c6250b0bf277876affeb05
   auth:
     repository: auth
-    digest: sha256:371434e6db944593b50dd477d0fd22d0d33dd3f722b4e7980d45ef66cc22f232
+    digest: sha256:a2df970eef02b04c956659838f5429404f4fd97f03fcdad768376a6d869b8d5a
   malwareScan:
     repository: vscan
     digest: sha256:62d84ad3aa55514c608dbbc18ed1048e05f5a98022bc40f8ddb756f8b1b2db89
@@ -531,22 +531,22 @@ images:
     digest: sha256:b1a5c34fba3f50b1ac8ee389232a1a9698fca38d40df3475774fffa27b01fad4
   scan:
     repository: scan
-    digest: sha256:5a0b68174b125926846c15f4109e289575729e3b3342fdd57e6159691027553f
+    digest: sha256:9f8031fc50b5730a7674e1c5c80d95125b38cfd45bc9dff92758fc5a7ae9397a
   registryviews:
     repository: registryviews
     digest: sha256:aca44092800113cd8a3e28b66f8fdc249b1824d690de6578047f92752eb71b4a
   docs:
     repository: api-docs
-    digest: sha256:fbb9bf83641f7f638ff1ddf58db1b65a90d7788b3b0dd2645290e1ea92ba2056
+    digest: sha256:6102528693d242662c9e93306c351e2630de38a38efbf404defee23de156d3c6
   frontend:
     repository: frontend
-    digest: sha256:efb359348e6ef0fac8c6c5feb5495c48399c9c4f9a2f7de642ccb02646b28788
+    digest: sha256:29cdb9ce9091d974702e9785aee5d57ef62c71f97884f3e3cfe653d42b87ce30
   proxy:
     repository: proxy
     digest: sha256:e16b33d83951a833e4165ff6d43cfcebc26eb88a7faca1af06ea1132f7ae1953
   license:
     repository: license
-    digest: sha256:01131527fcb83c125412c8623abf137f2bf49d4ce2f7fa215dd7c81bb39e09f8
+    digest: sha256:6bd166a5d76235eab7478f90928b865b53f0411795ad490be33756651395438e
   vulnerabilityScan:
     repository: vulnerability-scan
     digest: sha256:68d95e2e79ef700c4dbeab7fa84c867e069d6a1e9f84052fdf12ef976eaa5dba
@@ -558,10 +558,10 @@ images:
     digest: sha256:27f5f0a9571ed838b40e15d980d333e0e615e562215830e5de638c84824f8a01
   openscapScan:
     repository: openscap-scan
-    digest: sha256:efebbe2f5bb9a3ef0cda9bbc11ff9614e60008b3b7daf6bbb1a08c5cb3b5ee22
+    digest: sha256:a2958cb0fdd311276e77ac04697431d2336ab937b0617f48b69a7173fb4433ee
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    digest: sha256:252e5ff1ab5531763268ba6c9a9f3a2a6686af4e3e43c41dde2a87bc37640c90
+    digest: sha256:b3f6e8a08ba3c05b8bef186d16c87ef56744d1215653de373d6f6e6901b06c6d
   registry:
     repository: registry
     digest: sha256:eff8f510098b5b8ebc422dcf9ca051c35fcea62817df9bdc575af65cdbc96117
@@ -573,13 +573,13 @@ images:
     digest: sha256:9c7ae418321ff906a4873313e3a66790c930d533b48fd4eebbe6191d3f4a9574
   vulnDBInitializer:
     repository: vuln-db-initializer
-    digest: sha256:ac027620eb380130d3d0918338f73657f1a2534fb5d25520eb7202787c2b0ccf
+    digest: sha256:ee2780ddde486001103f25520aceb562550acac42a9344bad9147293837328b8
   imageScan:
     repository: image-scan
-    digest: sha256:dd7ab3e8de737efe4e8e1031a504f2cd814c52bafff6f4d2d6e5f85570cd1747
+    digest: sha256:0b430b51103d26421e5c2156b582675961adcf75993f9e120522dbe36b46d298
   scaScan:
     repository: sca-scan
-    digest: sha256:8e6f95cea493de3b7abca2e2a5d13a779511a39c27e244fab9150ede234efed7
+    digest: sha256:fa9c1e22bb7ed3bdd7cb240d2f8f90c943d3b10025c44745a5a94a15f5e33d58
   scaFeedConsumer:
     repository: sca-feed-consumer
 
@@ -631,8 +631,7 @@ serviceAccount:
     annotations:
 
 resources:
-  defaults:
-    {}
+  defaults: {}
     # If you want to specify resources, uncomment the following
     # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
     # limits:
@@ -698,7 +697,7 @@ tasks:
     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
     ##
     ## Default value: @daily (once a day, at midnight UTC)
-    schedule: "@daily"
+    schedule: '@daily'
 
   # The metrics collector will periodically retrieve metrics from pods that have the
   # `metrics: include` label.
@@ -733,7 +732,7 @@ tasks:
     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
     ##
     ## Default value: @daily
-    schedule: "@daily"
+    schedule: '@daily'
 
 cloudOne:
   ## apiKey is the api key used to authenticate with Cloud One Container Security.
@@ -784,7 +783,7 @@ securityContext:
       allowPrivilegeEscalation: false
       capabilities:
         drop:
-          - ALL
+        - ALL
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
@@ -799,7 +798,7 @@ securityContext:
       allowPrivilegeEscalation: false
       capabilities:
         drop:
-          - ALL
+        - ALL
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
@@ -819,7 +818,7 @@ securityContext:
       allowPrivilegeEscalation: false
       capabilities:
         drop:
-          - ALL
+        - ALL
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
@@ -835,7 +834,7 @@ securityContext:
       allowPrivilegeEscalation: false
       capabilities:
         drop:
-          - ALL
+        - ALL
       privileged: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
