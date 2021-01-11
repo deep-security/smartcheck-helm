@@ -626,9 +626,9 @@ serviceAccount:
   ##
   ## Reference: https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html
   ##
-  ## Default: blank
+  ## Default: {}
   registryAccess:
-    annotations:
+    annotations: {}
 
 resources:
   defaults: {}
