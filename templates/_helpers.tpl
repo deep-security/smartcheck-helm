@@ -336,6 +336,8 @@ args:
   - --service-username=$(SERVICE_USER)
   - --service-password=$(SERVICE_PASS)
   - --service-database=$(SERVICE_DB)
+  - --service-database-lc_ctype={{ default "en_US.utf8" .Values.db.lc_ctype }}
+  - --service-database-lc_collate={{ default "en_US.utf8" .Values.db.lc_collate }}
 {{- $volumeMounts := include "smartcheck.db-trust-volume-mount" . | nindent 2 }}
 {{- if (trim $volumeMounts) }}
 volumeMounts:
@@ -384,7 +386,10 @@ env:
         name: {{ template "smartcheck.fullname" . }}-{{ .service }}-db
 resources: {{ toYaml (default .Values.resources.defaults .Values.resources.dbInit) | nindent 2 }}
 {{- end -}}{{/* define */}}
-
+  - name: LC_CTYPE
+    value: {{ default "'en_US.utf8" .Values.db.lc_ctype | quote }}
+  - name: LC_COLLATE
+    value: {{ default "'en_US.utf8" .Values.db.lc_collate | quote }}
 
 {{/*
 Vulnerability DB init container
