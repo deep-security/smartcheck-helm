@@ -386,10 +386,6 @@ env:
         name: {{ template "smartcheck.fullname" . }}-{{ .service }}-db
 resources: {{ toYaml (default .Values.resources.defaults .Values.resources.dbInit) | nindent 2 }}
 {{- end -}}{{/* define */}}
-  - name: LC_CTYPE
-    value: {{ default "'en_US.utf8" .Values.db.lc_ctype | quote }}
-  - name: LC_COLLATE
-    value: {{ default "'en_US.utf8" .Values.db.lc_collate | quote }}
 
 {{/*
 Vulnerability DB init container
