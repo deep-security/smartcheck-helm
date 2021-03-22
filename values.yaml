@@ -513,7 +513,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.59
+    tag: 1.2.60
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -540,13 +540,13 @@ images:
     digest: sha256:b1a5c34fba3f50b1ac8ee389232a1a9698fca38d40df3475774fffa27b01fad4
   scan:
     repository: scan
-    digest: sha256:3f1d9db9d2501cd1166f3077149590c465169d469a81003e44358bf08dbd554b
+    digest: sha256:cd3a42cc07c79e42ec022c6b518e3df75d0d1c4579cb9920e721a80b06f9ae25
   registryviews:
     repository: registryviews
     digest: sha256:1e968446c7b9d30e8518b013dd376396f8fd8c40d22bbba63ccb0f6eb1340e66
   docs:
     repository: api-docs
-    digest: sha256:e3762f9d2e97a8f1224f81d501898a204d6e9b6c32ea56c0e9fe5f739ffd4941
+    digest: sha256:c4c3954bedcc2932d4467aa7ede5c5685f7c2678cb43b59de63e3771cbd41b6f
   frontend:
     repository: frontend
     digest: sha256:a1d47ce5892aeb1714c71177bc9165cbb938acf183060b035bf52a768bab9d5e
@@ -570,7 +570,7 @@ images:
     digest: sha256:a2958cb0fdd311276e77ac04697431d2336ab937b0617f48b69a7173fb4433ee
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    digest: sha256:99814af41050d80da2ee8cf3fa6bac826478802c5b18bf21ae227b9ca463b47e
+    digest: sha256:da510760f83d518b3a02cbaa868accd18002426e354f60cef0ead8cca88132f1
   registry:
     repository: registry
     digest: sha256:eff8f510098b5b8ebc422dcf9ca051c35fcea62817df9bdc575af65cdbc96117
@@ -582,7 +582,7 @@ images:
     digest: sha256:429f85e9f4509bd7d6f3f399c1fa4135f74364f15d2552f27c90c233d55c8be9
   vulnDBInitializer:
     repository: vuln-db-initializer
-    digest: sha256:4b4342dbf33f22c34452ae7bf6c650c279330418ea0f125cd89e93a018ee0fd2
+    digest: sha256:3629afd9d5161b7b10921503226a056934371b802ceeee6b3144312632a68d7e
   imageScan:
     repository: image-scan
     digest: sha256:96f2103ffa635d09e2820b0fa5e71f4fb1ce701ee0e60e13547324241b6b43e6
