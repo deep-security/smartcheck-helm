@@ -134,13 +134,13 @@ Use the `helm list` command to list installed releases.
 
 ### Installing a specific version of Deep Security Smart Check
 
-If you want to install a specific version of Deep Security Smart Check, you can use the archive link for the tagged release. For example, to install Deep Security Smart Check 1.2.60, you can run:
+If you want to install a specific version of Deep Security Smart Check, you can use the archive link for the tagged release. For example, to install Deep Security Smart Check 1.2.61, you can run:
 
 ```sh
 helm install \
   --values overrides.yaml \
   deepsecurity-smartcheck \
-  https://github.com/deep-security/smartcheck-helm/archive/1.2.60.tar.gz
+  https://github.com/deep-security/smartcheck-helm/archive/1.2.61.tar.gz
 ```
 
 ### Using an alternate Kubernetes namespace
