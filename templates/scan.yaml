@@ -140,6 +140,7 @@ spec:
             - --database-secret=$(DB_SECRET)
             - --malware-scan-url=http://malware-scan-internal:8081
             - --content-scan-url=http://content-scan-internal:8081
+            - --license-url=http://license-internal:8081
             - --vulnerability-scan-url=http://vulnerability-scan-internal:8081
             - --image-scan-url=http://image-scan-internal:8081
             - --content-source-scanner-webhook-url=http://registryviews-internal:8081/api/results
@@ -249,6 +250,14 @@ spec:
             {{- range $k, $v := (default (dict) .Values.extraLabels) }}
             {{ $k }}: {{ quote $v }}
             {{- end }}{{/* range .Values.extraLabels */}}
+      - podSelector:
+          matchLabels:
+            service: license
+            release: {{ .Release.Name }}
+            heritage: {{ .Release.Service }}
+            {{- range $k, $v := (default (dict) .Values.extraLabels) }}
+            {{ $k }}: {{ quote $v }}
+            {{- end }}{{/* range .Values.extraLabels */}}
       ports:
         - protocol: TCP
           port: 8081
@@ -263,7 +272,7 @@ spec:
   egress:
     {{- include "smartcheck.to-dns-networkpolicy" . | nindent 4 }}
     {{- include "smartcheck.to-db-networkpolicy" . | nindent 4 }}
-    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "auth" "registryviews" "malware-scan" "vulnerability-scan" "content-scan" "image-scan" "metrics")) | nindent 4 }}
+    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "auth" "registryviews" "malware-scan" "vulnerability-scan" "content-scan" "image-scan" "metrics" "license")) | nindent 4 }}
     - to: # any
       ports:
       - protocol: TCP
