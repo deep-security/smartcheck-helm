@@ -130,6 +130,8 @@ spec:
           args:
             - --internal-base=http://license-internal:8081
             - --authorization-url=http://auth-internal:8081
+            - --cloud-one-endpoint={{ default "" .Values.cloudOne.endpoint }}
+            - --cloud-one-api-key={{ default "" .Values.cloudOne.apiKey }}            
             - --use-strict-transport-security=true
             - --use-strict-transport-security-includes-subdomains=false
             - --use-strict-transport-security-includes-preload=false
