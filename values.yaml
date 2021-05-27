@@ -2,6 +2,7 @@
 # This is a YAML-formatted file.
 
 ## activationCode is the product activation code.
+## If you have a valid cloudOne apikey, you do not need an activationCode
 ##
 ## Default value: (none)
 activationCode:
