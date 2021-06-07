@@ -85,6 +85,8 @@ spec:
             - --root=work/
             {{- if .Values.telemetry.enabled }}
             - --telemetry-endpoint=http://metrics-internal:8081
+            - --license-url=http://license-internal:8081
+            - --cloud-one-api-key={{ default "" .Values.cloudOne.apiKey }}             
             {{- end }}
           env:
             {{- include "smartcheck.activation-code.env" . | nindent 12 }}
@@ -114,6 +116,8 @@ spec:
             {{- end }}{{/* if hasKey .Values.feed "sca" */}}
             {{- end }}{{/* if hasKey .Values "feed" */}}
             - --feed-dir=/data
+            - --license-url=http://license-internal:8081
+            - --cloud-one-api-key={{ default "" .Values.cloudOne.apiKey }}           
           env:
             {{- include "smartcheck.proxy.env" . | nindent 12 }}
             {{- include "smartcheck.activation-code.env" . | nindent 12 }}
@@ -220,6 +224,8 @@ spec:
             {{- end }}{{/* if hasKey .Values.feed "openscap" */}}
             {{- end }}{{/* if hasKey .Values "feed" */}}
             - --authorization-token=$(ACTIVATION_CODE)
+            - --license-url=http://license-internal:8081
+            - --cloud-one-api-key={{ default "" .Values.cloudOne.apiKey }}
             - --initial-oval-file=/initial-oval.xml
             - --initial-checklists-directory=/initial-checklists
           env:
@@ -281,6 +287,14 @@ spec:
             {{- range $k, $v := (default (dict) .Values.extraLabels) }}
             {{ $k }}: {{ quote $v }}
             {{- end }}{{/* range .Values.extraLabels */}}
+      - podSelector:
+          matchLabels:
+            service: license
+            release: {{ .Release.Name }}
+            heritage: {{ .Release.Service }}
+            {{- range $k, $v := (default (dict) .Values.extraLabels) }}
+            {{ $k }}: {{ quote $v }}
+            {{- end }}{{/* range .Values.extraLabels */}}
       ports:
         - protocol: TCP
           port: 8081
@@ -295,7 +309,7 @@ spec:
   egress:
     {{- include "smartcheck.to-dns-networkpolicy" . | nindent 4 }}
     {{- include "smartcheck.to-db-networkpolicy" . | nindent 4 }}
-    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "scan" "metrics")) | nindent 4 }}
+    {{- include "smartcheck.to-internal-service-networkpolicy" (dict "Release" .Release "Values" .Values "services" (list "scan" "metrics" "license")) | nindent 4 }}
     # allow egress for feed consumer
     - to: # any
       ports:

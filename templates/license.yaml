@@ -216,6 +216,22 @@ spec:
 {{- end }}
       - podSelector:
           matchLabels:
+            service: scan
+            release: {{ .Release.Name }}
+            heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+            {{ $k }}: {{ quote $v }}
+{{- end }}
+      - podSelector:
+          matchLabels:
+            service: image-scan
+            release: {{ .Release.Name }}
+            heritage: {{ .Release.Service }}
+{{- range $k, $v := (default (dict) .Values.extraLabels) }}
+            {{ $k }}: {{ quote $v }}
+{{- end }}
+      - podSelector:
+          matchLabels:
             service: metrics
             release: {{ .Release.Name }}
             heritage: {{ .Release.Service }}
