@@ -388,6 +388,10 @@ scan:
   malwareCache:
     enabled: true
 
+  # Set how long to wait before being able to rescan images through the registry APIs
+  # Default value: 12h
+  rescanProhibitedDuration:
+
   sca:
     ## The SCA scanner uses an ephemeral volume to store threat feed
     ## information. This volume is created when the pod is scheduled on a node
