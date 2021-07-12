@@ -56,7 +56,7 @@ Usage examples:
 ./collect-logs.sh -release deepsecurity-smartcheck -namespace trendmicro -resultdir /tmp/smartcheck-log -collectdump -corefilepattern core
 
 # Change the number of core dump files to be collected
-export MAX_DUMP_FILES 3
+export MAX_DUMP_FILES=3
 EOF
 }
 
