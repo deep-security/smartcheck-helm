@@ -389,7 +389,7 @@ scan:
     enabled: true
 
   # Set how long to wait before being able to rescan images through the registry APIs
-  # Default value: 12h
+  # Default value: 24h
   rescanProhibitedDuration:
 
   sca:
