@@ -465,8 +465,8 @@ malwareScan:
   workVolume:
     ## The amount of space to request for the work volume.
     ##
-    ## Default value: 300Mi
-    sizeLimit: 300Mi
+    ## Default value: 500Mi
+    sizeLimit: 500Mi
 
 registry:
   ## Enable the built-in registry for pre-registry scanning.
