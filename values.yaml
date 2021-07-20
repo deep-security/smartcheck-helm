@@ -460,6 +460,12 @@ malwareScan:
     icrc: false
     trendx: false
 
+  ## Control core files cleanup behavior in malware-scan
+  ## Core dumple file pattern. default "core*"
+  coreFilePattern:
+  ## Allowed total core files size limit. default "200Mi"
+  totalCoreFilesSize:
+
   ## The malware-Scan scanner uses an ephemeral volume to store working data
   ## for scans that are in progress. This data includes the compressed and uncompressed files.
   workVolume:
