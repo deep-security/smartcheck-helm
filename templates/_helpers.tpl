@@ -415,7 +415,11 @@ volumeMounts:
 env:
   {{- include "smartcheck.service.database.env" (dict "Chart" .Chart "Release" .Release "Values" .Values "service" .service) | nindent 2 }}
 resources: {{ toYaml (default .Values.resources.defaults .Values.resources.vulnDBInit) | nindent 2 }}
+args:
+  - {{ .Values.vulnerabilityScan.appendSeverity | quote }}
+  - {{ .Values.vulnerabilityScan.forceRestoreDB | quote }}
 {{- end -}}{{/* define */}}
+
 
 {{/*
 Service account name

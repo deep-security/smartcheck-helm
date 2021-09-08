@@ -499,6 +499,19 @@ registry:
     sizeLimit: 10Gi
 
 vulnerabilityScan:
+  ## Boolean value to determine whether or not to overwrite the distribution-specific
+  ## severity for a vulnerability with the NVD severity if the NVD severity is higher
+  ## 
+  ## Default value: true
+  appendSeverity: true
+
+  ## Forces the vulnerabilityscan database to be restored everytime the 
+  ## vulnerability-scan pod restarts. Can be used to refresh a corrupt vulnerability 
+  ## scan database.
+  ##
+  ## Default value: false
+  forceRestoreDB: false
+  
   workVolume:
     ## The amount of space to request for the vulnerability scan working volume
     ##
