@@ -511,7 +511,7 @@ vulnerabilityScan:
   ##
   ## Default value: false
   forceRestoreDB: false
-  
+
   workVolume:
     ## The amount of space to request for the vulnerability scan working volume
     ##
@@ -537,7 +537,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.73
+    tag: 1.2.74
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -594,7 +594,7 @@ images:
     digest: sha256:a2958cb0fdd311276e77ac04697431d2336ab937b0617f48b69a7173fb4433ee
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    digest: sha256:36f96d96750e5cdb0b9d509fb19b07abcdb0f0b785a74b51df0d1a9adfc181c6
+    digest: sha256:a012b4958b1f63719d27920753c560bb39c85fd0ca029ce3b16fdb623354ad95
   registry:
     repository: registry
     digest: sha256:eff8f510098b5b8ebc422dcf9ca051c35fcea62817df9bdc575af65cdbc96117
@@ -606,7 +606,7 @@ images:
     digest: sha256:429f85e9f4509bd7d6f3f399c1fa4135f74364f15d2552f27c90c233d55c8be9
   vulnDBInitializer:
     repository: vuln-db-initializer
-    digest: sha256:61376ffb63dafc113c9cbe15f2e26f5b1b62478d615b14bb878d162b303ae7bb
+    digest: sha256:8fedf21f6bfaa7ecae21f5b410892fd4e42168c9dbcf41c1a49c788f273459e9
   imageScan:
     repository: image-scan
     digest: sha256:36842810cdab5cb659696808469ef96f8ec12ca3388749c13ec1a67d52895913
