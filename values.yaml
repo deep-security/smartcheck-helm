@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 
 ## activationCode is the product activation code.
-## If you have a valid cloudOne apikey, you do not need an activationCode
+## If you have a valid Container Security Scanner API key, you do not need an activationCode
 ##
 ## Default value: (none)
 activationCode:
@@ -768,13 +768,15 @@ tasks:
     schedule: '@daily'
 
 cloudOne:
-  ## apiKey is the api key used to authenticate with Cloud One Container Security.
+  ## apiKey is the api key used to authenticate with Trend Micro Cloud One - Container Security.
+  ## The API key value is provided when creating a scanner in Container Security (either through the UI or through /api/scanners).
   ##
   ## Default value: (none)
   apiKey:
 
-  ## endpoint is the endpoint of the Cloud One Container Security scan results ingestion service.
-  ## Allows for full endpoint to be provided or the Cloud One region (ex: us-1).
+  ## endpoint is the endpoint of the Container Security scan results ingestion service.
+  ## Allows for full endpoint to be provided or the Trend Micro Cloud One region (ex: us-1).
+  ## The endpoint/region must match the Trend Micro Cloud One region where the scanner API key was created.
   ##
   ## Default value: https://container.us-1.cloudone.trendmicro.com
   endpoint: https://container.us-1.cloudone.trendmicro.com

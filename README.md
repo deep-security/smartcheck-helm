@@ -4,7 +4,7 @@
 
 ### Getting an activation code
 
-If you enrolled your Deep Security Smart Check installation with a valid Cloud One Container Security API key, you do not need an activation code. You can use Deep Security Smart Check without limitation.
+If you enrolled your Deep Security Smart Check installation with a valid [Trend Micro Cloud One - Container Security Scanner API key](https://cloudone.trendmicro.com/docs/container-security/?topicid=sc-integrate), you do not need an activation code. You can use Deep Security Smart Check without limitation.
 
 Otherwise, we recommend that you register for a 30-day trial license [code](https://go2.trendmicro.com/geoip/trial-168). Deep Security Smart Check will operate without an activation code; however, malware pattern updates will not be available and you will see a warning message in the administration console.
 
@@ -78,10 +78,10 @@ To install the latest version of Deep Security Smart Check into the default Kube
    # activationCode: YOUR-CODE-HERE
 
    # While it's still possible to use activationCode to activate Deep Security Smart Check,
-   # we strongly encourage you to enroll your Deep Security Smart Check installation with a valid Cloud One Container Security API key.
-   # You can find more detail on how to get a API key in https://cloudone.trendmicro.com/docs/container-security/api-key-create/
+   # we strongly encourage you to enroll your Deep Security Smart Check installation with a valid Container Security Scanner API key.
+   # You can find more detail on how to get a Scanner API key in https://cloudone.trendmicro.com/docs/container-security/?topicid=sc-integrate
    cloudOne:
-    apiKey: YOUR-CLOUD-ONE-CONTAINER-SECURITY-API-KEY
+    apiKey: YOUR-CONTAINER-SECURITY-SCANNER-API-KEY
 
    auth:
      ## secretSeed is used as part of the password generation process for
