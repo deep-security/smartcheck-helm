@@ -152,8 +152,8 @@ spec:
             - --image-scan-timeout={{ default "10m" .Values.scan.imageScan.timeout }}
             - --content-scan-timeout={{ default "5m" .Values.scan.contentScan.timeout }}
             - --malware-scan-timeout={{ default "1m" .Values.scan.malwareScan.timeout }}
-            {{if not .Values.scan.malwareScan.enabled}}
-            - --malware-scan-enabled=false
+            {{if .Values.scan.malwareScan.enabled}}
+            - --malware-scan-enabled=true
             {{end}}
             - --rescan-prohibited-duration={{ default "24h" .Values.scan.rescanProhibitedDuration}}
             {{- with .Values.scan.results }}

@@ -449,8 +449,8 @@ scan:
   # This references malware scan inside the scan pod
   malwareScan:
     # Enable the malware scanner
-    # Default Value: true
-    enabled: true
+    # Default Value: false
+    enabled: false
       # Set the timeout for the malware scanner.
       # Default value: 1m
     timeout:
