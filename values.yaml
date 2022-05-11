@@ -540,7 +540,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.77
+    tag: 1.2.78
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -576,7 +576,7 @@ images:
     digest: sha256:f5293bbe3e219d984e3d9d6107d0386c1850c1fb4c78bc9ec5478566d9274fe0
   frontend:
     repository: frontend
-    digest: sha256:5057b2f6ed3353c66ad24ea42096e44090e8bf4076949a0e8ce5e71390e3913b
+    digest: sha256:d2d778789b1e2f67dcfaab4e9d6c5be53b28cf6eb037f70707ec5e95d8671a52
   proxy:
     repository: proxy
     digest: sha256:e16b33d83951a833e4165ff6d43cfcebc26eb88a7faca1af06ea1132f7ae1953
@@ -597,7 +597,7 @@ images:
     digest: sha256:271c557b4b68d9b66bdb330da8d62ae1ff6a8acd48a701c5183cd657c738a080
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    digest: sha256:e49aa7753628ac8a92cc0031369b2e9466e78bb1e2f7feee6a43640d61738f95
+    digest: sha256:411b606040df4621120ca39068051a01d7d40124dca28869eef89229251a3f01
   registry:
     repository: registry
     digest: sha256:eff8f510098b5b8ebc422dcf9ca051c35fcea62817df9bdc575af65cdbc96117
@@ -609,7 +609,7 @@ images:
     digest: sha256:429f85e9f4509bd7d6f3f399c1fa4135f74364f15d2552f27c90c233d55c8be9
   vulnDBInitializer:
     repository: vuln-db-initializer
-    digest: sha256:2c4be0111af08bfc5ca5bc092923a25d051e2897802b408c900d8dca1ccb861e
+    digest: sha256:3c5d0cb841660b3dd2dd5f9fae98a7d74b0a4a07d332f734bd521433fbff0549
   imageScan:
     repository: image-scan
     digest: sha256:d7cc75f3953fccca4bc70d5e7ac0492b9cb73df719bf018ddc44d0c64ff6895a
