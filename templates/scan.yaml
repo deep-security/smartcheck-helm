@@ -133,7 +133,7 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 6
           args:
-            - --log-level=warning
+            - --log-level=debug
             - --internal-base=http://scan-internal:8081
             - --authorization-url=http://auth-internal:8081
             - --database-connection-string=postgres:postgres://
@@ -178,7 +178,8 @@ spec:
       volumes:
         {{- include "smartcheck.db-trust-volume" . | nindent 8 }}
         - name: work
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: "6Gi"
       nodeSelector: {{ toYaml (default .Values.nodeSelector.defaults .Values.nodeSelector.scan) | nindent 8 }}
       tolerations: {{ toYaml (default .Values.tolerations.defaults .Values.tolerations.scan) | nindent 8 }}
       restartPolicy: Always
