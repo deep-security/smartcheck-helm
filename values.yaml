@@ -594,7 +594,8 @@ images:
     digest: sha256:d824424ae99ca6c55b3dc5dc9dc29fb40de5bd102d307b6713b0b20912c2af81
   openscapScan:
     repository: openscap-scan
-    digest: sha256:5a84f853ccad667232f211ddb394365247e59ad2a5910ac2eecc2d5654318d1a
+    # digest value in docker.io
+    digest: sha256:7b99d755566e09483983a4a836c65e91336d6c00118deaa6e6d6aa74a94c0811
   openscapFeedConsumer:
     repository: openscap-feed-consumer
     digest: sha256:bf612fc891534dc5ae98c3407ee81e251357225b361f19ecadaab37bfef0a913
