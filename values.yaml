@@ -729,6 +729,7 @@ tasks:
     ##
     ## Default value: true
     enabled: true
+    apiVersion: v1beta1
 
     ## schedule controls the schedule for the scheduled scan. It is a string in
     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
