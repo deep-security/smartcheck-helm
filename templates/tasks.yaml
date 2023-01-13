@@ -1,5 +1,5 @@
 {{ if .Values.tasks.scan.enabled }}
-apiVersion: batch/{{ .Values.tasks.scan.apiVersion }}
+apiVersion: {{ .Values.kubernetes.cronjob.apiVersion }}
 kind: CronJob
 metadata:
   name: scan

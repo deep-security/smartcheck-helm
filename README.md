@@ -90,6 +90,12 @@ To install the latest version of Deep Security Smart Check into the default Kube
      ##
      ## Default value: {must be provided by the installer}
      secretSeed: YOUR-SECRET-HERE
+
+   # Change to batch/v1 if you want to deploy the Deep Security Smart Check in
+   # Kubernetes v1.25+
+   kubernetes:
+     cronjob:
+       apiVersion: batch/v1 # Default: batch/v1beta1
    ```
 
 2. Use `helm` to install Deep Security Smart Check with your site-specific settings:

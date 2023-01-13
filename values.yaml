@@ -719,6 +719,14 @@ networkPolicy:
   ## Default value: []
   additionalOutboundPorts: []
 
+kubernetes:
+  cronjob:
+    # The apiVersion is kept at `batch/v1beta1` to ensure backwards compatibility to kubernetes versions before v1.21
+    # configure apiVersion `batch/v1` if you want to deploy the Deep Security Smart Check on kubernetes v1.25+
+    #
+    # Default value: batch/v1beta1
+    apiVersion: batch/v1beta1
+
 # Scheduled system tasks
 tasks:
   # The scan task will periodically trigger scans on views that have the `schedule`
@@ -729,7 +737,6 @@ tasks:
     ##
     ## Default value: true
     enabled: true
-    apiVersion: v1beta1
 
     ## schedule controls the schedule for the scheduled scan. It is a string in
     ## [cron](https://en.wikipedia.org/wiki/Cron) format.
