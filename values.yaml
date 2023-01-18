@@ -540,7 +540,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.79
+    tag: 1.2.80
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -564,7 +564,7 @@ images:
     digest: sha256:16b5d4966ef899b8859073cde4cc3f6c42dff3b59ffefc71f41f1533777ff4ac
   contentScan:
     repository: contentscan
-    digest: sha256:4aa736281b9f507cd13666d71d74e2c78c3b7ed98c3165758e583eb80b2d35d5
+    digest: sha256:09dcba488b62c36b04685cd70cead374f3cf19594bc7606e11f1249f00b10da7
   scan:
     repository: scan
     digest: sha256:9e0690683e0cf2f42476661f3785a7bcec6d54707d7f5b1823a4ffd8042cd22d
@@ -598,19 +598,19 @@ images:
     digest: sha256:7b99d755566e09483983a4a836c65e91336d6c00118deaa6e6d6aa74a94c0811
   openscapFeedConsumer:
     repository: openscap-feed-consumer
-    digest: sha256:bf612fc891534dc5ae98c3407ee81e251357225b361f19ecadaab37bfef0a913
+    digest: sha256:5019b50457154ee57d0cfde75b82d43455166884315222a054ea2ee44b73c943
   registry:
     repository: registry
     digest: sha256:d801f7f96a2807bee6e1956435534adcea085c086e7f439d184f921a736dc449
   registryCleaner:
     repository: registry-cleaner
-    digest: sha256:bd788f62352b2f06e756c69b31614a2c2021e16ca6ba00a1d7b3ca27b0c70d71
+    digest: sha256:60731e84828ff1bc9fac8af1a88c76dcc1a0fe78db2ffacee932e6d60d596d4d
   dbInitializer:
     repository: db-initializer
     digest: sha256:39f3abd2e7c7e5731cbf3f74b938b0695ccfd32066607b7850061d5551a1b630
   vulnDBInitializer:
     repository: vuln-db-initializer
-    digest: sha256:dd4d6944b25c7188323b35b9fab57147a6baf451d0b561bfca01623d756e1e8a
+    digest: sha256:dad4c24a8e48c099b5819d9e40d23e714a82b35bc126ebe88b2573f5afa37402
   imageScan:
     repository: image-scan
     digest: sha256:37faa2d94c6c41b026ccc5e35acdb92cda5b47a840d133ef63ad43e6fc749a70
