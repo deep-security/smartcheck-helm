@@ -540,7 +540,7 @@ images:
 
     ## Default tag for images to pull. This can be overridden for each image
     ## by specifying the tag attribute at the image level.
-    tag: 1.2.81
+    tag: 1.2.82
 
     ## Default pull policy for images. This can be overridden for each image
     ## by specifying the pullPolicy attribute at the image level.
@@ -610,7 +610,7 @@ images:
     digest: sha256:39f3abd2e7c7e5731cbf3f74b938b0695ccfd32066607b7850061d5551a1b630
   vulnDBInitializer:
     repository: vuln-db-initializer
-    digest: sha256:cc0a62bf6a0dc061ecdab2e1ed7ff471a27e479c033f2f6ebb24e08f686429b9
+    digest: sha256:7e42e6db55676c9d3becf9c7ef3483e7c261059c6d7215e5da7f81ee647d84b2
   imageScan:
     repository: image-scan
     digest: sha256:37faa2d94c6c41b026ccc5e35acdb92cda5b47a840d133ef63ad43e6fc749a70
