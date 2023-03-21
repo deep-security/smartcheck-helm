@@ -103,7 +103,13 @@ To install the latest version of Deep Security Smart Check into the default Kube
 
 _Experienced `helm` users will note that we are using `deepsecurity-smartcheck` as the `helm` release name in these examples. There is no requirement to use this release name._
 
-**Note:** This installs Deep Security Smart Check with an in-cluster database, which requires a persistent volume. Your cluster must support creating persistent volumes to work with the in-cluster database. See [Use an external database](https://github.com/deep-security/smartcheck-helm/wiki/Use-an-external-database) to learn how to use an external database with Deep Security Smart Check.
+**Note:** This installs Deep Security Smart Check with an in-cluster database, which requires a persistent volume. Your cluster must support creating persistent volumes to work with the in-cluster database. See [Use an external database](https://github.com/deep-security/smartcheck-helm/wiki/Use-an-external-database) to learn how to use an external database with Deep Security Smart Check. If you install smartcheck without the volume you will encounter problems in the pods with "Evicted" and "Crash-loop back" messages. Remove de Smart Check instalation, create a volume and install again.
+
+Run the command below to delete the pods from the smartcheck namespace.
+
+```helm delete deepsecurity-smartcheck -n smartcheck```
+
+Create the volume, you can use [Longhorn](https://longhorn.io) add in to the cluster where Smart Check is installed. 
 
 ### Connecting to Deep Security Smart Check
 
